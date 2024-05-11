@@ -32,9 +32,9 @@ namespace Demo.Infrastructure
       
     }
 
-    public interface IUnitOfWork<T> : IUnitOfWork where T : class
+    public interface IUnitOfWork<IDbContext> : IUnitOfWork  
     {
-        T Context { get; }
+        IDbContext Context { get; }
 
         IDbTransaction Transaction{ get; }
     }
