@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Transactions;
 
 namespace Demo.Infrastructure
 {
@@ -17,15 +15,21 @@ namespace Demo.Infrastructure
         void Rollback();
 
 
-        void ExecuteRawSql(string sql, object parameters = null);
+        void ExecuteNoQueryRawSql(string sql, object parameters = null);
+        DataTable ExecuteRawSql(string sql, object parameter = null);
+
         /// <summary>
         /// Executes the query, and returns the first column of the first row in the result set returned by the query. 
         /// The additional columns or rows are ignored.
+        /// EG:returns the new Identity column value if a new row was inserted, 0 on failure.
+        ///     INSERT INTO Production.ProductCategory (Name) VALUES (@Name); SELECT CAST(scope_identity() AS int)
+        /// EG:{cmd.CommandText = "SELECT COUNT(1) FROM dbo.region"; var count = (int)cmd.ExecuteScalar();}
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        object Executescalar(string sql, object parameter = null);
+        object ExecuteScalar(string sql, object parameter = null);
+      
     }
 
     public interface IUnitOfWork<T> : IUnitOfWork where T : class

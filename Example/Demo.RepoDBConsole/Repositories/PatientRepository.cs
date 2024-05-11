@@ -10,7 +10,7 @@ using System.Linq;
 namespace Demo.RepoDBConsole
 {
 
-    public interface IPatientRepository : IRepoDBRepository<Patient>
+    public interface IPatientRepository : IRepoDBRepository<Patient,int>
     {
         Patient GetPatientByAccountNumber(string accountNumber);
         IEnumerable<Patient> GetActivePatients(PageFilter pagFilter);
