@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DBScripts>
+	<DBScript name="FORMULARY_SINGLE_BY_ID">
+		<Content>
+			<![CDATA[
+			SELECT
+				   [FormularyID]
+				  ,[SiteID]
+				  ,[Active]
+				  ,[Billnum]
+				  ,[CommonName]
+				  ,[BrandName]
+				  ,[Form]
+				  ,[DEA_Class]
+				  ,[Barcode]
+				  ,[UnitCost]
+				  ,[AllergyDrug]
+				  ,[VendorCode]
+			  FROM [dbo].[T_FORMULARY]
+			WHERE FormularyID=@ID
+    ]]>
+		</Content>
+
+	</DBScript>
+	<DBScript name="FORMULARY_QUERY_ALL">
+		<Content>
+			<![CDATA[
+			SELECT 
+				*
+			FROM
+			(SELECT
+				FormularyID, Active, Billnum, CommonName, BrandName, Form, DEA_Class, Barcode, UnitCost, AllergyDrug, VendorCode, SiteID
+			FROM T_FORMULARY ) AS T
+			ORDER BY T.FormularyID
+			OFFSET @Offset ROWS
+			FETCH NEXT @PageSize ROWS ONLY
+    ]]>
+		</Content>
+	</DBScript>
+
+	<DBScript name="FORMULARY_QUERY_BY_FORM">
+		<Content>
+			<![CDATA[
+			SELECT 
+				*
+			FROM
+			(SELECT
+				FormularyID, Active, Billnum, CommonName, BrandName, Form, DEA_Class, Barcode, UnitCost, AllergyDrug, VendorCode, SiteID
+			FROM T_FORMULARY ) AS T
+			WHERE Form=@Form
+			ORDER BY T.FormularyID
+			OFFSET @Offset ROWS
+			FETCH NEXT @PageSize ROWS ONLY
+    ]]>
+		</Content>
+	</DBScript>
+
+</DBScripts>

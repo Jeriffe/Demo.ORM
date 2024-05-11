@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DBScripts>
+  <DBScript name="PATIENT_QUERY_ALL">
+    <Content>
+      <![CDATA[
+SELECT 
+       [PatientID]
+      ,[FirstName]
+      ,[MiddleInitial]
+      ,[LastName]
+      ,[BirthDate]
+      ,[Gender]
+      ,[MedRecNumber]
+      ,[PatientType]
+      ,[SiteID]
+FROM [DapperTest].[dbo].[T_PATIENT]
+ORDER BY PatientID
+OFFSET @Offset ROWS
+FETCH NEXT @PageSize ROWS ONLY
+    ]]>
+    </Content>
+  </DBScript>
+  
+  <DBScript name="PATIENT_SINGLE_BY_MRN">
+    <Content>
+    <![CDATA[
+SELECT
+       [PatientID]
+      ,[FirstName]
+      ,[MiddleInitial]
+      ,[LastName]
+      ,[BirthDate]
+      ,[Gender]
+      ,[MedRecNumber]
+      ,[PatientType]
+      ,[SiteID]
+FROM [DapperTest].[dbo].[T_PATIENT]
+WHERE MedRecNumber=@MedRecNumber
+    ]]>
+    </Content>
+  </DBScript>
+	<DBScript name="PATIENT_SINGLE_BY_ACCT">
+		<Content>
+			<![CDATA[
+	SELECT 
+	     P.PatientID
+		,P.FirstName
+		,P.MiddleInitial
+		,P.LastName
+		,P.BirthDate
+		,P.Gender
+		,P.MedRecNumber
+		,P.PatientType
+		,P.SiteID
+	FROM dbo.T_PATIENT AS P
+	INNER JOIN dbo.T_VISIT AS V ON P.PatientID = V.PatientID
+	WHERE V.AccountNumber = @AccountNumber
+    ]]>
+		</Content>
+	</DBScript>
+	<DBScript name="PATIENT_QUERY_BY_CAREUNITID" type="Procedure">
+		<Content>
+			<![CDATA[dbo.GetPatientByCareUnitID]]>
+		</Content>
+	</DBScript>
+
+	<DBScript name="PATIENT_QUERY_BY_DISCHARGEDATE" type="Text">
+		<Content>
+			<![CDATA[
+			SELECT 
+				 P.PatientID
+				,P.FirstName
+				,P.MiddleInitial
+				,P.LastName
+				,P.BirthDate
+				,P.Gender
+				,P.MedRecNumber
+				,P.DisChargeDate
+				,P.PatientType
+				,P.SiteID
+			FROM dbo.T_PATIENT AS P
+			WHERE P.DisChargeDate IS NULL
+			ORDER BY PatientID
+			OFFSET @Offset ROWS
+			FETCH NEXT @PageSize ROWS ONLY
+			]]>
+		</Content>
+	</DBScript>
+	
+</DBScripts>
