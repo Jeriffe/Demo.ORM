@@ -29,8 +29,8 @@ namespace Demo.RepoDBConsole
 
         private static void TestReportService()
         {
-            IDbContext context = new DbContext(ConnectionString);
-            var service = new ReportService(new UnitOfWork(context));
+            IDbContext context = new Repositories.SqlDbContext(ConnectionString);
+            var service = new ReportService(new Repositories.UnitOfWork(context));
 
             var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
         }
@@ -78,15 +78,15 @@ namespace Demo.RepoDBConsole
 
         private static void TestRepositories()
         {
-            IDbContext context = new DbContext(ConnectionString);
-            IUnitOfWork unitOfWork = new UnitOfWork(context);
+            IDbContext context = new Repositories.SqlDbContext(ConnectionString);
+            IUnitOfWork unitOfWork = new Repositories.UnitOfWork(context);
             IPatientRepository patientRes = new PatientRepository(unitOfWork);
 
             var patient = patientRes.GetByKey(2);
 
             unitOfWork.ProcessWithTrans(() =>
             {
-                int maxId = (int)unitOfWork.Executescalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
                 //Create
                 int id = patientRes.Create(new Patient
                 {
@@ -108,7 +108,7 @@ namespace Demo.RepoDBConsole
 
             unitOfWork.ProcessWithoutTrans(() =>
             {
-                int maxId = (int)unitOfWork.Executescalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
 
                 //Create
                 int id = patientRes.Create(new Patient
@@ -130,7 +130,7 @@ namespace Demo.RepoDBConsole
 
             unitOfWork.ProcessWithTrans(() =>
             {
-                int maxId = (int)unitOfWork.Executescalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
                 patientRes.Delete(new Patient { ID = maxId });
                 //Create multiple
                 //Update multiple

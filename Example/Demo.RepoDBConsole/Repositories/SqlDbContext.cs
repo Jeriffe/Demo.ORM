@@ -1,18 +1,14 @@
-﻿using Demo.Infrastructure;
-using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
-using System.IO;
 
-namespace Demo.Infrastructure
+namespace Demo.RepoDBConsole.Repositories
 {
-    public class DbContext : IDbContext
+    public class SqlDbContext : Infrastructure.IDbContext
     {
         public string ConnectionString { get; set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
 
-        public DbContext(string connectionString)
+        public SqlDbContext(string connectionString)
         {
             ConnectionString = connectionString;
         }
@@ -22,7 +18,7 @@ namespace Demo.Infrastructure
         {
             if (conn == null)
             {
-                conn = new SqlConnection(ConnectionString);
+                conn = new System.Data.SqlClient.SqlConnection(ConnectionString);
             }
 
             return conn;

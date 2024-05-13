@@ -1,8 +1,9 @@
-﻿using RepoDb;
+﻿using Demo.Infrastructure;
+using RepoDb;
 using System;
 using System.Data;
 
-namespace Demo.Infrastructure
+namespace Demo.RepoDBConsole.Repositories
 {
     public class UnitOfWork : IUnitOfWork<IDbContext>
     {
@@ -82,14 +83,32 @@ namespace Demo.Infrastructure
             Context.CloseConnection();
         }
 
-        public void ExecuteRawSql(string sql, object parameters)
+        public object ExecuteScalar(string sql, object parameters)
         {
+            //RepoDb: IDataReader ExecuteScalar(this IDbConnection connection
+            return Context.Connection.ExecuteScalar(sql, parameters, transaction: trans);
+        }
+
+        public void ExecuteNoQueryRawSql(string sql, object parameters = null)
+        {
+            //RepoDb: IDataReader ExecuteNonQuery(this IDbConnection connection
             Context.Connection.ExecuteNonQuery(sql, parameters, transaction: trans);
         }
 
-        public object Executescalar(string sql, object parameters)
+        DataTable IUnitOfWork.ExecuteRawSql(string sql, object parameter)
         {
-            return Context.Connection.ExecuteScalar(sql, parameters, transaction: trans);
+            //RepoDb: IDataReader ExecuteReader(this IDbConnection connection
+            using (var dataReader = Context.Connection.ExecuteReader(sql, parameter))
+            {
+                if (dataReader.Read())
+                {
+                    var dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+                    return dataTable;
+                }
+
+                return null;
+            }
         }
     }
 

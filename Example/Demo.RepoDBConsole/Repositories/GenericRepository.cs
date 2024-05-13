@@ -1,4 +1,5 @@
 ﻿using Demo.Infrastructure;
+using Microsoft.IdentityModel.Tokens;
 using RepoDb;
 using RepoDb.Enumerations;
 using System;
@@ -9,7 +10,9 @@ using System.Linq.Expressions;
 
 namespace Demo.RepoDBConsole.Repositories
 {
-    public interface IRepoDBRepository<TEntity> : IRepository<TEntity> where TEntity : class, new()
+    public interface IRepoDBRepository<TEntity, TKey> : IRepository<TEntity, TKey>
+        where TEntity : class, new()
+        where TKey : struct
     {
         TEntity GetSingle(Expression<Func<TEntity, bool>> expr);
 
@@ -24,7 +27,7 @@ namespace Demo.RepoDBConsole.Repositories
         void Delete(IEnumerable<TEntity> entities);
     }
 
-    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity> where TEntity : class, new()
+    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity, int> where TEntity : class, new()
     {
         public string ConnectionString { get; }
 
@@ -49,14 +52,9 @@ namespace Demo.RepoDBConsole.Repositories
             get { return unitOfWork; }
         }
 
-        public virtual TEntity Get(object id)
-        {
-            return Context.Connection.Query<TEntity>(id, transaction: unitOfWork.Transaction).FirstOrDefault();
-        }
-
         public TEntity GetSingle(Expression<Func<TEntity, bool>> expr)
         {
-            return Context.Connection.Query(expr,transaction:unitOfWork.Transaction).FirstOrDefault();
+            return Context.Connection.Query(expr, transaction: unitOfWork.Transaction).FirstOrDefault();
         }
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> expr = null)
@@ -96,7 +94,7 @@ namespace Demo.RepoDBConsole.Repositories
 
         public virtual void Update(TEntity entity)
         {
-            Context.Connection.Update<TEntity>(entity,transaction:unitOfWork.Transaction);
+            Context.Connection.Update<TEntity>(entity, transaction: unitOfWork.Transaction);
         }
         public virtual void Delete(TEntity entity)
         {
@@ -208,7 +206,5 @@ namespace Demo.RepoDBConsole.Repositories
                 disposed = true;
             }
         }
-
-
     }
 }
