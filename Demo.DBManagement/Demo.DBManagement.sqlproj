@@ -79,6 +79,6 @@
     <None Include="PostDeployment\InitialOrder.sql" />
     <None Include="PostDeployment\InitialProduct.sql" />
     <None Include="PublishSetttings\RecreateDB.publish.xml" />
-    <None Include="PublishSetttings\WithTableDrop.publish.xml" />
+    <None Include="PublishSetttings\UpdateWithTableDrop.publish.xml" />
   </ItemGroup>
 </Project>
