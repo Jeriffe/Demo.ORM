@@ -9,9 +9,9 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-IF EXISTS (SELECT 1 FROM T_Custom)
+IF EXISTS (SELECT 1 FROM T_Customer)
 BEGIN
-  PRINT 'Data already exists in T_Custom';
+  PRINT 'Data already exists in T_Customer';
 END
 ELSE
 BEGIN
@@ -39,3 +39,12 @@ BEGIN
   :r .\InitialOrder.sql
 END
 
+IF EXISTS (SELECT 1 FROM T_OrderDetail)
+BEGIN
+  PRINT 'Data already exists in T_OrderDetail';
+END
+ELSE
+BEGIN
+  PRINT 'excute InitialOrderDetail.sql';
+  :r .\InitialOrderDetail.sql
+END
