@@ -17,7 +17,7 @@ namespace Demo.RepoDBConsole.Models.Mappers
         {
             var patienMapper = FluentMapper.Entity<Patient>();
             patienMapper
-            .Table("dbo.[T_PATIENT]")
+            .Table("dbo.T_PATIENT")
             .Primary(e => e.ID)
             .Identity(e => e.ID)
             .Column(e=>e.ID,"PatientID")

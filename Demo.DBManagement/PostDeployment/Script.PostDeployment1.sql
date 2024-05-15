@@ -48,3 +48,13 @@ BEGIN
   PRINT 'excute InitialOrderItem.sql';
   :r .\InitialOrderItem.sql
 END
+
+IF EXISTS (SELECT 1 FROM T_PATIENT)
+BEGIN
+  PRINT 'Data already exists in T_PATIENT';
+END
+ELSE
+BEGIN
+  PRINT 'excute InitialPatient.sql';
+  :r .\InitialPatient.sql
+END
