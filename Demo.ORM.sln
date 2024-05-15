@@ -20,6 +20,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Demo.DBManagement", "Demo.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.DapperConsole", "Example\Demo.DapperConsole\Demo.DapperConsole.csproj", "{D82800D7-EED4-4D31-A45F-C967782AC86C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.NHibernateConsole", "Demo.NHibernateConsole\Demo.NHibernateConsole.csproj", "{F691FDC2-EA3D-4B52-BCB8-70CA814BEC74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{D82800D7-EED4-4D31-A45F-C967782AC86C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D82800D7-EED4-4D31-A45F-C967782AC86C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D82800D7-EED4-4D31-A45F-C967782AC86C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F691FDC2-EA3D-4B52-BCB8-70CA814BEC74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F691FDC2-EA3D-4B52-BCB8-70CA814BEC74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F691FDC2-EA3D-4B52-BCB8-70CA814BEC74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F691FDC2-EA3D-4B52-BCB8-70CA814BEC74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9E66B13D-F92C-4426-AB18-A9DA1374FBDF} = {F0153663-0F38-43F9-80C2-9092F9DC28D6}
 		{D82800D7-EED4-4D31-A45F-C967782AC86C} = {F0153663-0F38-43F9-80C2-9092F9DC28D6}
+		{F691FDC2-EA3D-4B52-BCB8-70CA814BEC74} = {F0153663-0F38-43F9-80C2-9092F9DC28D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {999D6782-C08D-4F6E-AC47-70CB6E8DCBDF}

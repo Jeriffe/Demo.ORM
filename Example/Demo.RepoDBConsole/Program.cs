@@ -107,7 +107,7 @@ namespace Demo.RepoDBConsole
                // throw new Exception("Rollback trans");
             });
 
-            unitOfWork.ProcessWithoutTrans(() =>
+            unitOfWork.ProcessWithTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
 

@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Demo.Infrastructure;
+using System;
 using System.Transactions;
 
-namespace Demo.Infrastructure
+namespace Demo.Data.NHibernateRepository
 {
     public static class ExtensionMethods
     {
-        public static void ProcessWithTrans(this IUnitOfWork conn, Action action)
+        public static void ProcessByTrans(this IUnitOfWork conn, Action action)
         {
             using (var transaction = new TransactionScope())
             {
                 try
                 {
-                    conn.BeginTrans();
-
                     action();
-
-                    conn.Commit();
 
                     transaction.Complete();
 
@@ -27,7 +23,10 @@ namespace Demo.Infrastructure
                 }
             }
         }
-             
+
+
+
+        
     }
 
 }
