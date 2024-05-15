@@ -26,9 +26,6 @@ namespace Demo.DapperConsole
             Map(p => p.ID).ToColumn("PatientID").IsIdentity().IsKey();
             Map(p => p.MedRecordNumber).ToColumn("MedRecNumber");
             Map(p => p.FullName).Ignore();
-
-            // Ignore the 'LastModified' property when mapping.
-            //Map(p => p.FullName).Ignore();
         }
     }
 }

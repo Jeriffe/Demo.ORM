@@ -3,8 +3,6 @@ using Demo.Infrastructure;
 using Dommel;
 using System.Data;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
 
 namespace Demo.DapperConsole
 {
@@ -12,7 +10,6 @@ namespace Demo.DapperConsole
     {
         private IUnitOfWork<IDbContext> unitOfWork;
 
-        private PartsQryGenerator partsQryGenerator;
         public IDbContext Context { get { return unitOfWork.Context; } }
 
         public GenericRepository(IUnitOfWork unitOfWork)
@@ -23,8 +20,6 @@ namespace Demo.DapperConsole
             }
 
             this.unitOfWork = unitOfWork as IUnitOfWork<IDbContext>;
-
-            partsQryGenerator = new PartsQryGenerator();
         }
 
         #region IRepository<TEntity>
@@ -79,9 +74,11 @@ namespace Demo.DapperConsole
                 throw new ArgumentNullException("entity");
             }
 
-            var id = Context.Connection.Insert(entity);
-            var INTID=Convert.ToInt32(id);
-            return GetByKey(INTID);
+            var obj = Context.Connection.Insert(entity);
+
+            var id=Convert.ToInt32(obj);
+
+            return GetByKey(id);
         }
 
   
@@ -127,23 +124,7 @@ namespace Demo.DapperConsole
         {
             return Context.Connection.Query<TEntity>(sql, commandType: commandType);
         }
-
-
-
-
-        #region IRepositoryWithParameters<TEntity>
-        public IEnumerable<TEntity> GetByParameters(object filter)
-        {
-            ParameterValidator.ValidateObject(filter, nameof(filter));
-
-            var selectQry = partsQryGenerator.GenerateSelect(filter);
-
-            var result = Context.Connection.Query<TEntity>(selectQry, filter);
-
-            return result;
-        }
-       
-        #endregion
+      
 
         #region IDisposable
 
@@ -171,106 +152,6 @@ namespace Demo.DapperConsole
             }
         }
 
-
-
         #endregion
-
-        public class PartsQryGenerator
-        {
-            private PropertyInfo[] properties;
-            private string[] propertiesNames;
-            private string typeName;
-
-            private string characterParameter;
-
-            public PartsQryGenerator(char characterParameter = '@')
-            {
-                var type = typeof(TEntity);
-
-                this.characterParameter = characterParameter.ToString();
-
-                properties = type.GetProperties();
-                propertiesNames = properties.Where(a => !IsComplexType(a)).Select(a => a.Name).ToArray();
-                typeName = type.Name;
-            }
-            public string GenerateSelect()
-            {
-                var result = string.Empty;
-
-                var sb = new StringBuilder("SELECT ");
-
-                string separator = $",{Environment.NewLine}";
-
-                string selectPart = string.Join(separator, propertiesNames);
-
-                sb.AppendLine(selectPart);
-
-                string fromPart = $"FROM {typeName}";
-
-                sb.Append(fromPart);
-
-                result = sb.ToString();
-
-                return result;
-            }
-
-            public string GenerateSelect(object fieldsFilter)
-            {
-                //   ParameterValidator.ValidateObject(fieldsFilter, nameof(fieldsFilter));
-
-                var initialSelect = GenerateSelect();
-                if (fieldsFilter == null)
-                {
-                    return initialSelect;
-                }
-
-                var where = GenerateWhere(fieldsFilter);
-
-                var result = $" {initialSelect} {where}";
-
-                return result;
-            }
-
-            private string GenerateWhere(object filtersPKs)
-            {
-                ParameterValidator.ValidateObject(filtersPKs, nameof(filtersPKs));
-
-                var filtersPksFields = filtersPKs.GetType().GetProperties().Select(a => a.Name).ToArray();
-
-                if (!filtersPksFields?.Any() ?? true) throw new ArgumentException($"El parameter filtersPks isn't valid. This parameter must be a class type", nameof(filtersPKs));
-
-                var propertiesWhere = filtersPksFields.Select(a => $"{a} = {characterParameter}{a}").ToArray();
-
-                var strWhere = string.Join(" AND ", propertiesWhere);
-
-                var result = $" WHERE {strWhere} ";
-
-                return result;
-            }
-
-            private bool IsComplexType(PropertyInfo propertyInfo)
-            {
-                bool result;
-
-                result = (propertyInfo.PropertyType.IsClass && propertyInfo.PropertyType.Name != "String") || propertyInfo.PropertyType.IsInterface;
-
-                return result;
-            }
-        }
-
-        public static class ParameterValidator
-        {
-            public static void ValidateObject(object obj, string nameParameter, string customMessage = null)
-            {
-                if (obj == null)
-                    throw new ArgumentNullException(nameParameter, customMessage ?? $"The parameter {nameParameter} it is not null");
-            }
-
-            public static void ValidateString(string str, string nameParameter, string customMessage = null)
-            {
-                if (string.IsNullOrWhiteSpace(str))
-                    throw new ArgumentNullException(nameParameter, customMessage ?? $"The parameter {nameParameter} it is not null/empty/white");
-            }
-        }
     }
 }

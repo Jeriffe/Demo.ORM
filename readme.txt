@@ -10,3 +10,6 @@ Demo.DapperConsole
 	Install-Package Dapper -Version 2.1.35
 	Install-Package Dommel
 	Install-Package Dapper.FluentMap.Dommel
+
+Demo.RepoDBConsole
+	Install-Package RepoDb

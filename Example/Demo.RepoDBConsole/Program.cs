@@ -153,14 +153,14 @@ namespace Demo.RepoDBConsole
             });
 
             //query by store procedure
-            var patient_ByCareUnitID_Paging = patientRes.GetPatientByCareUnitID(2, new PageFilter { PagIndex = 1, PageSize = 3 });
+            //var patient_ByCareUnitID_Paging = patientRes.GetPatientByCareUnitID(2, new PageFilter { PagIndex = 1, PageSize = 3 });
 
-            //query by text
-            var patient_Active_Paging = patientRes.GetActivePatients(new PageFilter { PagIndex = 2, PageSize = 3 });
+            ////query by text
+            //var patient_Active_Paging = patientRes.GetActivePatients(new PageFilter { PagIndex = 2, PageSize = 3 });
 
 
-            //query by text
-            var patient_AcctNo = patientRes.GetPatientByAccountNumber("AccountNumber938067");
+            ////query by text
+            //var patient_AcctNo = patientRes.GetPatientByAccountNumber("AccountNumber938067");
 
             /*
             var sql2 = "SELECT * FROM [dbo].[T_PATIENT] WHERE PatientID=@PatientID";
