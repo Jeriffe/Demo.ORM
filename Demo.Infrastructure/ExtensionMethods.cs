@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Transactions;
 
 namespace Demo.Infrastructure
@@ -7,7 +8,6 @@ namespace Demo.Infrastructure
     {
         public static void ProcessWithTrans(this IUnitOfWork conn, Action action)
         {
-
             using (var transaction = new TransactionScope())
             {
                 try
@@ -17,8 +17,8 @@ namespace Demo.Infrastructure
                     action();
 
                     conn.Commit();
-
                     transaction.Complete();
+
                 }
                 catch (Exception ex)
                 {
@@ -31,6 +31,8 @@ namespace Demo.Infrastructure
 
             }
         }
+
+
 
         public static void ProcessWithoutTrans(this IUnitOfWork conn, Action action)
         {

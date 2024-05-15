@@ -1,9 +1,10 @@
-﻿using Demo.Infrastructure;
-using RepoDb;
-using System;
-using System.Data;
+﻿using Dapper;
+using Demo.Infrastructure;
 
-namespace Demo.RepoDBConsole.Repositories
+using System.Data;
+using System.Data.Common;
+
+namespace Demo.DapperConsole
 {
     public class UnitOfWork : IUnitOfWork<IDbContext>
     {
@@ -22,7 +23,13 @@ namespace Demo.RepoDBConsole.Repositories
         {
             if (trans == null)
             {
-                trans = Context.CreateConnection().EnsureOpen().BeginTransaction();
+                var conn = Context.CreateConnection();
+                if (conn.State!= ConnectionState.Open)
+                {
+                    conn.Open();
+                }
+                
+                trans = conn.BeginTransaction();
             }
         }
 
@@ -42,7 +49,7 @@ namespace Demo.RepoDBConsole.Repositories
             {
                 trans.Commit();
             }
-            catch (Exception) { throw ; }
+            catch (Exception) { throw; }
             finally
             {
                 DisposeTransaction();
@@ -86,13 +93,15 @@ namespace Demo.RepoDBConsole.Repositories
         public object ExecuteScalar(string sql, params object[] parameters)
         {
             //RepoDb: IDataReader ExecuteScalar(this IDbConnection connection
-            return Context.Connection.ExecuteScalar(sql, null, transaction: trans);
+            var result = Context.Connection.ExecuteScalar(sql, null, transaction: trans);
+
+            return result;
         }
 
         public void ExecuteNoQueryRawSql(string sql, params object[] parameters)
         {
             //RepoDb: IDataReader ExecuteNonQuery(this IDbConnection connection
-            Context.Connection.ExecuteNonQuery(sql, null, transaction: trans);
+            Context.Connection.Execute(sql, null, transaction: trans);
         }
 
         public DataTable ExecuteRawSql(string sql, params object[] parameter)

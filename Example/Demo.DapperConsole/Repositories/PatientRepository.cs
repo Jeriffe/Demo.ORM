@@ -1,20 +1,17 @@
 ﻿using Demo.DBScripts;
 using Demo.Infrastructure;
-using Demo.RepoDBConsole.Models;
-using Demo.RepoDBConsole.Repositories;
-using System;
-using System.Collections.Generic;
+using Demo.DapperConsole.Models;
 using System.Data;
-using System.Linq;
 
-namespace Demo.RepoDBConsole
+namespace Demo.DapperConsole
 {
 
-    public interface IPatientRepository : IRepoDBRepository<Patient,long>
+    public interface IPatientRepository : IRepository<Patient,int>
     {
         Patient GetPatientByAccountNumber(string accountNumber);
         IEnumerable<Patient> GetActivePatients(PageFilter pagFilter);
         IEnumerable<Patient> GetPatientByCareUnitID(int careUnitID, PageFilter pagFilter);
+      
     }
 
     public class PatientRepository : GenericRepository<Patient>, IPatientRepository
@@ -37,15 +34,15 @@ namespace Demo.RepoDBConsole
         {
             var sql = ScriptsLoader.Get("PATIENT_QUERY_BY_CAREUNITID");
 
-            var offSet = GetOffset(pagFilter.PagIndex, pagFilter.PageSize);
-            var conditon = new
-            {
-                CareUnitID = careUnitID,
-                Offset = offSet,
-                PageSize = pagFilter.PageSize
-            };
+            //var offSet = GetOffset(pagFilter.PagIndex, pagFilter.PageSize);
+            //var conditon = new
+            //{
+            //    CareUnitID = careUnitID,
+            //    Offset = offSet,
+            //    PageSize = pagFilter.PageSize
+            //};
 
-            var patients = GetList(sql, CommandType.StoredProcedure, conditon);
+            var patients = GetList(sql, CommandType.StoredProcedure, null);
 
             return patients;
         }
@@ -54,13 +51,13 @@ namespace Demo.RepoDBConsole
         {
             var sql = ScriptsLoader.Get("PATIENT_QUERY_BY_DISCHARGEDATE");
 
-            var conditon = new
-            {
-                Offset = GetOffset(pagFilter.PagIndex, pagFilter.PageSize),
-                PageSize = pagFilter.PageSize
-            };
+            //var conditon = new
+            //{
+            //    Offset = GetOffset(pagFilter.PagIndex, pagFilter.PageSize),
+            //    PageSize = pagFilter.PageSize
+            //};
 
-            var patients = GetList(sql, CommandType.Text, conditon);
+            var patients = GetList(sql, CommandType.Text, null);
 
             return patients;
         }

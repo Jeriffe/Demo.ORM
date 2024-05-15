@@ -1,5 +1,4 @@
 ﻿using Demo.Infrastructure;
-using Microsoft.IdentityModel.Tokens;
 using RepoDb;
 using RepoDb.Enumerations;
 using System;
@@ -14,10 +13,6 @@ namespace Demo.RepoDBConsole.Repositories
         where TEntity : class, new()
         where TKey : struct
     {
-        TEntity GetSingle(Expression<Func<TEntity, bool>> expr);
-
-        IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> expr = null);
-
         IEnumerable<TEntity> GetList(PageFilterWithOrderBy pagFilter, Expression<Func<TEntity, bool>> expr = null);
 
         void Create(IEnumerable<TEntity> entities);
@@ -27,7 +22,8 @@ namespace Demo.RepoDBConsole.Repositories
         void Delete(IEnumerable<TEntity> entities);
     }
 
-    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity, int> where TEntity : class, new()
+    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity, long>
+        where TEntity : class, new()
     {
         public string ConnectionString { get; }
 
@@ -52,14 +48,14 @@ namespace Demo.RepoDBConsole.Repositories
             get { return unitOfWork; }
         }
 
-        public TEntity GetSingle(Expression<Func<TEntity, bool>> expr)
+        public TEntity Get(Expression<Func<TEntity, bool>> expr)
         {
             return Context.Connection.Query(expr, transaction: unitOfWork.Transaction).FirstOrDefault();
         }
 
-        public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> expr = null)
+        public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr=null)
         {
-            return Context.Connection.Query(expr, transaction: unitOfWork.Transaction);
+            return Context.Connection.Query(predicateExpr, transaction: unitOfWork.Transaction);
         }
 
         public IEnumerable<TEntity> GetList(PageFilterWithOrderBy pagFilter, Expression<Func<TEntity, bool>> expr = null)
@@ -86,10 +82,11 @@ namespace Demo.RepoDBConsole.Repositories
             return Context.Connection.QueryAll<TEntity>(cacheKey: cacheKey, transaction: unitOfWork.Transaction);
         }
 
-
-        public virtual int Create(TEntity entity)
+        public virtual TEntity Create(TEntity entity)
         {
-            return Context.Connection.Insert<TEntity, int>(entity, transaction: unitOfWork.Transaction);
+            var id = Context.Connection.Insert<TEntity, int>(entity, transaction: unitOfWork.Transaction);
+
+            return GetByKey(id);
         }
 
         public virtual void Update(TEntity entity)
@@ -158,7 +155,7 @@ namespace Demo.RepoDBConsole.Repositories
             }
         }
 
-        public TEntity GetByKey(int id)
+        public TEntity GetByKey(long id)
         {
             return Context.Connection.Query<TEntity>(id, transaction: unitOfWork.Transaction).FirstOrDefault();
         }
@@ -206,5 +203,7 @@ namespace Demo.RepoDBConsole.Repositories
                 disposed = true;
             }
         }
+
+       
     }
 }

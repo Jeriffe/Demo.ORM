@@ -88,14 +88,15 @@ namespace Demo.RepoDBConsole
             {
                 int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
                 //Create
-                int id = patientRes.Create(new Patient
+                var np = patientRes.Create(new Patient
                 {
                     FirstName = $"FirstName{maxId}",
                     LastName = $"LastName{maxId}",
                     MedRecordNumber = $"MRN{maxId}"
                 });
 
-                var newPatient = patientRes.GetByKey(id);
+                var newPatient = patientRes.GetByKey(np.ID);
+
                 newPatient.MiddleInitial += "UPDATE";
                 //Update
                 patientRes.Update(newPatient);
@@ -111,14 +112,14 @@ namespace Demo.RepoDBConsole
                 int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
 
                 //Create
-                int id = patientRes.Create(new Patient
+                var np = patientRes.Create(new Patient
                 {
                     FirstName = $"FirstName{maxId}",
                     LastName = $"LastName{maxId}",
                     MedRecordNumber = $"MRN{maxId}"
                 });
 
-                var newPatient = patientRes.GetByKey(id);
+                var newPatient = patientRes.GetByKey(np.ID);
                 newPatient.MiddleInitial += "UPDATE";
                 //Update
                 patientRes.Update(newPatient);
@@ -140,9 +141,9 @@ namespace Demo.RepoDBConsole
 
 
 
-            var patient1 = patientRes.GetSingle((Patient p) => p.MedRecordNumber == "938417");
+            var patient1 = patientRes.Get((Patient p) => p.MedRecordNumber == "938417");
 
-            var patients = patientRes.GetList((Patient p) => p.Gender == "F");
+            var patients = patientRes.Get((Patient p) => p.Gender == "F");
             var patientss = patientRes.GetList(new PageFilterWithOrderBy
             {
                 PagIndex = 1,

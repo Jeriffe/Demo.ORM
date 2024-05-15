@@ -15,8 +15,8 @@ namespace Demo.Infrastructure
         void Rollback();
 
 
-        void ExecuteNoQueryRawSql(string sql, object parameters = null);
-        DataTable ExecuteRawSql(string sql, object parameter = null);
+        void ExecuteNoQueryRawSql(string sql, params object[] parameters);
+        DataTable ExecuteRawSql(string sql, params object[] parameter);
 
         /// <summary>
         /// Executes the query, and returns the first column of the first row in the result set returned by the query. 
@@ -28,13 +28,12 @@ namespace Demo.Infrastructure
         /// <param name="sql"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        object ExecuteScalar(string sql, object parameter = null);
-      
+        object ExecuteScalar(string sql, params object[] parameter);
     }
 
-    public interface IUnitOfWork<IDbContext> : IUnitOfWork  
+    public interface IUnitOfWork<T> : IUnitOfWork  
     {
-        IDbContext Context { get; }
+        T Context { get; }
 
         IDbTransaction Transaction{ get; }
     }
