@@ -62,7 +62,7 @@
     <Folder Include="PublishSetttings" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Table\T_OrderDetail.sql" />
+    <Build Include="Table\T_OrderItem.sql" />
     <Build Include="Table\T_Customer.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +81,6 @@
     <None Include="PostDeployment\InitialProduct.sql" />
     <None Include="PublishSetttings\RecreateDB.publish.xml" />
     <None Include="PublishSetttings\UpdateWithTableDrop.publish.xml" />
-    <None Include="PostDeployment\InitialOrderDetail.sql" />
+    <None Include="PostDeployment\InitialOrderItem.sql" />
   </ItemGroup>
 </Project>

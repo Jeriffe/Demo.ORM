@@ -1,4 +1,4 @@
-﻿INSERT INTO T_OrderDetail([OrderID], [ProductID], [Price], [CreateDate], [Description])
+﻿INSERT INTO T_OrderItem([OrderID], [ProductID], [Price], [CreateDate], [Description])
 VALUES
 (1, 2, 1499.9900, GETDATE(), 'Order detail'),
 (1, 5, 49.9900, GETDATE(), 'Order detail'),

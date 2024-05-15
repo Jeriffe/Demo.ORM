@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[T_OrderDetail]
+﻿CREATE TABLE [dbo].[T_OrderItem]
 (
 	[Id] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
     [OrderID] BIGINT NOT NULL, 

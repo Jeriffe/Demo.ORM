@@ -39,12 +39,12 @@ BEGIN
   :r .\InitialOrder.sql
 END
 
-IF EXISTS (SELECT 1 FROM T_OrderDetail)
+IF EXISTS (SELECT 1 FROM T_OrderItem)
 BEGIN
-  PRINT 'Data already exists in T_OrderDetail';
+  PRINT 'Data already exists in T_OrderItem';
 END
 ELSE
 BEGIN
-  PRINT 'excute InitialOrderDetail.sql';
-  :r .\InitialOrderDetail.sql
+  PRINT 'excute InitialOrderItem.sql';
+  :r .\InitialOrderItem.sql
 END
