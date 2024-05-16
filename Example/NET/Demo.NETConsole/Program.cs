@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Demo.NETConsole
 {
@@ -10,6 +9,22 @@ namespace Demo.NETConsole
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+
+            //Host Mode
+            //StartupHost.InitializeHost(args, HostType.NewHost);
+
+            //DI Mode
+            CallService();
+        }
+
+        static async void CallService()
+        {
+            var service = DependencyInjectionResolver.Resolve<IHostedService>();
+
+            await service.StartAsync(new CancellationToken());
+
+            Console.ReadLine();
         }
     }
 }

@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.NETCoreWinForm", "Exam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Services", "Demo.Services\Demo.Services.csproj", "{EBF1C4FA-69E5-4614-8C8A-BEA925135089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.HostedWindowsServices", "Example\NET\Demo.HostedWindowsServices\Demo.HostedWindowsServices.csproj", "{F6B88352-D8BF-4129-8732-1CA8B972CC6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,10 @@ Global
 		{EBF1C4FA-69E5-4614-8C8A-BEA925135089}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBF1C4FA-69E5-4614-8C8A-BEA925135089}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBF1C4FA-69E5-4614-8C8A-BEA925135089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6B88352-D8BF-4129-8732-1CA8B972CC6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6B88352-D8BF-4129-8732-1CA8B972CC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6B88352-D8BF-4129-8732-1CA8B972CC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6B88352-D8BF-4129-8732-1CA8B972CC6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{1BAE5D94-CEBE-4E13-BC21-8E6888988120} = {F0153663-0F38-43F9-80C2-9092F9DC28D6}
 		{1AC31D32-943D-48DC-A68C-DB209BEDA602} = {D8CC3BC2-4CC9-432C-8C11-5CDE56BA694C}
 		{6189E720-D3A4-4A22-BAA5-4CB3D7059C57} = {1BAE5D94-CEBE-4E13-BC21-8E6888988120}
+		{F6B88352-D8BF-4129-8732-1CA8B972CC6F} = {D8CC3BC2-4CC9-432C-8C11-5CDE56BA694C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {999D6782-C08D-4F6E-AC47-70CB6E8DCBDF}
