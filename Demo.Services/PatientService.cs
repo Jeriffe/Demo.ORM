@@ -1,15 +1,14 @@
 ﻿using Demo.Data.Models;
-using Demo.Data.RepoDBRepository;
 using Demo.Infrastructure;
 using System.Collections.Generic;
 
-namespace Demo.RepoDBConsole.Services
+namespace Demo.Services
 {
     public class PatientService
     {
         IUnitOfWork unitOfWork;
-        IPatientRepository patientRepository;
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository patientRepository)
+        IRepository<Patient> patientRepository;
+        public PatientService(IUnitOfWork unitOfWork, IRepository<Patient> patientRepository)
         {
             this.unitOfWork = unitOfWork;
             this.patientRepository = patientRepository;

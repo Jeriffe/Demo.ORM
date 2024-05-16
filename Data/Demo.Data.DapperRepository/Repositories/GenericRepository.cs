@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace Demo.Data.DapperRepository
 {
-    public class GenericRepository<TEntity> : IRepository<TEntity, int> where TEntity : class, new()
+    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class, new()
     {
         private IUnitOfWork<IDbContext> unitOfWork;
 
@@ -49,6 +49,11 @@ namespace Demo.Data.DapperRepository
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr)
         {
+            if (predicateExpr == null)
+            {
+                return GetQuery().ToList();
+            }
+
             return GetQuery().Where(predicateExpr);
         }
 

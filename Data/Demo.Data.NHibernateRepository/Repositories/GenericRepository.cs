@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace Demo.Data.NHibernateRepository
 {
-    public class GenericRepository<TEntity> : IRepository<TEntity, int> where TEntity : class, new()
+    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class, new()
     {
         private IUnitOfWork<NHibernate.ISession> unitOfWork;
 
@@ -52,7 +52,7 @@ namespace Demo.Data.NHibernateRepository
             }
 
         }
-        
+
         public bool Any(Expression<Func<TEntity, bool>> predicateExpr)
         {
             return Context.Query<TEntity>().Any(predicateExpr);
@@ -71,6 +71,11 @@ namespace Demo.Data.NHibernateRepository
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr)
         {
+            if (predicateExpr == null)
+            {
+                return Context.Query<TEntity>().ToList();
+            }
+
             return Context.Query<TEntity>().Where(predicateExpr).ToList();
         }
 
@@ -127,14 +132,14 @@ namespace Demo.Data.NHibernateRepository
         {
             var records = GetList(criteria);
 
-            Trans(() => 
-            { 
+            Trans(() =>
+            {
                 foreach (var r in records)
                 {
-                     Context.Delete(r);
+                    Context.Delete(r);
                 }
             });
-}
+        }
 
         public void Update(TEntity entity)
         {

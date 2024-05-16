@@ -9,9 +9,8 @@ using System.Linq.Expressions;
 
 namespace Demo.Data.RepoDBRepository
 {
-    public interface IRepoDBRepository<TEntity, TKey> : IRepository<TEntity, TKey>
+    public interface IRepoDBRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, new()
-        where TKey : struct
     {
         IEnumerable<TEntity> GetList(PageFilterWithOrderBy pagFilter, Expression<Func<TEntity, bool>> expr = null);
 
@@ -22,7 +21,7 @@ namespace Demo.Data.RepoDBRepository
         void Delete(IEnumerable<TEntity> entities);
     }
 
-    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity, long>
+    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity>
         where TEntity : class, new()
     {
         public string ConnectionString { get; }
@@ -155,7 +154,7 @@ namespace Demo.Data.RepoDBRepository
             }
         }
 
-        public TEntity GetByKey(long id)
+        public TEntity GetByKey(int id)
         {
             return Context.Connection.Query<TEntity>(id, transaction: unitOfWork.Transaction).FirstOrDefault();
         }

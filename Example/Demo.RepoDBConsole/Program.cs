@@ -1,6 +1,7 @@
 ﻿using Demo.Data.Models;
 using Demo.Data.RepoDBRepository;
 using Demo.Infrastructure;
+using Demo.Services;
 using Microsoft.Data.SqlClient;
 using RepoDb;
 using System;
@@ -18,21 +19,29 @@ namespace Demo.RepoDBConsole
 
             FluentMappers.Initialize();
 
+            TestServices();
+
             TestRepositories();
 
-            TestReportService();
+           
 
            // RawOperation();
 
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
         }
 
-        private static void TestReportService()
+        private static void TestServices()
         {
             IDbContext context = new SqlDbContext(ConnectionString);
+            IUnitOfWork unitOfWork = new UnitOfWork(context);
+            var patientRes = new GenericRepository<Patient>(unitOfWork);
+            var pservice = new PatientService(unitOfWork, patientRes);
+           var plist= pservice.GetAll(null);
+
             var service = new ReportService(new UnitOfWork(context));
 
-            var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
+
+           // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
         }
 
         private static void RawOperation()

@@ -1,5 +1,7 @@
 ﻿using Demo.Data.Models;
 using Demo.Data.NHibernateRepository;
+using Demo.Infrastructure;
+using Demo.Services;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
@@ -17,6 +19,8 @@ namespace Demo.NHibernateConsole
 
         static void Main(string[] args)
         {
+            TestServices();
+
             var sessionFactory = CreateSessionFactory();
             using (var session = sessionFactory.OpenSession())
             {
@@ -86,6 +90,23 @@ namespace Demo.NHibernateConsole
             }
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
         }
+        private static void TestServices()
+        {
+            var sessionFactory = CreateSessionFactory();
+            using (var session = sessionFactory.OpenSession())
+            {
+                IUnitOfWork unitOfWork = new UnitOfWork(session);
+                var patientRes = new GenericRepository<Patient>(unitOfWork);
+                var pservice = new PatientService(unitOfWork, patientRes);
+                var plist = pservice.GetAll(null);
+
+                var service = new ReportService(unitOfWork);
+
+
+                // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
+            }
+        }
+
         static ISessionFactory CreateSessionFactory()
         {
             return Fluently.Configure()

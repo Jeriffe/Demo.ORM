@@ -2,6 +2,7 @@
 using Demo.Data.DapperRepository.Mappers;
 using Demo.Data.Models;
 using Demo.Infrastructure;
+using Demo.Services;
 using System.Configuration;
 namespace Demo.DapperConsole
 {
@@ -12,12 +13,25 @@ namespace Demo.DapperConsole
         static void Main(string[] args)
         {
             FluentMappers.Initialize();
+            TestServices();
 
             TestRepositories();
 
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
         }
+        private static void TestServices()
+        {
+            IDbContext context = new SqlDbContext(ConnectionString);
+            IUnitOfWork unitOfWork = new UnitOfWork(context);
+            var patientRes = new GenericRepository<Patient>(unitOfWork);
+            var pservice = new PatientService(unitOfWork, patientRes);
+            var plist = pservice.GetAll(null);
 
+            var service = new ReportService(new UnitOfWork(context));
+
+
+            // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
+        }
         private static void TestRepositories()
         {
             IDbContext context = new SqlDbContext(ConnectionString);

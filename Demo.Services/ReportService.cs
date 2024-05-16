@@ -1,18 +1,12 @@
 ﻿using Demo.Infrastructure;
-using RepoDb;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Text;
 
-namespace Demo.RepoDBConsole
+namespace Demo.Services
 {
     public class ReportService
     {
-        private IUnitOfWork<IDbContext> unitOfWork;
-        public ReportService(IUnitOfWork<IDbContext> unitOfWork)
+        private IUnitOfWork unitOfWork;
+        public ReportService(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
@@ -35,15 +29,7 @@ namespace Demo.RepoDBConsole
 	INNER JOIN dbo.T_VISIT AS V ON P.PatientID = V.PatientID
 	WHERE CareUnitID=@CareUnitID";
 
-            var table = new DataTable();
-
-            using (var connection = unitOfWork.Context.Connection)
-            {
-                using (var reader = connection.ExecuteReader(sql, new { CareUnitID = careUnitID }))
-                {
-                    table.Load(reader);
-                }
-            }
+            var table = unitOfWork.ExecuteRawSql(sql, new { CareUnitID = careUnitID });
 
             return table;
         }

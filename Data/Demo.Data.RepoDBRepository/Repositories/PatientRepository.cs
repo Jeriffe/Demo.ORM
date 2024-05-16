@@ -7,7 +7,7 @@ using System.Data;
 namespace Demo.Data.RepoDBRepository
 {
 
-    public interface IPatientRepository : IRepoDBRepository<Patient,long>
+    public interface IPatientRepository : IRepoDBRepository<Patient>
     {
         Patient GetPatientByAccountNumber(string accountNumber);
         IEnumerable<Patient> GetActivePatients(PageFilter pagFilter);

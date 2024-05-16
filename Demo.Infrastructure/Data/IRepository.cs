@@ -5,8 +5,13 @@ using System.Linq.Expressions;
 
 namespace Demo.Infrastructure
 {
-    public interface IRepository<TEntity, TKey> : IDisposable 
-        where TEntity : class, new() 
+    public interface IRepository<TEntity> : IRepository<TEntity, int>
+         where TEntity : class, new()
+    {
+    }
+
+    public interface IRepository<TEntity, TKey> : IDisposable
+        where TEntity : class, new()
         where TKey : struct
     {
         IUnitOfWork UnitOfWork { get; }
@@ -14,8 +19,8 @@ namespace Demo.Infrastructure
         TEntity GetByKey(TKey id);
 
         TEntity Get(Expression<Func<TEntity, bool>> predicateExpr);
-        
-        IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr=null);
+
+        IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr = null);
 
         TEntity GetSingle(string sql, CommandType commandType = CommandType.Text, object whereConditions = null);
         IEnumerable<TEntity> GetList(string sql, CommandType commandType = CommandType.Text, object parameters = null);
@@ -32,7 +37,7 @@ namespace Demo.Infrastructure
         ASC,
         DESC
     }
-    public class PageFilterWithOrderBy: PageFilter
+    public class PageFilterWithOrderBy : PageFilter
     {
         public string OrderBy { get; set; }
 
