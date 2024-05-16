@@ -65,20 +65,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="GenericRepository.cs" />
-    <Compile Include="Mappers\FluentMappers.cs" />
-    <Compile Include="Patient.cs" />
+    <Compile Include="FluentMappers.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitOfWork.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Demo.Infrastructure\Demo.Infrastructure.csproj">
+    <ProjectReference Include="..\..\Data\Demo.Data.Models\Demo.Data.Models.csproj">
+      <Project>{769C8DAC-935E-4C1B-A4D0-93BAFEBC28D9}</Project>
+      <Name>Demo.Data.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Data\Demo.Data.NHibernateRepository\Demo.Data.NHibernateRepository.csproj">
+      <Project>{4C30C586-4D25-4EEE-BF81-94408F3D955E}</Project>
+      <Name>Demo.Data.NHibernateRepository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj">
       <Project>{2085A991-3952-4176-B984-5390E2190B3C}</Project>
       <Name>Demo.Infrastructure</Name>
     </ProjectReference>

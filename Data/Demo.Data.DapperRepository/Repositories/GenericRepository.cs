@@ -1,10 +1,13 @@
 ﻿using Dapper;
 using Demo.Infrastructure;
 using Dommel;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 
-namespace Demo.DapperConsole
+namespace Demo.Data.DapperRepository
 {
     public class GenericRepository<TEntity> : IRepository<TEntity, int> where TEntity : class, new()
     {

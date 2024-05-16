@@ -1,7 +1,6 @@
-﻿
-using System;
+﻿using System;
 
-namespace Demo.Models
+namespace Demo.Data.Models
 {
     public class Patient
     {
@@ -9,7 +8,6 @@ namespace Demo.Models
         public virtual string FirstName { get; set; }
         public virtual string MiddleInitial { get; set; }
         public virtual string LastName { get; set; }
-
         public virtual DateTime? BirthDate { get; set; }
         public virtual string Gender { get; set; }
         public virtual string MedRecordNumber { get; set; }

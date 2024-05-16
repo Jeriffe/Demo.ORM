@@ -1,19 +1,20 @@
-﻿using Demo.Infrastructure;
+﻿using Dapper;
+using Demo.Infrastructure;
 using System;
 using System.Data;
-using System.ServiceModel.Channels;
+using System.Data.Common;
 
-namespace Demo.Data.NHibernateRepository
+namespace Demo.Data.DapperRepository
 {
-    public class UnitOfWork : IUnitOfWork<NHibernate.ISession>
+    public class UnitOfWork : IUnitOfWork<IDbContext>
     {
         private IDbTransaction trans = null;
 
-        public NHibernate.ISession Context { get; private set; }
+        public IDbContext Context { get; private set; }
 
         public IDbTransaction Transaction => trans;
 
-        public UnitOfWork(NHibernate.ISession context)
+        public UnitOfWork(IDbContext context)
         {
             Context = context;
         }
@@ -22,12 +23,13 @@ namespace Demo.Data.NHibernateRepository
         {
             if (trans == null)
             {
-                if (Context.Connection.State != ConnectionState.Open)
+                var conn = Context.CreateConnection();
+                if (conn.State != ConnectionState.Open)
                 {
-                    Context.Connection.Open();
+                    conn.Open();
                 }
 
-                trans = Context.Connection.BeginTransaction();
+                trans = conn.BeginTransaction();
             }
         }
 
@@ -47,7 +49,10 @@ namespace Demo.Data.NHibernateRepository
             {
                 trans.Commit();
             }
-            catch (Exception) { throw; }
+            catch
+            {
+                throw;
+            }
             finally
             {
                 DisposeTransaction();
@@ -66,7 +71,7 @@ namespace Demo.Data.NHibernateRepository
         {
             if (Context != null)
             {
-                //Context.Dispose();
+                Context.Dispose();
                 Context = null;
             }
         }
@@ -85,37 +90,37 @@ namespace Demo.Data.NHibernateRepository
 
         private void CloseConnection()
         {
-            // Context.CloseConnection();
+            Context.CloseConnection();
         }
 
         public object ExecuteScalar(string sql, params object[] parameters)
         {
             //RepoDb: IDataReader ExecuteScalar(this IDbConnection connection
-            //  return Context.Connection.ExecuteScalar(sql, null, transaction: trans);
-            return null;
+            var result = Context.Connection.ExecuteScalar(sql, null, transaction: trans);
+
+            return result;
         }
 
         public void ExecuteNoQueryRawSql(string sql, params object[] parameters)
         {
             //RepoDb: IDataReader ExecuteNonQuery(this IDbConnection connection
-            //Context.Connection.ExecuteNonQuery(sql, null, transaction: trans);
+            Context.Connection.Execute(sql, null, transaction: trans);
         }
 
         public DataTable ExecuteRawSql(string sql, params object[] parameter)
         {
             //RepoDb: IDataReader ExecuteReader(this IDbConnection connection
-            //using (var dataReader = Context.Connection.ExecuteReader(sql, null))
-            //{
-            //    if (dataReader.Read())
-            //    {
-            //        var dataTable = new DataTable();
-            //        dataTable.Load(dataReader);
-            //        return dataTable;
-            //    }
+            using (var dataReader = Context.Connection.ExecuteReader(sql, null))
+            {
+                if (dataReader.Read())
+                {
+                    var dataTable = new DataTable();
+                    dataTable.Load(dataReader);
+                    return dataTable;
+                }
 
-            //    return null;
-            //}
-            return null;
+                return null;
+            }
         }
     }
 

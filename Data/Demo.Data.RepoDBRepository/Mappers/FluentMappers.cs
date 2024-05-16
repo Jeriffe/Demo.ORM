@@ -1,11 +1,7 @@
-﻿using RepoDb;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Demo.Data.Models;
+using RepoDb;
 
-namespace Demo.RepoDBConsole.Models.Mappers
+namespace Demo.Data.RepoDBRepository
 {
     public class FluentMappers
     {
@@ -13,7 +9,7 @@ namespace Demo.RepoDBConsole.Models.Mappers
         {
         }
 
-        internal static void Initialize()
+        public static void Initialize()
         {
             var patienMapper = FluentMapper.Entity<Patient>();
             patienMapper

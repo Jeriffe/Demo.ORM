@@ -1,4 +1,4 @@
-﻿using Demo.Models;
+﻿using Demo.Data.Models;
 using FluentNHibernate.Mapping;
 
 namespace Demo.Data.NHibernateRepository

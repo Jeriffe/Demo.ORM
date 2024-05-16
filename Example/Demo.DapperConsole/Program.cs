@@ -1,6 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using Demo.Data.DapperRepository;
+using Demo.Data.DapperRepository.Mappers;
+using Demo.Data.Models;
 using Demo.Infrastructure;
-using Demo.DapperConsole.Models;
 using System.Configuration;
 namespace Demo.DapperConsole
 {
@@ -14,23 +15,25 @@ namespace Demo.DapperConsole
 
             TestRepositories();
 
-            // RawOperation();
-
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
         }
 
         private static void TestRepositories()
         {
-
-
             IDbContext context = new SqlDbContext(ConnectionString);
             var unitOfWork = new UnitOfWork(context);
             var patientRes = new PatientRepository(unitOfWork);
 
             var patient = patientRes.Get(o => o.ID == 2);
 
+            var patient1 = patientRes.Get((Patient p) => p.MedRecordNumber == "938417");
+
+            var patients = patientRes.GetList((Patient p) => p.Gender == "F");
+
             int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-            var nps = patientRes.Create(new Patient
+
+            //Create
+            var np = patientRes.Create(new Patient
             {
                 FirstName = $"FirstName{maxId}",
                 LastName = $"LastName{maxId}",
@@ -39,7 +42,13 @@ namespace Demo.DapperConsole
                 DisChargeDate = DateTime.Now,
             });
 
+            var newPatient = patientRes.Get(o => o.ID == np.ID);
+            newPatient.MiddleInitial += "UPDATE";
+            //Update
+            patientRes.Update(newPatient);
 
+            // Delete
+            patientRes.Delete(newPatient);
 
 
             unitOfWork.ProcessWithTrans((Action)(() =>
@@ -68,27 +77,6 @@ namespace Demo.DapperConsole
             }));
 
 
-
-
-            //Create
-            var np = patientRes.Create(new Patient
-            {
-                FirstName = $"FirstName{maxId}",
-                LastName = $"LastName{maxId}",
-                MedRecordNumber = $"MRN{maxId}",
-                BirthDate = DateTime.Now,
-                DisChargeDate = DateTime.Now,
-            });
-
-            var newPatient = patientRes.Get(o => o.ID == np.ID);
-            newPatient.MiddleInitial += "UPDATE";
-            //Update
-            patientRes.Update(newPatient);
-
-            // Delete
-            patientRes.Delete(newPatient);
-
-
             unitOfWork.ProcessWithTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
@@ -99,13 +87,7 @@ namespace Demo.DapperConsole
                 //Delete multiple
 
             });
-
-
-
-            var patient1 = patientRes.Get((Patient p) => p.MedRecordNumber == "938417");
-
-            var patients = patientRes.GetList((Patient p) => p.Gender == "F");
+          
         }
-
     }
 }

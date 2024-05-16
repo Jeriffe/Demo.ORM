@@ -1,13 +1,10 @@
-﻿using Demo.DBScripts;
+﻿using Demo.Data.Models;
+using Demo.DBScripts;
 using Demo.Infrastructure;
-using Demo.RepoDBConsole.Models;
-using Demo.RepoDBConsole.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 
-namespace Demo.RepoDBConsole
+namespace Demo.Data.RepoDBRepository
 {
 
     public interface IPatientRepository : IRepoDBRepository<Patient,long>

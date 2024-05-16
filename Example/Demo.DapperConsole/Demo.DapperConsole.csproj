@@ -12,15 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="Dapper.FluentMap.Dommel" Version="2.0.0" />
-    <PackageReference Include="Dommel" Version="3.3.1" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Demo.DBScripts\Demo.DBScripts.csproj" />
+    <ProjectReference Include="..\..\Data\Demo.Data.DapperRepository\Demo.Data.DapperRepository.csproj" />
+    <ProjectReference Include="..\..\Data\Demo.Data.Models\Demo.Data.Models.csproj" />
     <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
   </ItemGroup>
 

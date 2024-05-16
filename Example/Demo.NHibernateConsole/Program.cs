@@ -1,5 +1,5 @@
-﻿using Demo.Data.NHibernateRepository;
-using Demo.Models;
+﻿using Demo.Data.Models;
+using Demo.Data.NHibernateRepository;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
@@ -23,9 +23,6 @@ namespace Demo.NHibernateConsole
                 var p1 = session.Get<Patient>(2);
                 var rs = session.Query<Patient>().ToList();
                 var results = session.QueryOver<Patient>().Where(x => x.Gender == "F").List();
-
-
-
 
                 var unitOfWork = new UnitOfWork(session);
                 var patientRes = new GenericRepository<Patient>(unitOfWork);
@@ -62,7 +59,7 @@ namespace Demo.NHibernateConsole
                         }
                 );
 
-                // retreive all stores and display them
+                // retrieve all stores and display them
                 using (var transaction = new TransactionScope())
                 {
                     if (p1 != null)
@@ -87,15 +84,6 @@ namespace Demo.NHibernateConsole
                 }
 
             }
-
-
-
-            TestRepositories();
-
-            TestReportService();
-
-            // RawOperation();
-
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
         }
         static ISessionFactory CreateSessionFactory()
@@ -114,72 +102,6 @@ namespace Demo.NHibernateConsole
             // this NHibernate tool takes a configuration (with mapping info in)
             // and exports a database schema from it
             new SchemaExport(config).Create(false, false);
-        }
-
-        private static void TestReportService()
-        {
-            //IDbContext context = new Repositories.SqlDbContext(ConnectionString);
-            //var service = new ReportService(new Repositories.UnitOfWork(context));
-
-            //var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
-        }
-
-
-
-        private static void TestRepositories()
-        {
-            //IDbContext context = new Repositories.SqlDbContext(ConnectionString);
-            //IUnitOfWork unitOfWork = new Repositories.UnitOfWork(context);
-            //IPatientRepository patientRes = new PatientRepository(unitOfWork);
-
-            //var patient = patientRes.GetByKey(2);
-
-            //unitOfWork.ProcessWithTrans(() =>
-            //{
-            //    int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-            //    //Create
-            //    var np = patientRes.Create(new Patient
-            //    {
-            //        FirstName = $"FirstName{maxId}",
-            //        LastName = $"LastName{maxId}",
-            //        MedRecordNumber = $"MRN{maxId}"
-            //    });
-
-            //    var newPatient = patientRes.GetByKey(np.ID);
-
-            //    newPatient.MiddleInitial += "UPDATE";
-            //    //Update
-            //    patientRes.Update(newPatient);
-
-            //    //Delete
-            //   patientRes.Delete(newPatient);
-
-            //   // throw new Exception("Rollback trans");
-            //});
-
-            //unitOfWork.ProcessWithoutTrans(() =>
-            //{
-            //    int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-
-            //    //Create
-            //    var np = patientRes.Create(new Patient
-            //    {
-            //        FirstName = $"FirstName{maxId}",
-            //        LastName = $"LastName{maxId}",
-            //        MedRecordNumber = $"MRN{maxId}"
-            //    });
-
-            //    var newPatient = patientRes.GetByKey(np.ID);
-            //    newPatient.MiddleInitial += "UPDATE";
-            //    //Update
-            //    patientRes.Update(newPatient);
-
-            //   // Delete
-            //    patientRes.Delete(newPatient);
-
-            //});
-
-
         }
 
     }

@@ -6,10 +6,19 @@ Supported version under .NET Standard v2.1
 	.NET &.NETCore	3.0, 3.1, 5.0, 6.0, 7.0, 8.0
 	.NET Framework	N/A
 
-Demo.DapperConsole
+
+
+Demo.Data.DapperRepository
 	Install-Package Dapper -Version 2.1.35
 	Install-Package Dommel
 	Install-Package Dapper.FluentMap.Dommel
+	Install-Package System.Data.SqlClient
 
-Demo.RepoDBConsole
+Demo.Data.RepoDBRepository
 	Install-Package RepoDb
+
+	--This has a reference of Microsoft.Data.SqlClient,  so we need to make sure use it in UnitOfWork
+	Install-Package RepoDb.SqlServer  
+	
+Demo.Data.NHibernateRepository
+	Install-Package FluentNHibernate -Version 3.3.0

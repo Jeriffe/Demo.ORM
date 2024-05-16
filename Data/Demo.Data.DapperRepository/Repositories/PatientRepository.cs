@@ -1,9 +1,11 @@
-﻿using Demo.DBScripts;
+﻿using Demo.Data.DapperRepository;
+using Demo.Data.Models;
+using Demo.DBScripts;
 using Demo.Infrastructure;
-using Demo.DapperConsole.Models;
+using System.Collections.Generic;
 using System.Data;
 
-namespace Demo.DapperConsole
+namespace Demo.Data.DapperRepository
 {
 
     public interface IPatientRepository : IRepository<Patient,int>

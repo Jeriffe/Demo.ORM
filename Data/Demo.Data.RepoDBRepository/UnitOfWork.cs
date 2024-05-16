@@ -3,7 +3,7 @@ using RepoDb;
 using System;
 using System.Data;
 
-namespace Demo.RepoDBConsole.Repositories
+namespace Demo.Data.RepoDBRepository
 {
     public class UnitOfWork : IUnitOfWork<IDbContext>
     {

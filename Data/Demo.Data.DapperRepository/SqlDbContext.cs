@@ -1,7 +1,8 @@
 ﻿using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 
-namespace Demo.RepoDBConsole.Repositories
+namespace Demo.Data.DapperRepository
 {
     public class SqlDbContext : Infrastructure.IDbContext
     {
@@ -18,7 +19,7 @@ namespace Demo.RepoDBConsole.Repositories
         {
             if (conn == null)
             {
-                conn = new System.Data.SqlClient.SqlConnection(ConnectionString);
+                conn = new SqlConnection(ConnectionString);
             }
 
             return conn;

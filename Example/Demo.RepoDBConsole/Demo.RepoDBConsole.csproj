@@ -6,14 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RepoDb.SqlServer" Version="1.1.3" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Demo.DBScripts\Demo.DBScripts.csproj" />
+    <ProjectReference Include="..\..\Data\Demo.Data.Models\Demo.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Data\Demo.Data.RepoDBRepository\Demo.Data.RepoDBRepository.csproj" />
     <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
   </ItemGroup>
 

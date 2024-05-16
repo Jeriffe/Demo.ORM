@@ -1,11 +1,11 @@
 ﻿using Dapper.FluentMap;
 using Dapper.FluentMap.Dommel;
 using Dapper.FluentMap.Dommel.Mapping;
-using Demo.DapperConsole.Models;
+using Demo.Data.Models;
 
-namespace Demo.DapperConsole
+namespace Demo.Data.DapperRepository.Mappers
 {
-    public class FluentMappers 
+    public class FluentMappers
     {
         public static void Initialize()
         {
@@ -22,7 +22,7 @@ namespace Demo.DapperConsole
 
         public PatientMap()
         {
-            ToTable("T_PATIENT","dbo");
+            ToTable("T_PATIENT", "dbo");
             Map(p => p.ID).ToColumn("PatientID").IsIdentity().IsKey();
             Map(p => p.MedRecordNumber).ToColumn("MedRecNumber");
             Map(p => p.FullName).Ignore();

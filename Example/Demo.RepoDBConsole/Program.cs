@@ -1,6 +1,6 @@
-﻿using Demo.Infrastructure;
-using Demo.RepoDBConsole.Models;
-using Demo.RepoDBConsole.Models.Mappers;
+﻿using Demo.Data.Models;
+using Demo.Data.RepoDBRepository;
+using Demo.Infrastructure;
 using Microsoft.Data.SqlClient;
 using RepoDb;
 using System;
@@ -14,7 +14,7 @@ namespace Demo.RepoDBConsole
 
         static void Main(string[] args)
         {
-            SqlServerBootstrap.Initialize();
+            GlobalConfiguration.Setup().UseSqlServer();
 
             FluentMappers.Initialize();
 
@@ -29,8 +29,8 @@ namespace Demo.RepoDBConsole
 
         private static void TestReportService()
         {
-            IDbContext context = new Repositories.SqlDbContext(ConnectionString);
-            var service = new ReportService(new Repositories.UnitOfWork(context));
+            IDbContext context = new SqlDbContext(ConnectionString);
+            var service = new ReportService(new UnitOfWork(context));
 
             var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
         }
@@ -78,11 +78,39 @@ namespace Demo.RepoDBConsole
 
         private static void TestRepositories()
         {
-            IDbContext context = new Repositories.SqlDbContext(ConnectionString);
-            IUnitOfWork unitOfWork = new Repositories.UnitOfWork(context);
+            IDbContext context = new SqlDbContext(ConnectionString);
+            IUnitOfWork unitOfWork = new UnitOfWork(context);
             IPatientRepository patientRes = new PatientRepository(unitOfWork);
 
             var patient = patientRes.GetByKey(2);
+            var patient1 = patientRes.Get((Patient p) => p.MedRecordNumber == "938417");
+
+            var patients = patientRes.Get((Patient p) => p.Gender == "F");
+            var patientss = patientRes.GetList(new PageFilterWithOrderBy
+            {
+                PagIndex = 1,
+                PageSize = 3,
+                OrderBy = "PatientID",
+                OrderSorting = OrderSorting.ASC
+            });
+            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+
+            //Create
+            var np = patientRes.Create(new Patient
+            {
+                FirstName = $"FirstName{maxId}",
+                LastName = $"LastName{maxId}",
+                MedRecordNumber = $"MRN{maxId}"
+            });
+
+            var newPatient = patientRes.GetByKey(np.ID);
+            newPatient.MiddleInitial += "UPDATE";
+            //Update
+            patientRes.Update(newPatient);
+
+            // Delete
+            patientRes.Delete(newPatient);
+
 
             unitOfWork.ProcessWithTrans(() =>
             {
@@ -107,28 +135,7 @@ namespace Demo.RepoDBConsole
                // throw new Exception("Rollback trans");
             });
 
-            unitOfWork.ProcessWithTrans(() =>
-            {
-                int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-
-                //Create
-                var np = patientRes.Create(new Patient
-                {
-                    FirstName = $"FirstName{maxId}",
-                    LastName = $"LastName{maxId}",
-                    MedRecordNumber = $"MRN{maxId}"
-                });
-
-                var newPatient = patientRes.GetByKey(np.ID);
-                newPatient.MiddleInitial += "UPDATE";
-                //Update
-                patientRes.Update(newPatient);
-
-               // Delete
-                patientRes.Delete(newPatient);
-
-            });
-
+           
             unitOfWork.ProcessWithTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
@@ -138,19 +145,7 @@ namespace Demo.RepoDBConsole
                 //Delete multiple
 
             });
-
-
-
-            var patient1 = patientRes.Get((Patient p) => p.MedRecordNumber == "938417");
-
-            var patients = patientRes.Get((Patient p) => p.Gender == "F");
-            var patientss = patientRes.GetList(new PageFilterWithOrderBy
-            {
-                PagIndex = 1,
-                PageSize = 3,
-                OrderBy = "PatientID",
-                OrderSorting = OrderSorting.ASC
-            });
+         
 
             //query by store procedure
             //var patient_ByCareUnitID_Paging = patientRes.GetPatientByCareUnitID(2, new PageFilter { PagIndex = 1, PageSize = 3 });

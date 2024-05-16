@@ -7,7 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Demo.RepoDBConsole.Repositories
+namespace Demo.Data.RepoDBRepository
 {
     public interface IRepoDBRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         where TEntity : class, new()

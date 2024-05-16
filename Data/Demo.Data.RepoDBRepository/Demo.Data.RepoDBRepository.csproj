@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RepoDb" Version="1.13.1" />
+    <PackageReference Include="RepoDb.SqlServer" Version="1.13.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Demo.Data.DapperRepository\Demo.Data.DapperRepository.csproj" />
+    <ProjectReference Include="..\Demo.Data.Models\Demo.Data.Models.csproj" />
+  </ItemGroup>
+
+</Project>
