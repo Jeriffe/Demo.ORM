@@ -12,12 +12,13 @@ namespace Demo.DapperConsole
 
         static void Main(string[] args)
         {
-            FluentMappers.Initialize();
             TestServices();
 
             TestRepositories();
 
-            Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
+            Console.WriteLine("Welcome to use Dapper, the fastest ROM in the world!");
+
+            Console.ReadLine();
         }
         private static void TestServices()
         {

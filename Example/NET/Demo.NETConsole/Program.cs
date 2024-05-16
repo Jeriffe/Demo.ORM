@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Threading;
+using Demo.Services;
 
 namespace Demo.NETConsole
 {
@@ -15,16 +16,26 @@ namespace Demo.NETConsole
             //StartupHost.InitializeHost(args, HostType.NewHost);
 
             //DI Mode
-            CallService();
+            CallHostedService();
+
+            CallAppService();
+
+            Console.ReadLine();
         }
 
-        static async void CallService()
+        private static void CallAppService()
+        {
+            var service = DependencyInjectionResolver.Resolve<IPatientService>();
+
+           var result= service.GetAll(new Infrastructure.PageFilter { });
+
+        }
+
+        static async void CallHostedService()
         {
             var service = DependencyInjectionResolver.Resolve<IHostedService>();
 
             await service.StartAsync(new CancellationToken());
-
-            Console.ReadLine();
         }
     }
 }

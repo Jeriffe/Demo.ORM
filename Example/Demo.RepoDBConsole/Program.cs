@@ -15,9 +15,7 @@ namespace Demo.RepoDBConsole
 
         static void Main(string[] args)
         {
-            GlobalConfiguration.Setup().UseSqlServer();
 
-            FluentMappers.Initialize();
 
             TestServices();
 
@@ -28,6 +26,8 @@ namespace Demo.RepoDBConsole
            // RawOperation();
 
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
+
+            Console.ReadLine();
         }
 
         private static void TestServices()

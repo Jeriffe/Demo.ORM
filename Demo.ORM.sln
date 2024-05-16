@@ -38,11 +38,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NETCore", "NETCore", "{1BAE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.NETConsole", "Example\NET\Demo.NETConsole\Demo.NETConsole.csproj", "{1AC31D32-943D-48DC-A68C-DB209BEDA602}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.NETCoreWinForm", "Example\NETCore\Demo.NETCoreWinForm\Demo.NETCoreWinForm.csproj", "{6189E720-D3A4-4A22-BAA5-4CB3D7059C57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.NETCoreWinForm", "Example\NETCore\Demo.NETCoreWinForm\Demo.NETCoreWinForm.csproj", "{6189E720-D3A4-4A22-BAA5-4CB3D7059C57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Services", "Demo.Services\Demo.Services.csproj", "{EBF1C4FA-69E5-4614-8C8A-BEA925135089}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.Services", "Demo.Services\Demo.Services.csproj", "{EBF1C4FA-69E5-4614-8C8A-BEA925135089}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.HostedWindowsServices", "Example\NET\Demo.HostedWindowsServices\Demo.HostedWindowsServices.csproj", "{F6B88352-D8BF-4129-8732-1CA8B972CC6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.NETCoreConsole", "Example\NETCore\Demo.NETCoreConsole\Demo.NETCoreConsole.csproj", "{5DE340FA-1FEB-4A31-881F-A27ACA94196C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,6 +110,10 @@ Global
 		{F6B88352-D8BF-4129-8732-1CA8B972CC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6B88352-D8BF-4129-8732-1CA8B972CC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6B88352-D8BF-4129-8732-1CA8B972CC6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DE340FA-1FEB-4A31-881F-A27ACA94196C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DE340FA-1FEB-4A31-881F-A27ACA94196C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DE340FA-1FEB-4A31-881F-A27ACA94196C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DE340FA-1FEB-4A31-881F-A27ACA94196C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +131,7 @@ Global
 		{1AC31D32-943D-48DC-A68C-DB209BEDA602} = {D8CC3BC2-4CC9-432C-8C11-5CDE56BA694C}
 		{6189E720-D3A4-4A22-BAA5-4CB3D7059C57} = {1BAE5D94-CEBE-4E13-BC21-8E6888988120}
 		{F6B88352-D8BF-4129-8732-1CA8B972CC6F} = {D8CC3BC2-4CC9-432C-8C11-5CDE56BA694C}
+		{5DE340FA-1FEB-4A31-881F-A27ACA94196C} = {1BAE5D94-CEBE-4E13-BC21-8E6888988120}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {999D6782-C08D-4F6E-AC47-70CB6E8DCBDF}

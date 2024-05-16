@@ -9,8 +9,9 @@ using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using Demo.Data.Models;
 using Demo.Services;
-
-namespace Demo.NETConsole
+//using Demo.Data.DapperRepository;
+using Demo.Data.RepoDBRepository;
+namespace Demo.NETCoreConsole
 {
     public class DependencyInjectionResolver
     {
@@ -46,14 +47,14 @@ namespace Demo.NETConsole
             // to add logging services.
             services.AddLogging();
 
-            services.AddSingleton<IHostedService, SingleService>();
 
+            var connstr =  Configuration.GetConnectionString("DBSTR");
 
             //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
-            var connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DBSTR"].ConnectionString;
+            connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DBSTR"].ConnectionString;
 
-            services.AddScoped<IDbContext>(c => new Data.RepoDBRepository.SqlDbContext(connstr));
-            services.AddScoped<IUnitOfWork, Data.RepoDBRepository.UnitOfWork>();
+            services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
+            services.AddScoped<IUnitOfWork,UnitOfWork>();
 
 
             Console.WriteLine($"ConnectionString={connstr}");
@@ -72,10 +73,8 @@ namespace Demo.NETConsole
             // registrations; if you make them AFTER Populate, the Autofac
             // registrations will override. You can make registrations
             // before or after Populate, however you choose.
-            containerBuilder.RegisterType<LoopHostService>().As<ILoopTimer>();
 
-
-            containerBuilder.RegisterType<Data.RepoDBRepository.GenericRepository<Patient>>().As<IRepository<Patient>>();
+            containerBuilder.RegisterType<GenericRepository<Patient>>().As<IRepository<Patient>>();
 
             containerBuilder.RegisterType<PatientService>().As<IPatientService>();
 
@@ -91,6 +90,6 @@ namespace Demo.NETConsole
             return serviceProvider;
         }
 
-
+       
     }
 }

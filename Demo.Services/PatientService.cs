@@ -4,7 +4,14 @@ using System.Collections.Generic;
 
 namespace Demo.Services
 {
-    public class PatientService
+
+    public interface IPatientService
+    {
+        IEnumerable<Patient> GetAll(PageFilter pageFilter);
+    }
+
+
+    public class PatientService: IPatientService
     {
         IUnitOfWork unitOfWork;
         IRepository<Patient> patientRepository;

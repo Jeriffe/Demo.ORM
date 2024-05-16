@@ -196,16 +196,30 @@
     <Compile Include="StartupHost.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Data\Demo.Data.Models\Demo.Data.Models.csproj">
+      <Project>{769C8DAC-935E-4C1B-A4D0-93BAFEBC28D9}</Project>
+      <Name>Demo.Data.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Data\Demo.Data.RepoDBRepository\Demo.Data.RepoDBRepository.csproj">
+      <Project>{8c7530c2-0ed2-4f13-875d-0165b244b7d4}</Project>
+      <Name>Demo.Data.RepoDBRepository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Demo.Infrastructure\Demo.Infrastructure.csproj">
-      <Project>{2085a991-3952-4176-b984-5390e2190b3c}</Project>
+      <Project>{2085A991-3952-4176-B984-5390E2190B3C}</Project>
       <Name>Demo.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Demo.Services\Demo.Services.csproj">
+      <Project>{EBF1C4FA-69E5-4614-8C8A-BEA925135089}</Project>
+      <Name>Demo.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

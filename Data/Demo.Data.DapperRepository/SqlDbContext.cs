@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Demo.Data.DapperRepository.Mappers;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 
@@ -8,6 +9,11 @@ namespace Demo.Data.DapperRepository
     {
         public string ConnectionString { get; set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
+
+        static SqlDbContext()
+        {
+            FluentMappers.Initialize();
+        }
 
         public SqlDbContext(string connectionString)
         {
