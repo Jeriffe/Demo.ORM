@@ -19,53 +19,27 @@ namespace Demo.NHibernateConsole
 
         static void Main(string[] args)
         {
-            TestServices();
+            //var p1 =  session.Get<Patient>(2);
+            //var rs = session.Query<Patient>().ToList();
+            //var results = session.QueryOver<Patient>().Where(x => x.Gender == "F").List();
 
-            var sessionFactory = CreateSessionFactory();
-            using (var session = sessionFactory.OpenSession())
+            var context = new SqlDbContext(ConnectionString);
+            var unitOfWork = new UnitOfWork(context);
+            var patientRes = new GenericRepository<Patient>(unitOfWork);
+
+            var mID = patientRes.GetByKey(3);
+            var Pp = new Patient
             {
-                var p1 = session.Get<Patient>(2);
-                var rs = session.Query<Patient>().ToList();
-                var results = session.QueryOver<Patient>().Where(x => x.Gender == "F").List();
+                FirstName = $"FirstName{mID.ID}",
+                LastName = $"LastName{mID.ID}",
+                MedRecordNumber = $"MRN{mID.ID}"
+            };
+            var patient = patientRes.Create(Pp);
 
-                var unitOfWork = new UnitOfWork(session);
-                var patientRes = new GenericRepository<Patient>(unitOfWork);
-
-                var mID = p1.ID;
-                var Pp = new Patient
+            unitOfWork.ProcessByTrans(
+                () =>
                 {
-                    FirstName = $"FirstName{mID}",
-                    LastName = $"LastName{mID}",
-                    MedRecordNumber = $"MRN{mID}"
-                };
-                var patient = patientRes.Create(Pp);
-
-                unitOfWork.ProcessByTrans(
-                    () =>
-                        {
-                            if (p1 != null)
-                            {
-                                var maxId = p1.ID;
-
-                                var p = new Patient
-                                {
-                                    FirstName = $"FirstName{maxId}",
-                                    LastName = $"LastName{maxId}",
-                                    MedRecordNumber = $"MRN{maxId}"
-                                };
-
-                                patientRes.Create(p);
-
-                                p.MiddleInitial = "MUpdate";
-                                patientRes.Update(p);
-
-                            }
-                        }
-                );
-
-                // retrieve all stores and display them
-                using (var transaction = new TransactionScope())
-                {
+                   var p1 = patientRes.Get(o=>o.ID==2);
                     if (p1 != null)
                     {
                         var maxId = p1.ID;
@@ -82,29 +56,103 @@ namespace Demo.NHibernateConsole
                         p.MiddleInitial = "MUpdate";
                         patientRes.Update(p);
 
-                        transaction.Complete();
-
                     }
                 }
+            );
 
-            }
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
+
+            TestServices();
+            //Test();
         }
+
+        private static void Test()
+        {
+            //var sessionFactory = CreateSessionFactory();
+            //using (var session = sessionFactory.OpenSession())
+            //{
+            //    var p1 = session.Get<Patient>(2);
+            //    var rs = session.Query<Patient>().ToList();
+            //    var results = session.QueryOver<Patient>().Where(x => x.Gender == "F").List();
+
+            //    var unitOfWork = new UnitOfWork(session);
+            //    var patientRes = new GenericRepository<Patient>(unitOfWork);
+
+            //    var mID = p1.ID;
+            //    var Pp = new Patient
+            //    {
+            //        FirstName = $"FirstName{mID}",
+            //        LastName = $"LastName{mID}",
+            //        MedRecordNumber = $"MRN{mID}"
+            //    };
+            //    var patient = patientRes.Create(Pp);
+
+            //    unitOfWork.ProcessByTrans(
+            //        () =>
+            //        {
+            //            if (p1 != null)
+            //            {
+            //                var maxId = p1.ID;
+
+            //                var p = new Patient
+            //                {
+            //                    FirstName = $"FirstName{maxId}",
+            //                    LastName = $"LastName{maxId}",
+            //                    MedRecordNumber = $"MRN{maxId}"
+            //                };
+
+            //                patientRes.Create(p);
+
+            //                p.MiddleInitial = "MUpdate";
+            //                patientRes.Update(p);
+
+            //            }
+            //        }
+            //    );
+
+            //    // retrieve all stores and display them
+            //    using (var transaction = new TransactionScope())
+            //    {
+            //        if (p1 != null)
+            //        {
+            //            var maxId = p1.ID;
+
+            //            var p = new Patient
+            //            {
+            //                FirstName = $"FirstName{maxId}",
+            //                LastName = $"LastName{maxId}",
+            //                MedRecordNumber = $"MRN{maxId}"
+            //            };
+
+            //            patientRes.Create(p);
+
+            //            p.MiddleInitial = "MUpdate";
+            //            patientRes.Update(p);
+
+            //            transaction.Complete();
+
+            //        }
+            //    }
+
+            //}
+            //Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
+        }
+
         private static void TestServices()
         {
-            var sessionFactory = CreateSessionFactory();
-            using (var session = sessionFactory.OpenSession())
-            {
-                IUnitOfWork unitOfWork = new UnitOfWork(session);
-                var patientRes = new GenericRepository<Patient>(unitOfWork);
-                var pservice = new PatientService(unitOfWork, patientRes);
-                var plist = pservice.GetAll(null);
+            //var sessionFactory = CreateSessionFactory();
+            //using (var session = sessionFactory.OpenSession())
+            //{
+            //    IUnitOfWork unitOfWork = new UnitOfWork(session);
+            //    var patientRes = new GenericRepository<Patient>(unitOfWork);
+            //    var pservice = new PatientService(unitOfWork, patientRes);
+            //    var plist = pservice.GetAll(null);
 
-                var service = new ReportService(unitOfWork);
+            //    var service = new ReportService(unitOfWork);
 
 
-                // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
-            }
+            //    // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
+            //}
         }
 
         static ISessionFactory CreateSessionFactory()

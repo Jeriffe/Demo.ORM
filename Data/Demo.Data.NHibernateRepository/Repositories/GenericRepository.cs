@@ -10,18 +10,23 @@ namespace Demo.Data.NHibernateRepository
 {
     public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class, new()
     {
-        private IUnitOfWork<NHibernate.ISession> unitOfWork;
+        private IUnitOfWork<IDbContext> unitOfWork;
 
-        public NHibernate.ISession Context { get { return unitOfWork.Context; } }
+        public NHibernate.ISession Session { get; private set; }
 
         public GenericRepository(IUnitOfWork unitOfWork)
         {
-            if (!(unitOfWork is IUnitOfWork<NHibernate.ISession>))
+            if (!(unitOfWork is IUnitOfWork<IDbContext>))
             {
                 throw new ArgumentException("Expected IUnitOfWork<Microsoft.EntityFrameworkCore.DbContext>");
             }
 
-            this.unitOfWork = unitOfWork as IUnitOfWork<NHibernate.ISession>;
+            this.unitOfWork = unitOfWork as IUnitOfWork<IDbContext>;
+
+            if (this.unitOfWork.Context is SqlDbContext)
+            {
+                Session = (this.unitOfWork.Context as SqlDbContext).Session;
+            }
         }
 
         #region IRepository<TEntity>
@@ -32,7 +37,7 @@ namespace Demo.Data.NHibernateRepository
 
         public void Trans(Action action)
         {
-            using (ITransaction transaction = Context.BeginTransaction())
+            using (ITransaction transaction = Session.BeginTransaction())
             {
                 action();
 
@@ -42,7 +47,7 @@ namespace Demo.Data.NHibernateRepository
         }
         public T Trans<T>(Func<T> action)
         {
-            using (ITransaction transaction = Context.BeginTransaction())
+            using (ITransaction transaction = Session.BeginTransaction())
             {
                 var result = action();
 
@@ -55,39 +60,39 @@ namespace Demo.Data.NHibernateRepository
 
         public bool Any(Expression<Func<TEntity, bool>> predicateExpr)
         {
-            return Context.Query<TEntity>().Any(predicateExpr);
+            return Session.Query<TEntity>().Any(predicateExpr);
         }
 
         public int Count(Expression<Func<TEntity, bool>> predicateExpr)
         {
-            return Context.Query<TEntity>().Count(predicateExpr);
+            return Session.Query<TEntity>().Count(predicateExpr);
 
         }
         public IEnumerable<TEntity> Get()
         {
 
-            return Context.Query<TEntity>().ToList();
+            return Session.Query<TEntity>().ToList();
         }
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr)
         {
             if (predicateExpr == null)
             {
-                return Context.Query<TEntity>().ToList();
+                return Session.Query<TEntity>().ToList();
             }
 
-            return Context.Query<TEntity>().Where(predicateExpr).ToList();
+            return Session.Query<TEntity>().Where(predicateExpr).ToList();
         }
 
         public TEntity GetByKey(int Id)
         {
-            return Context.Get<TEntity>(Id);
+            return Session.Get<TEntity>(Id);
         }
 
 
         public TEntity Get(Expression<Func<TEntity, bool>> predicateExpr)
         {
-            var result = Context.Query<TEntity>().Where(predicateExpr).ToList();
+            var result = Session.Query<TEntity>().Where(predicateExpr).ToList();
             if (result != null & result.Count > 0)
             {
                 return result[0];
@@ -106,7 +111,7 @@ namespace Demo.Data.NHibernateRepository
 
             return Trans<TEntity>(() =>
             {
-                Context.SaveOrUpdate(entity);
+                Session.SaveOrUpdate(entity);
 
                 //var id = Convert.ToInt32(obj);
                 return null;
@@ -124,7 +129,7 @@ namespace Demo.Data.NHibernateRepository
                 throw new ArgumentNullException("entity");
             }
 
-            Trans(() => Context.Delete(entity));
+            Trans(() => Session.Delete(entity));
 
         }
 
@@ -136,7 +141,7 @@ namespace Demo.Data.NHibernateRepository
             {
                 foreach (var r in records)
                 {
-                    Context.Delete(r);
+                    Session.Delete(r);
                 }
             });
         }
@@ -148,7 +153,7 @@ namespace Demo.Data.NHibernateRepository
                 throw new ArgumentNullException("entity");
             }
 
-            Trans(() => Context.Update(entity));
+            Trans(() => Session.Update(entity));
         }
 
         #endregion

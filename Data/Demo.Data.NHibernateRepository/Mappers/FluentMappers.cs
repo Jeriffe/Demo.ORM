@@ -1,7 +1,7 @@
 ﻿using Demo.Data.Models;
 using FluentNHibernate.Mapping;
 
-namespace Demo.NHibernateConsole
+namespace Demo.Data.NHibernateRepository
 {
     public class FluentMappers
     {

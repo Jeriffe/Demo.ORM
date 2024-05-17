@@ -13,8 +13,4 @@
     <ProjectReference Include="..\Demo.Data.Models\Demo.Data.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Mappers\" />
-  </ItemGroup>
-
 </Project>

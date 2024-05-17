@@ -4,15 +4,16 @@ using System.Data;
 
 namespace Demo.Data.NHibernateRepository
 {
-    public class UnitOfWork : IUnitOfWork<NHibernate.ISession>
+    public class UnitOfWork : IUnitOfWork<IDbContext>
     {
         private IDbTransaction trans = null;
 
-        public NHibernate.ISession Context { get; private set; }
 
         public IDbTransaction Transaction => trans;
 
-        public UnitOfWork(NHibernate.ISession context)
+        public IDbContext Context { get; private set; }
+
+        public UnitOfWork(IDbContext context)
         {
             Context = context;
         }
@@ -21,12 +22,14 @@ namespace Demo.Data.NHibernateRepository
         {
             if (trans == null)
             {
-                if (Context.Connection.State != ConnectionState.Open)
+                var conn = Context.CreateConnection();
+
+                if (conn.State != ConnectionState.Open)
                 {
-                    Context.Connection.Open();
+                    conn.Open();
                 }
 
-                trans = Context.Connection.BeginTransaction();
+                trans = conn.BeginTransaction();
             }
         }
 
@@ -84,7 +87,7 @@ namespace Demo.Data.NHibernateRepository
 
         private void CloseConnection()
         {
-            // Context.CloseConnection();
+            Context.CloseConnection();
         }
 
         public object ExecuteScalar(string sql, params object[] parameters)
