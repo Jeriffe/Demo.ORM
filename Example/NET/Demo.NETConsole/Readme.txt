@@ -16,5 +16,5 @@ NuGet\Install-Package Serilog.Settings.Configuration
 
 NuGet\Install-Package Serilog.Settings.AppSettings
 
-
+NuGet\Install-Package Microsoft.Data.SqlClient -Version 5.1.0
 
