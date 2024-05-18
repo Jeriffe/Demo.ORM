@@ -11,7 +11,7 @@ using Demo.Data.Models;
 using Demo.Services;
 //using Demo.Data.DapperRepository;
 using Demo.Data.RepoDBRepository;
-namespace Demo.NETCoreConsole
+namespace Demo.NETConsole
 {
     public class DependencyInjectionResolver
     {

@@ -1,4 +1,4 @@
-namespace Demo.NETCoreWinForm
+namespace Demo.NETWinForm
 {
     public partial class Form1 : Form
     {

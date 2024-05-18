@@ -1,4 +1,4 @@
-namespace Demo.NETCoreWinForm
+namespace Demo.NETWinForm
 {
     internal static class Program
     {
