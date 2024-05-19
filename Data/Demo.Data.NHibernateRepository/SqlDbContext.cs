@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Configuration;
+using Demo.Data.Models;
 
 namespace Demo.Data.NHibernateRepository
 {
@@ -60,7 +61,7 @@ namespace Demo.Data.NHibernateRepository
                 .Database(MsSqlConfiguration.MsSql2012
                     .ConnectionString(connStr))
                 .Mappings(m =>
-                    m.FluentMappings.AddFromAssemblyOf<UnitOfWork>())
+                    m.FluentMappings.AddFromAssemblyOf<FluentMappers>())
                 .ExposeConfiguration(BuildSchema)
                 .BuildSessionFactory();
         }
