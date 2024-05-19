@@ -28,6 +28,26 @@ namespace Demo.DapperConsole
             var pservice = new PatientService(unitOfWork, patientRes);
             var plist = pservice.GetAll(null);
 
+            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+
+            var pMax = pservice.GetSingle(maxId);
+          
+
+            //Create
+            var np = patientRes.Create(new Patient
+            {
+                FirstName = $"FirstName{maxId}",
+                LastName = $"LastName{maxId}",
+                MedRecordNumber = $"MRN{maxId}",
+                BirthDate = DateTime.Now,
+                DisChargeDate = DateTime.Now,
+            });
+            np = pservice.Create(np);
+            np.MiddleInitial += "BaseAppSvc";
+            pservice.Update(np);
+            var updatedP = pservice.GetSingle(np.ID);
+            pservice.Delete(updatedP);
+
             var service = new ReportService(new UnitOfWork(context));
 
 
@@ -102,7 +122,7 @@ namespace Demo.DapperConsole
                 //Delete multiple
 
             });
-          
+
         }
     }
 }

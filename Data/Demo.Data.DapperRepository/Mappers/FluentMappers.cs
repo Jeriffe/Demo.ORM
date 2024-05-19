@@ -23,7 +23,7 @@ namespace Demo.Data.DapperRepository.Mappers
         public PatientMap()
         {
             ToTable("T_PATIENT", "dbo");
-            Map(p => p.ID).ToColumn("PatientID").IsIdentity().IsKey();
+            Map(p => p.ID).ToColumn("PatientId").IsIdentity().IsKey();
             Map(p => p.MedRecordNumber).ToColumn("MedRecNumber");
             Map(p => p.FullName).Ignore();
         }

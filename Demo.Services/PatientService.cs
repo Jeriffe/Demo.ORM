@@ -11,19 +11,16 @@ namespace Demo.Services
     }
 
 
-    public class PatientService: IPatientService
+    public class PatientService : BaseAppService<Patient>, IPatientService
     {
-        IUnitOfWork unitOfWork;
-        IRepository<Patient> patientRepository;
         public PatientService(IUnitOfWork unitOfWork, IRepository<Patient> patientRepository)
+            : base(unitOfWork, patientRepository)
         {
-            this.unitOfWork = unitOfWork;
-            this.patientRepository = patientRepository;
         }
 
         public IEnumerable<Patient> GetAll(PageFilter pageFilter)
         {
-            return patientRepository.GetList();
+            return entityRepository.GetList();
         }
     }
 }
