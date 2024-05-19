@@ -12,8 +12,6 @@ namespace Demo.Data.RepoDBRepository
     public interface IRepoDBRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, new()
     {
-        IEnumerable<TEntity> GetList(PageFilterWithOrderBy pagFilter, Expression<Func<TEntity, bool>> expr = null);
-
         void Create(IEnumerable<TEntity> entities);
 
         void Update(IEnumerable<TEntity> entities);
@@ -54,15 +52,15 @@ namespace Demo.Data.RepoDBRepository
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr=null)
         {
+            if (predicateExpr == null)
+            {
+                return Context.Connection.QueryAll<TEntity>(transaction: unitOfWork.Transaction).ToList();
+            }
+
             return Context.Connection.Query(predicateExpr, transaction: unitOfWork.Transaction);
         }
 
-        public IEnumerable<TEntity> GetList(PageFilterWithOrderBy pagFilter, Expression<Func<TEntity, bool>> expr = null)
-        {
-            var orderFields = new List<OrderField> { new OrderField(pagFilter.OrderBy, GetOrder(pagFilter.OrderSorting)) };
-
-            return Context.Connection.BatchQuery(pagFilter.PagIndex, pagFilter.PageSize, orderFields, expr, transaction: unitOfWork.Transaction);
-        }
+       
 
         private Order GetOrder(OrderSorting orderSorting)
         {

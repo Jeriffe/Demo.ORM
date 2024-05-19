@@ -5,15 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CustomertService.cs" />
-    <Compile Remove="OrderService.cs" />
-    <Compile Remove="ProductService.cs" />
+    <None Remove="Readme.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Readme.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Demo.Data.Models\Demo.Data.Models.csproj" />
-    <ProjectReference Include="..\Demo.DTOs\Demo.DTOs.csproj" />
-    <ProjectReference Include="..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

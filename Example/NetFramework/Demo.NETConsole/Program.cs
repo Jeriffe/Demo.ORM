@@ -3,6 +3,8 @@ using System;
 using System.Threading.Tasks;
 using System.Threading;
 using Demo.Services;
+using Demo.Data.Models;
+using Demo.DTOs;
 
 namespace Demo.NETConsole
 {
@@ -25,7 +27,7 @@ namespace Demo.NETConsole
 
         private static void CallAppService()
         {
-            var service = DependencyInjectionResolver.Resolve<IPatientService>();
+            var service = DependencyInjectionResolver.Resolve<IAppService<TPatient, Patient>>();
 
            var result= service.GetAll(new Infrastructure.PageFilter { });
 

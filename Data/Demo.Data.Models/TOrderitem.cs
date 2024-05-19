@@ -1,11 +1,9 @@
 using System;
-using System.Text;
-using System.Collections.Generic;
-using NHibernate.Criterion;
 
 
-namespace Demo.Data.NHibernateRepository {
-    
+namespace Demo.Data.Models
+{
+
     public class TOrderitem {
         public virtual long Id { get; set; }
         public virtual long OrderId { get; set; }

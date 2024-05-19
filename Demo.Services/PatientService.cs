@@ -1,26 +1,17 @@
-﻿using Demo.Data.Models;
+﻿using AutoMapper;
+using Demo.Data.Models;
+using Demo.DTOs;
 using Demo.Infrastructure;
 using System.Collections.Generic;
 
 namespace Demo.Services
 {
 
-    public interface IPatientService
+    public class PatientService : BaseAppService<TPatient,Patient>, IAppService<TPatient, Patient>
     {
-        IEnumerable<Patient> GetAll(PageFilter pageFilter);
-    }
-
-
-    public class PatientService : BaseAppService<Patient>, IPatientService
-    {
-        public PatientService(IUnitOfWork unitOfWork, IRepository<Patient> patientRepository)
-            : base(unitOfWork, patientRepository)
+        public PatientService(IUnitOfWork unitOfWork, IRepository<TPatient> repository,IMapper mapper)
+            : base(unitOfWork, repository,mapper)
         {
-        }
-
-        public IEnumerable<Patient> GetAll(PageFilter pageFilter)
-        {
-            return entityRepository.GetList();
         }
     }
 }

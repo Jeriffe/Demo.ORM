@@ -3,9 +3,10 @@ using System.Text;
 using System.Collections.Generic;
 
 
-namespace Demo.Data.NHibernateRepository {
-    
-    public class TPatient {
+namespace Demo.Data.Models
+{
+    public class TPatient
+    {
         public virtual int PatientId { get; set; }
         public virtual string MedRecNumber { get; set; }
         public virtual string FirstName { get; set; }

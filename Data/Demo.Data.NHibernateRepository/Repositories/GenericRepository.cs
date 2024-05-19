@@ -111,10 +111,11 @@ namespace Demo.Data.NHibernateRepository
 
             return Trans<TEntity>(() =>
             {
-                Session.SaveOrUpdate(entity);
+                var obj = Session.Save(entity);
+                var id = Convert.ToInt32(obj);
+                var item = GetByKey(id);
 
-                //var id = Convert.ToInt32(obj);
-                return null;
+                return item;
             }
            );
 
@@ -153,7 +154,12 @@ namespace Demo.Data.NHibernateRepository
                 throw new ArgumentNullException("entity");
             }
 
-            Trans(() => Session.Update(entity));
+            Trans(() =>
+            {
+                Session.Merge(entity);
+
+                Session.Update(entity);
+            });
         }
 
         #endregion

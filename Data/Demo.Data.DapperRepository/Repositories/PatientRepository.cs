@@ -8,22 +8,22 @@ using System.Data;
 namespace Demo.Data.DapperRepository
 {
 
-    public interface IPatientRepository : IRepository<Patient,int>
+    public interface IPatientRepository : IRepository<TPatient,int>
     {
-        Patient GetPatientByAccountNumber(string accountNumber);
-        IEnumerable<Patient> GetActivePatients(PageFilter pagFilter);
-        IEnumerable<Patient> GetPatientByCareUnitID(int careUnitID, PageFilter pagFilter);
+        TPatient GetPatientByAccountNumber(string accountNumber);
+        IEnumerable<TPatient> GetActivePatients(PageFilter pagFilter);
+        IEnumerable<TPatient> GetPatientByCareUnitID(int careUnitID, PageFilter pagFilter);
       
     }
 
-    public class PatientRepository : GenericRepository<Patient>, IPatientRepository
+    public class PatientRepository : GenericRepository<TPatient>, IPatientRepository
     {
         public PatientRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
 
         }
 
-        public Patient GetPatientByAccountNumber(string accountNumber)
+        public TPatient GetPatientByAccountNumber(string accountNumber)
         {
             var sql = ScriptsLoader.Get("PATIENT_SINGLE_BY_ACCT");
 
@@ -32,7 +32,7 @@ namespace Demo.Data.DapperRepository
             return patient;
         }
 
-        public IEnumerable<Patient> GetPatientByCareUnitID(int careUnitID, PageFilter pagFilter)
+        public IEnumerable<TPatient> GetPatientByCareUnitID(int careUnitID, PageFilter pagFilter)
         {
             var sql = ScriptsLoader.Get("PATIENT_QUERY_BY_CAREUNITID");
 
@@ -49,7 +49,7 @@ namespace Demo.Data.DapperRepository
             return patients;
         }
 
-        public IEnumerable<Patient> GetActivePatients(PageFilter pagFilter)
+        public IEnumerable<TPatient> GetActivePatients(PageFilter pagFilter)
         {
             var sql = ScriptsLoader.Get("PATIENT_QUERY_BY_DISCHARGEDATE");
 

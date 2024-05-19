@@ -9,6 +9,7 @@ using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using Demo.Data.Models;
 using Demo.Services;
+using Demo.DTOs;
 
 namespace Demo.NETConsole
 {
@@ -75,9 +76,9 @@ namespace Demo.NETConsole
             containerBuilder.RegisterType<LoopHostService>().As<ILoopTimer>();
 
 
-            containerBuilder.RegisterType<Data.RepoDBRepository.GenericRepository<Patient>>().As<IRepository<Patient>>();
+            containerBuilder.RegisterType<Data.RepoDBRepository.GenericRepository<TPatient>>().As<IRepository<Patient>>();
 
-            containerBuilder.RegisterType<PatientService>().As<IPatientService>();
+            containerBuilder.RegisterType<PatientService>().As<IAppService<TPatient, Patient>>();
 
 
             // Creating a new AutofacServiceProvider makes the container

@@ -11,6 +11,9 @@ using Demo.Data.Models;
 using Demo.Services;
 //using Demo.Data.DapperRepository;
 using Demo.Data.RepoDBRepository;
+using System.Reflection;
+using Demo.DTOs;
+using Demo.DTOs.Mapper;
 namespace Demo.NETConsole
 {
     public class DependencyInjectionResolver
@@ -56,6 +59,7 @@ namespace Demo.NETConsole
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
             services.AddScoped<IUnitOfWork,UnitOfWork>();
 
+            services.AddAutoMapper(typeof(MappingProfile));
 
             Console.WriteLine($"ConnectionString={connstr}");
 
@@ -74,9 +78,9 @@ namespace Demo.NETConsole
             // registrations will override. You can make registrations
             // before or after Populate, however you choose.
 
-            containerBuilder.RegisterType<GenericRepository<Patient>>().As<IRepository<Patient>>();
+            containerBuilder.RegisterType<GenericRepository<TPatient>>().As<IRepository<TPatient>>();
 
-            containerBuilder.RegisterType<PatientService>().As<IPatientService>();
+            containerBuilder.RegisterType<PatientService>().As<IAppService<TPatient, Patient>>();
 
 
             // Creating a new AutofacServiceProvider makes the container

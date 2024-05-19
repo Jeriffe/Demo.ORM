@@ -1,21 +1,27 @@
 ﻿using Demo.Data.Models;
 using FluentNHibernate.Mapping;
+using NHibernate.Mapping.ByCode;
+using NHibernate.Mapping.ByCode.Conformist;
+
 
 namespace Demo.Data.NHibernateRepository
 {
     public class FluentMappers
     {
-        static FluentMappers()
+        public static void Initialize()
         {
         }
     }
 
-    public class PatientMap : ClassMap<Patient>
+    public class TPatientMap : ClassMap<TPatient>
     {
-        public PatientMap()
+        public TPatientMap()
         {
-            Id(x => x.ID,"PatientID");
-            Map(x => x.MedRecordNumber, "MedRecNumber");
+            Schema("dbo");
+            Table("T_PATIENT");
+            Id(x => x.PatientId);
+
+            Map(x => x.MedRecNumber);
             Map(x => x.FirstName);
             Map(x => x.MiddleInitial);
             Map(x => x.LastName);
@@ -23,8 +29,7 @@ namespace Demo.Data.NHibernateRepository
             Map(x => x.BirthDate);
             Map(x => x.DisChargeDate);
             Map(x => x.PatientType);
-            Map(x => x.SiteID);
-            Table("T_PATIENT");
+            Map(x => x.SiteId);
         }
     }
 }

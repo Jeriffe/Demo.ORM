@@ -1,9 +1,13 @@
-﻿using Demo.Data.DapperRepository;
+﻿using AutoMapper;
+using Demo.Data.DapperRepository;
 using Demo.Data.DapperRepository.Mappers;
 using Demo.Data.Models;
+using Demo.DTOs;
 using Demo.Infrastructure;
 using Demo.Services;
 using System.Configuration;
+using System.Data.SqlClient;
+using System.Reflection;
 namespace Demo.DapperConsole
 {
     class Program
@@ -12,117 +16,117 @@ namespace Demo.DapperConsole
 
         static void Main(string[] args)
         {
-            TestServices();
 
             TestRepositories();
 
-            Console.WriteLine("Welcome to use Dapper, the fastest ROM in the world!");
+            TestServices();
+
+
+
+            // RawOperation();
+
+            Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
 
             Console.ReadLine();
         }
+
         private static void TestServices()
         {
-            IDbContext context = new SqlDbContext(ConnectionString);
-            IUnitOfWork unitOfWork = new UnitOfWork(context);
-            var patientRes = new GenericRepository<Patient>(unitOfWork);
-            var pservice = new PatientService(unitOfWork, patientRes);
+            var context = new SqlDbContext(ConnectionString);
+            var unitOfWork = new UnitOfWork(context);
+            var patientRepo = new GenericRepository<TPatient>(unitOfWork);
+
+            var _configuration = new MapperConfiguration(config =>
+          config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
+
+            var mapper = _configuration.CreateMapper();
+            var pservice = new PatientService(unitOfWork, patientRepo, mapper);
+
             var plist = pservice.GetAll(null);
-
-            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-
-            var pMax = pservice.GetSingle(maxId);
-          
-
-            //Create
-            var np = patientRes.Create(new Patient
-            {
-                FirstName = $"FirstName{maxId}",
-                LastName = $"LastName{maxId}",
-                MedRecordNumber = $"MRN{maxId}",
-                BirthDate = DateTime.Now,
-                DisChargeDate = DateTime.Now,
-            });
-            np = pservice.Create(np);
-            np.MiddleInitial += "BaseAppSvc";
-            pservice.Update(np);
-            var updatedP = pservice.GetSingle(np.ID);
-            pservice.Delete(updatedP);
 
             var service = new ReportService(new UnitOfWork(context));
 
-
-            // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
-        }
-        private static void TestRepositories()
-        {
-            IDbContext context = new SqlDbContext(ConnectionString);
-            var unitOfWork = new UnitOfWork(context);
-            var patientRes = new PatientRepository(unitOfWork);
-
-            var patient = patientRes.Get(o => o.ID == 2);
-
-            var patient1 = patientRes.Get((Patient p) => p.MedRecordNumber == "938417");
-
-            var patients = patientRes.GetList((Patient p) => p.Gender == "F");
-
-            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-
-            //Create
-            var np = patientRes.Create(new Patient
-            {
-                FirstName = $"FirstName{maxId}",
-                LastName = $"LastName{maxId}",
-                MedRecordNumber = $"MRN{maxId}",
-                BirthDate = DateTime.Now,
-                DisChargeDate = DateTime.Now,
-            });
-
-            var newPatient = patientRes.Get(o => o.ID == np.ID);
-            newPatient.MiddleInitial += "UPDATE";
-            //Update
-            patientRes.Update(newPatient);
-
-            // Delete
-            patientRes.Delete(newPatient);
-
-
-            unitOfWork.ProcessWithTrans((Action)(() =>
+            //Use app service
+            unitOfWork.ProcessWithTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
                 //Create
-                var np = patientRes.Create(new Patient
+                var dtoP = new Patient
                 {
                     FirstName = $"FirstName{maxId}",
                     LastName = $"LastName{maxId}",
                     MedRecordNumber = $"MRN{maxId}",
                     BirthDate = DateTime.Now,
                     DisChargeDate = DateTime.Now,
-                });
-                //var np = patientRes.Get(o => o.ID == maxId);
-
-                var newPatient = patientRes.Get(o => o.ID == np.ID);
-                newPatient.MiddleInitial += "UPDATE";
-                //Update
-                patientRes.Update((Patient)newPatient);
-
-                //Delete
-                //patientRes.Delete(newPatient);
+                };
+                dtoP = pservice.Create(dtoP);
+                dtoP.MiddleInitial += "BaseAppSvc";
+                pservice.Update(dtoP);
+                var updatedP = pservice.GetSingle(dtoP.PatientId);
 
                 // throw new Exception("Rollback trans");
-            }));
+            });
 
+            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var pppp = pservice.GetSingle(maxId);
+            pservice.Delete(pppp);
+
+            // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
+        }
+        private static void TestRepositories()
+        {
+            var context = new SqlDbContext(ConnectionString);
+            var unitOfWork = new UnitOfWork(context);
+            var patientRepo = new PatientRepository(unitOfWork);
+
+            //Use repository
+            var patient = patientRepo.GetByKey(2);
+            var patient1 = patientRepo.Get(p => p.MedRecNumber == "938417");
+
+            var patients = patientRepo.Get(p => p.Gender == "F");
+           
+            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+
+            //Create
+            var np = patientRepo.Create(new TPatient
+            {
+                FirstName = $"FirstName{maxId}",
+                LastName = $"LastName{maxId}",
+                MedRecNumber = $"MRN{maxId}"
+            });
+
+            var newPatient = patientRepo.GetByKey(np.PatientId);
+            newPatient.MiddleInitial += "UPDATE";
+            //Update
+            patientRepo.Update(newPatient);
+
+            // Delete
+            patientRepo.Delete(newPatient);
 
             unitOfWork.ProcessWithTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
 
-                patientRes.Delete(new Patient { ID = maxId });
-                //Create multiple
-                //Update multiple
-                //Delete multiple
+                var newPatient = patientRepo.GetByKey(maxId);
 
+                newPatient = patientRepo.Create(new TPatient
+                {
+                    FirstName = $"FirstName{maxId}",
+                    LastName = $"LastName{maxId}",
+                    MedRecNumber = $"MRN{maxId}"
+                });
+
+                newPatient.MiddleInitial += "UPDATE";
+                //Update
+                patientRepo.Update(newPatient);
             });
 
+            int nmaxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var nnewPatient = patientRepo.GetByKey(nmaxId);
+            // Delete
+            patientRepo.Delete(nnewPatient);
+
         }
+
     }
 }

@@ -1,26 +1,23 @@
-using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using NHibernate.Mapping.ByCode.Conformist;
-using NHibernate.Mapping.ByCode;
-using Demo.Data.NHibernateRepository;
+using Demo.Data.Models;
+using FluentNHibernate.Mapping;
 
 
-namespace Demo.Data.NHibernateRepository {
-    
-    
-    public class TProductMap : ClassMapping<TProduct> {
-        
-        public TProductMap() {
-			Table("T_Product");
-			Schema("dbo");
-			Lazy(true);
-			Id(x => x.Id, map => map.Generator(Generators.Identity));
-			Property(x => x.Name, map => map.NotNullable(true));
-			Property(x => x.Price, map => map.NotNullable(true));
-			Property(x => x.Description);
-            Bag(x => x.OrderItems, colmap => { colmap.Key(x => x.Column("ProductID")); colmap.Inverse(true); }, map => { map.OneToMany(); });
+namespace Demo.Data.NHibernateRepository
+{
+
+
+    public class TProductMap : ClassMap<TProduct>
+    {
+
+        public TProductMap()
+        {
+            Schema("dbo");
+            Table("T_Product");
+            Id(x => x.Id);
+
+            Map(x => x.Name);
+            Map(x => x.Price);
+            Map(x => x.Description);
 
         }
     }

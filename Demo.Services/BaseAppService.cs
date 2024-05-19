@@ -1,52 +1,84 @@
-﻿using Demo.Infrastructure;
+﻿using AutoMapper;
+using Demo.Data.Models;
+using Demo.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Demo.Services
 {
-    public interface IAppService<TEntity> where TEntity : class, new()
+    public interface IAppService<TEntity, TDTO> where TEntity : class, new()
+        where TDTO : class, new()
     {
-        TEntity GetSingle(int keyId);
+        IEnumerable<TDTO> GetAll(PageFilter pageFilter);
 
-        TEntity Create(TEntity item);
+        TDTO GetSingle(int keyId);
 
-        void Update(TEntity item);
+        TDTO Create(TDTO item);
 
-        void Delete(TEntity item);
+        void Update(TDTO item);
+
+        void Delete(TDTO item);
     }
 
-    public abstract class BaseAppService<TEntity> : IAppService<TEntity> where TEntity : class, new()
+    public abstract class BaseAppService<TEntity, TDTO> : IAppService<TEntity, TDTO>
+        where TEntity : class, new()
+        where TDTO : class, new()
+
     {
         protected IRepository<TEntity> entityRepository;
         protected IUnitOfWork unitOfWork;
-        public BaseAppService(IUnitOfWork uow, IRepository<TEntity> repository)
+        protected IMapper mapper;
+        public BaseAppService(IUnitOfWork uow, IRepository<TEntity> repository, IMapper mapper)
         {
             unitOfWork = uow;
             entityRepository = repository;
+            this.mapper = mapper;
         }
-        public TEntity GetSingle(int keyId)
+
+        public TDTO GetSingle(int keyId)
         {
-          var entity= entityRepository.GetByKey(keyId);
+            var entity = entityRepository.GetByKey(keyId);
 
-            return entity;
+            var dto = mapper.Map<TDTO>(entity);
+
+            return dto;
         }
-
-        public TEntity Create(TEntity item)
+        public IEnumerable<TDTO> GetAll(PageFilter pageFilter)
         {
-           return entityRepository.Create(item);
+            var models = entityRepository.GetList();
+
+            var dtos = mapper.Map<List<TDTO>>(models);
+            return dtos;
         }
 
-        public void Delete(TEntity item)
+        public TDTO Create(TDTO item)
         {
-            entityRepository.Delete(item);
+            var model = mapper.Map<TEntity>(item);
 
+            var dbModel = entityRepository.Create(model);
+
+            var dto = mapper.Map<TDTO>(dbModel);
+
+            return dto;
         }
 
-        public void Update(TEntity item)
+        public void Delete(TDTO item)
         {
-            entityRepository.Update(item);
+            var model = mapper.Map<TEntity>(item);
+
+            entityRepository.Delete(model);
 
         }
+
+        public void Update(TDTO item)
+        {
+            var model = mapper.Map<TEntity>(item);
+
+            entityRepository.Update(model);
+
+        }
+
+
     }
 }

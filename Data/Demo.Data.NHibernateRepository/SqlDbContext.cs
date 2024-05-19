@@ -1,12 +1,11 @@
-﻿using FluentNHibernate.Cfg.Db;
-using FluentNHibernate.Cfg;
-using NHibernate.Tool.hbm2ddl;
+﻿using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
 using NHibernate;
+using NHibernate.Tool.hbm2ddl;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
-using System.Configuration;
-using Demo.Data.Models;
+using FluentNHibernate.Cfg;
 
 namespace Demo.Data.NHibernateRepository
 {
@@ -61,7 +60,7 @@ namespace Demo.Data.NHibernateRepository
                 .Database(MsSqlConfiguration.MsSql2012
                     .ConnectionString(connStr))
                 .Mappings(m =>
-                    m.FluentMappings.AddFromAssemblyOf<FluentMappers>())
+                    m.FluentMappings.AddFromAssemblyOf<TPatientMap>())
                 .ExposeConfiguration(BuildSchema)
                 .BuildSessionFactory();
         }

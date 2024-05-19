@@ -323,6 +323,10 @@
       <Project>{8c7530c2-0ed2-4f13-875d-0165b244b7d4}</Project>
       <Name>Demo.Data.RepoDBRepository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Demo.DTOs\Demo.DTOs.csproj">
+      <Project>{FCBB06C2-C7D0-4485-967E-F3C29ECC07D6}</Project>
+      <Name>Demo.DTOs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Demo.Infrastructure\Demo.Infrastructure.csproj">
       <Project>{2085A991-3952-4176-B984-5390E2190B3C}</Project>
       <Name>Demo.Infrastructure</Name>

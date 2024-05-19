@@ -1,6 +1,7 @@
 ﻿using Demo.Infrastructure;
 using System;
 using System.Data;
+using System.Data.Common;
 
 namespace Demo.Data.NHibernateRepository
 {
@@ -94,7 +95,21 @@ namespace Demo.Data.NHibernateRepository
         {
             //RepoDb: IDataReader ExecuteScalar(this IDbConnection connection
             //  return Context.Connection.ExecuteScalar(sql, null, transaction: trans);
-            return null;
+
+            var conn = Context.Connection;
+            if (conn.State!= ConnectionState.Open)
+            {
+                conn.Open();
+            }
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = sql;
+                cmd.Transaction = trans as DbTransaction;
+
+                var result = cmd.ExecuteScalar();
+
+                return result;
+            }
         }
 
         public void ExecuteNoQueryRawSql(string sql, params object[] parameters)

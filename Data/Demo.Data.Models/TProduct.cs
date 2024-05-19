@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 
 
-namespace Demo.Data.NHibernateRepository {
+namespace Demo.Data.Models {
     
     public class TProduct {
         public virtual long Id { get; set; }
