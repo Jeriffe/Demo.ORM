@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Demo.Data.NHibernateRepository
 {
@@ -37,16 +38,20 @@ namespace Demo.Data.NHibernateRepository
 
         public void Trans(Action action)
         {
-            using (ITransaction transaction = Session.BeginTransaction())
+            //Fix:NHibernate.NonUniqueObjectException: 'a different object with the same identifier value was already associated
+            Session.Clear();
+            using (ITransaction trans = Session.BeginTransaction())
             {
                 action();
 
-                transaction.Commit();
+                trans.Commit();
             }
 
         }
         public T Trans<T>(Func<T> action)
         {
+            //Fix:NHibernate.NonUniqueObjectException: 'a different object with the same identifier value was already associated
+            Session.Clear();
             using (ITransaction transaction = Session.BeginTransaction())
             {
                 var result = action();
@@ -109,7 +114,7 @@ namespace Demo.Data.NHibernateRepository
                 throw new ArgumentNullException("entity");
             }
 
-            return Trans<TEntity>(() =>
+            return Trans(() =>
             {
                 var obj = Session.Save(entity);
                 var id = Convert.ToInt32(obj);
@@ -130,6 +135,7 @@ namespace Demo.Data.NHibernateRepository
                 throw new ArgumentNullException("entity");
             }
 
+            Session.Clear();
             Trans(() => Session.Delete(entity));
 
         }
@@ -139,7 +145,7 @@ namespace Demo.Data.NHibernateRepository
             var records = GetList(criteria);
 
             Trans(() =>
-            {
+            {                
                 foreach (var r in records)
                 {
                     Session.Delete(r);
@@ -157,8 +163,6 @@ namespace Demo.Data.NHibernateRepository
             Trans(() =>
             {
                 Session.Merge(entity);
-
-                Session.Update(entity);
             });
         }
 

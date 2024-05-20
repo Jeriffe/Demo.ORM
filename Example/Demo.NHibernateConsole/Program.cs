@@ -18,7 +18,7 @@ namespace Demo.NHibernateConsole
         static void Main(string[] args)
         {
 
-          //  TestRepositories();
+             TestRepositories();
 
             TestServices();
 
@@ -47,33 +47,44 @@ namespace Demo.NHibernateConsole
 
             var service = new ReportService(new UnitOfWork(context));
 
+            CRUDOperations(unitOfWork, pservice);
+            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var pppp = pservice.GetSingle(maxId);
+            pservice.Delete(pppp);
+
             //Use app service
             unitOfWork.ProcessByTrans(() =>
             {
-                int maxxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-                //Create
-                var dtoP = new Patient
-                {
-                    FirstName = $"FirstName{maxxId}",
-                    LastName = $"LastName{maxxId}",
-                    MedRecordNumber = $"MRN{maxxId}",
-                    BirthDate = DateTime.Now,
-                    DisChargeDate = DateTime.Now,
-                };
-                dtoP = pservice.Create(dtoP);
-
-                //https://www.cnblogs.com/Y-S-X/p/8347152.html
-                dtoP.MiddleInitial += "BaseAppSvc";
-                pservice.Update(dtoP);
-
+                CRUDOperations(unitOfWork, pservice);
 
                 // throw new Exception("Rollback trans");
             });
 
-            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-            var pppp = pservice.GetSingle(maxId);
+            maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            pppp = pservice.GetSingle(maxId);
             pservice.Delete(pppp);
         }
+
+        private static void CRUDOperations(UnitOfWork unitOfWork, PatientService pservice)
+        {
+            int maxxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+
+            //Create
+            var dtoP = new Patient
+            {
+                FirstName = $"FirstName{maxxId}",
+                LastName = $"LastName{maxxId}",
+                MedRecordNumber = $"MRN{maxxId}",
+                BirthDate = DateTime.Now,
+                DisChargeDate = DateTime.Now,
+            };
+            dtoP = pservice.Create(dtoP);
+
+            //https://www.cnblogs.com/Y-S-X/p/8347152.html
+            dtoP.MiddleInitial += "BaseAppSvc";
+            pservice.Update(dtoP);
+        }
+
         private static void TestRepositories()
         {
             var context = new SqlDbContext(ConnectionString);
@@ -129,4 +140,3 @@ namespace Demo.NHibernateConsole
     }
 }
 
- 
