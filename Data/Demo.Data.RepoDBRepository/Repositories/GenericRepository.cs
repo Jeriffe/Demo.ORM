@@ -3,7 +3,6 @@ using RepoDb;
 using RepoDb.Enumerations;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -34,7 +33,7 @@ namespace Demo.Data.RepoDBRepository
         {
             if (!(unitOfWork is IUnitOfWork<IDbContext>))
             {
-                throw new ArgumentException("Expected IUnitOfWork<DapperDbContext>");
+                throw new ArgumentException("Expected IUnitOfWork<IDbContext from RepoDb>");
             }
 
             this.unitOfWork = unitOfWork as IUnitOfWork<IDbContext>;
@@ -155,20 +154,6 @@ namespace Demo.Data.RepoDBRepository
         public TEntity GetByKey(int id)
         {
             return Context.Connection.Query<TEntity>(id, transaction: unitOfWork.Transaction).FirstOrDefault();
-        }
-
-        public TEntity GetSingle(string sql, CommandType commandType = CommandType.Text, object anonymousConditions = null)
-        {
-            var result = Context.Connection.ExecuteQuery<TEntity>(sql, anonymousConditions, commandType: commandType, transaction: unitOfWork.Transaction).FirstOrDefault();
-
-            return result;
-        }
-
-        public IEnumerable<TEntity> GetList(string sql, CommandType commandType = CommandType.Text, object anonymousConditions = null)
-        {
-            var result = Context.Connection.ExecuteQuery<TEntity>(sql, anonymousConditions, commandType: commandType, transaction: unitOfWork.Transaction);
-
-            return result;
         }
 
         protected int GetOffset(int pageIndex, int pageSize)

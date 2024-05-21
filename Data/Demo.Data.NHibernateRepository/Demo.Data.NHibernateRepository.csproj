@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentNHibernate" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Demo.RawSql\Demo.RawSql.csproj" />
     <ProjectReference Include="..\Demo.Data.Models\Demo.Data.Models.csproj" />
   </ItemGroup>
 

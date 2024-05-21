@@ -3,6 +3,7 @@ using Demo.Infrastructure;
 using System;
 using System.Data;
 using System.Data.Common;
+using Demo.RawSql;
 
 namespace Demo.Data.DapperRepository
 {
@@ -93,34 +94,24 @@ namespace Demo.Data.DapperRepository
             Context.CloseConnection();
         }
 
-        public object ExecuteScalar(string sql, params object[] parameters)
+        public object ExecuteRawScalar(string sql, params RawParameter[] parameters)
         {
-            //RepoDb: IDataReader ExecuteScalar(this IDbConnection connection
-            var result = Context.Connection.ExecuteScalar(sql, null, transaction: trans);
+
+
+            var result = Context.Connection.ExecuteRawScalar(trans as DbTransaction, sql, parameters);
 
             return result;
         }
 
-        public void ExecuteNoQueryRawSql(string sql, params object[] parameters)
+        public void ExecuteRawNoQuery(string sql, params RawParameter[] parameters)
         {
-            //RepoDb: IDataReader ExecuteNonQuery(this IDbConnection connection
-            Context.Connection.Execute(sql, null, transaction: trans);
+            Context.Connection.ExecuteRawSql(trans as DbTransaction, sql, parameters);
+
         }
 
-        public DataTable ExecuteRawSql(string sql, params object[] parameter)
+        public DataTable ExecuteRawSql(string sql, params RawParameter[] parameters)
         {
-            //RepoDb: IDataReader ExecuteReader(this IDbConnection connection
-            using (var dataReader = Context.Connection.ExecuteReader(sql, null))
-            {
-                if (dataReader.Read())
-                {
-                    var dataTable = new DataTable();
-                    dataTable.Load(dataReader);
-                    return dataTable;
-                }
-
-                return null;
-            }
+            return Context.Connection.ExecuteRawSql(trans as DbTransaction, sql, parameters);
         }
     }
 

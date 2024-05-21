@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Demo.DBScripts\Demo.DBScripts.csproj" />
     <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Demo.RawSql\Demo.RawSql.csproj" />
     <ProjectReference Include="..\Demo.Data.Models\Demo.Data.Models.csproj" />
   </ItemGroup>
 

@@ -2,10 +2,8 @@
 using NHibernate;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Demo.Data.NHibernateRepository
 {
@@ -13,13 +11,13 @@ namespace Demo.Data.NHibernateRepository
     {
         private IUnitOfWork<IDbContext> unitOfWork;
 
-        public NHibernate.ISession Session { get; private set; }
+        public ISession Session { get; private set; }
 
         public GenericRepository(IUnitOfWork unitOfWork)
         {
             if (!(unitOfWork is IUnitOfWork<IDbContext>))
             {
-                throw new ArgumentException("Expected IUnitOfWork<Microsoft.EntityFrameworkCore.DbContext>");
+                throw new ArgumentException("Expected IUnitOfWork<NHibernate.ISession>");
             }
 
             this.unitOfWork = unitOfWork as IUnitOfWork<IDbContext>;
@@ -115,16 +113,13 @@ namespace Demo.Data.NHibernateRepository
             }
 
             return Trans(() =>
-            {
-                var obj = Session.Save(entity);
-                var id = Convert.ToInt32(obj);
-                var item = GetByKey(id);
+                    {
+                        var obj = Session.Save(entity);
+                        var id = Convert.ToInt32(obj);
+                        var item = GetByKey(id);
 
-                return item;
-            }
-           );
-
-
+                        return item;
+                    });
         }
 
 
@@ -145,7 +140,7 @@ namespace Demo.Data.NHibernateRepository
             var records = GetList(criteria);
 
             Trans(() =>
-            {                
+            {
                 foreach (var r in records)
                 {
                     Session.Delete(r);
@@ -167,20 +162,6 @@ namespace Demo.Data.NHibernateRepository
         }
 
         #endregion
-
-        public TEntity GetSingle(string sql, CommandType commandType = CommandType.Text, object whereConditions = null)
-        {
-            //return Context.Connection.QueryFirst<TEntity>(sql, commandType: commandType);
-            return null;
-
-        }
-
-        public IEnumerable<TEntity> GetList(string sql, CommandType commandType = CommandType.Text, object parameters = null)
-        {
-            //return Context.Connection.Query<TEntity>(sql, commandType: commandType);
-            return null;
-        }
-
 
         #region IDisposable
 

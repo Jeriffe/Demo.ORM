@@ -25,9 +25,12 @@ namespace Demo.Data.RepoDBRepository
         {
             var sql = ScriptsLoader.Get("PATIENT_SINGLE_BY_ACCT");
 
-            var patient = GetSingle(sql, CommandType.Text, new { AccountNumber = accountNumber, });
+            //var patient = GetSingle(sql, CommandType.Text, new { AccountNumber = accountNumber, });
 
-            return patient;
+            //return patient;
+
+            return null;
+
         }
 
         public IEnumerable<TPatient> GetPatientByCareUnitID(int careUnitID, PageFilter pagFilter)
@@ -42,9 +45,10 @@ namespace Demo.Data.RepoDBRepository
                 PageSize = pagFilter.PageSize
             };
 
-            var patients = GetList(sql, CommandType.StoredProcedure, conditon);
+            //var patients = GetList(sql, CommandType.StoredProcedure, conditon);
 
-            return patients;
+            //return patients;
+            return null;
         }
 
         public IEnumerable<TPatient> GetActivePatients(PageFilter pagFilter)
@@ -57,9 +61,11 @@ namespace Demo.Data.RepoDBRepository
                 PageSize = pagFilter.PageSize
             };
 
-            var patients = GetList(sql, CommandType.Text, conditon);
+            //var patients = GetList(sql, CommandType.Text, conditon);
 
-            return patients;
+            //return patients;
+            return null;
+
         }
     }
 }

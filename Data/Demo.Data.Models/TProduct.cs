@@ -1,10 +1,8 @@
-using System;
-using System.Text;
 using System.Collections.Generic;
 
 
-namespace Demo.Data.Models {
-    
+namespace Demo.Data.Models
+{
     public class TProduct {
         public virtual long Id { get; set; }
         public virtual string Name { get; set; }

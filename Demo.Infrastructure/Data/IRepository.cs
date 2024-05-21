@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq.Expressions;
 
 namespace Demo.Infrastructure
@@ -22,16 +21,13 @@ namespace Demo.Infrastructure
 
         IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr = null);
 
-        TEntity GetSingle(string sql, CommandType commandType = CommandType.Text, object whereConditions = null);
-        IEnumerable<TEntity> GetList(string sql, CommandType commandType = CommandType.Text, object parameters = null);
-
-
         TEntity Create(TEntity item);
 
         void Update(TEntity item);
 
         void Delete(TEntity item);
     }
+
     public enum OrderSorting
     {
         ASC,

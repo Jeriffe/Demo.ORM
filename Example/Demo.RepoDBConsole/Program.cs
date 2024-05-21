@@ -1,12 +1,9 @@
-﻿using AutoMapper.Configuration;
-using AutoMapper;
+﻿using AutoMapper;
 using Demo.Data.Models;
 using Demo.Data.RepoDBRepository;
 using Demo.DTOs;
 using Demo.Infrastructure;
 using Demo.Services;
-using Microsoft.Data.SqlClient;
-using RepoDb;
 using System;
 using System.Configuration;
 using System.Reflection;
@@ -19,14 +16,11 @@ namespace Demo.RepoDBConsole
 
         static void Main(string[] args)
         {
+            RawOperation();
 
             TestRepositories();
 
             TestServices();
-
-
-
-            // RawOperation();
 
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
 
@@ -52,7 +46,7 @@ namespace Demo.RepoDBConsole
             //Use app service
             unitOfWork.ProcessWithTrans(() =>
             {
-                int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
                 //Create
                 var dtoP = new Patient
                 {
@@ -70,7 +64,7 @@ namespace Demo.RepoDBConsole
                 // throw new Exception("Rollback trans");
             });
 
-            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
             var pppp = pservice.GetSingle(maxId);
             pservice.Delete(pppp);
 
@@ -81,36 +75,17 @@ namespace Demo.RepoDBConsole
         {
             try
             {
-                using (var connection = new SqlConnection(ConnectionString))
-                {
+                var context = new SqlDbContext(ConnectionString);
+                var unitOfWork = new UnitOfWork(context);
 
-                    var persons = connection.QueryAll<TPatient>();
+                unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
+                    new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 });
 
-                    var person = connection.Query<TPatient>(p => p.PatientId == 6);
+                unitOfWork.ExecuteRawNoQuery("UPDATE dbo.T_PATIENT SET BirthDate=DATEADD(YEAR,-30,GETDATE()) WHERE PatientId=@PatientId", new RawParameter { Name = "@PatientId", Value = 3 });
 
-                    var sql = "SELECT * FROM [dbo].[T_PATIENT] ORDER BY PatientID DESC;";
-                    var peoples_ByScript = connection.ExecuteQuery<TPatient>(sql);
+                var dataTable = unitOfWork.ExecuteRawSql("SELECT TOP (100) * FROM [ORM_DEMO].[dbo].[T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId",
+                       new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 });
 
-                    var sqll = "SELECT * FROM [dbo].[T_PATIENT] WHERE Gender=@Gender;";
-                    var peoples_ByGender = connection.ExecuteQuery<TPatient>(sqll, new { Gender = "F" });
-
-
-                    var sql1 = "SELECT MAX(PatientID) FROM [dbo].[T_PATIENT];";
-                    var maxId = connection.ExecuteScalar<long>(sql1);
-
-                    var sql2 = "SELECT * FROM [dbo].[T_PATIENT] WHERE PatientID=2;";
-                    using (var reader = connection.ExecuteReader(sql2))
-                    {
-                        if (reader.Read())
-                        {
-                            var p = new TPatient
-                            {
-                                PatientId = reader.GetInt32(0),
-                                MedRecNumber = reader["MedRecNumber"].ToString()
-                            };
-                        }
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -129,7 +104,7 @@ namespace Demo.RepoDBConsole
             var patient1 = patientRepo.Get(p => p.MedRecNumber == "938417");
 
             var patients = patientRepo.Get(p => p.Gender == "F");
-            int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
 
             //Create
             var np = patientRepo.Create(new TPatient
@@ -149,7 +124,7 @@ namespace Demo.RepoDBConsole
 
             unitOfWork.ProcessWithTrans(() =>
             {
-                int maxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
 
                 var newPatient = patientRepo.GetByKey(maxId);
 
@@ -165,7 +140,7 @@ namespace Demo.RepoDBConsole
                 patientRepo.Update(newPatient);
             });
 
-            int nmaxId = (int)unitOfWork.ExecuteScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            int nmaxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
             var nnewPatient = patientRepo.GetByKey(nmaxId);
             // Delete
             patientRepo.Delete(nnewPatient);

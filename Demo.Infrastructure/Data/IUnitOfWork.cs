@@ -5,9 +5,6 @@ namespace Demo.Infrastructure
 {
     public interface IUnitOfWork : IDisposable
     {
-
-        void SaveChanges();
-
         void BeginTrans();
 
         void Commit();
@@ -15,8 +12,8 @@ namespace Demo.Infrastructure
         void Rollback();
 
 
-        void ExecuteNoQueryRawSql(string sql, params object[] parameters);
-        DataTable ExecuteRawSql(string sql, params object[] parameter);
+        void ExecuteRawNoQuery(string sql, params RawParameter[] parameters);
+        DataTable ExecuteRawSql(string sql, params RawParameter[] parameter);
 
         /// <summary>
         /// Executes the query, and returns the first column of the first row in the result set returned by the query. 
@@ -28,16 +25,21 @@ namespace Demo.Infrastructure
         /// <param name="sql"></param>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        object ExecuteScalar(string sql, params object[] parameter);
+        object ExecuteRawScalar(string sql, params RawParameter[] parameter);
     }
 
-    public interface IUnitOfWork<T> : IUnitOfWork  
+    public interface IUnitOfWork<T> : IUnitOfWork
     {
         T Context { get; }
 
-        IDbTransaction Transaction{ get; }
+        IDbTransaction Transaction { get; }
     }
 
+    public class RawParameter
+    {
+        public string Name { get; set; }
+        public object Value { get; set; }
+    }
 
 
 }

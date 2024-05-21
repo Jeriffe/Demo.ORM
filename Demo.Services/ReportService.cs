@@ -29,7 +29,7 @@ namespace Demo.Services
 	INNER JOIN dbo.T_VISIT AS V ON P.PatientID = V.PatientID
 	WHERE CareUnitID=@CareUnitID";
 
-            var table = unitOfWork.ExecuteRawSql(sql, new { CareUnitID = careUnitID });
+            var table = unitOfWork.ExecuteRawSql(sql, new RawParameter { Name = "@CareUnitID", Value = careUnitID });
 
             return table;
         }

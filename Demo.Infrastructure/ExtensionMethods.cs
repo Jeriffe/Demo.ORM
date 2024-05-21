@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Transactions;
 
 namespace Demo.Infrastructure
@@ -27,7 +28,14 @@ namespace Demo.Infrastructure
                 }
             }
         }
-             
-    }
 
+        public static void EnsureOpenConn(this DbConnection conn)
+        {
+            if (conn.State != ConnectionState.Open)
+            {
+                conn.Open();
+            }
+        }
+
+    }
 }
