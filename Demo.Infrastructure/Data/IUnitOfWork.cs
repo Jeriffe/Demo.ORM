@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 
 namespace Demo.Infrastructure
 {
@@ -12,20 +14,14 @@ namespace Demo.Infrastructure
         void Rollback();
 
 
-        void ExecuteRawNoQuery(string sql, params RawParameter[] parameters);
-        DataTable ExecuteRawSql(string sql, params RawParameter[] parameter);
+        object ExecuteRawScalar(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters);
 
-        /// <summary>
-        /// Executes the query, and returns the first column of the first row in the result set returned by the query. 
-        /// The additional columns or rows are ignored.
-        /// EG:returns the new Identity column value if a new row was inserted, 0 on failure.
-        ///     INSERT INTO Production.ProductCategory (Name) VALUES (@Name); SELECT CAST(scope_identity() AS int)
-        /// EG:{cmd.CommandText = "SELECT COUNT(1) FROM dbo.region"; var count = (int)cmd.ExecuteScalar();}
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
-        object ExecuteRawScalar(string sql, params RawParameter[] parameter);
+        void ExecuteRawNoQuery( string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters);
+
+        DataTable ExecuteRawSql( string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters);
+
+        IEnumerable<T> ExecuteRawSql<T>(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
+            where T : class, new();
     }
 
     public interface IUnitOfWork<T> : IUnitOfWork

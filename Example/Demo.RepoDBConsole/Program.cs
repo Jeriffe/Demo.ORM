@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Demo.Data.Models;
 using Demo.Data.RepoDBRepository;
+using Demo.DBScripts;
 using Demo.DTOs;
 using Demo.Infrastructure;
+using Demo.RawSql;
 using Demo.Services;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Reflection;
 
@@ -31,6 +34,7 @@ namespace Demo.RepoDBConsole
         {
             var context = new SqlDbContext(ConnectionString);
             var unitOfWork = new UnitOfWork(context);
+
             var patientRepo = new GenericRepository<TPatient>(unitOfWork);
 
             var _configuration = new MapperConfiguration(config =>
@@ -76,16 +80,27 @@ namespace Demo.RepoDBConsole
             try
             {
                 var context = new SqlDbContext(ConnectionString);
-                var unitOfWork = new UnitOfWork(context);
+                var sqlExecutor = new DapperRawExecutor();
+                var unitOfWork = new UnitOfWork(context, sqlExecutor);
+
+                //var unitOfWork = new UnitOfWork(context);
 
                 unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
-                    new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 });
+               parameters: new List<RawParameter> {
+                    new RawParameter { Name = "@Gender", Value = "F" },
+                    new RawParameter { Name = "@PatientId", Value = 6 }}.ToArray());
 
-                unitOfWork.ExecuteRawNoQuery("UPDATE dbo.T_PATIENT SET BirthDate=DATEADD(YEAR,-30,GETDATE()) WHERE PatientId=@PatientId", new RawParameter { Name = "@PatientId", Value = 3 });
+                unitOfWork.ExecuteRawNoQuery("UPDATE dbo.T_PATIENT SET BirthDate=DATEADD(YEAR,-30,GETDATE()) WHERE PatientId=@PatientId",
+                    parameters: new RawParameter { Name = "@PatientId", Value = 3 });
 
                 var dataTable = unitOfWork.ExecuteRawSql("SELECT TOP (100) * FROM [ORM_DEMO].[dbo].[T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId",
-                       new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 });
+                        parameters: new List<RawParameter> { new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 } }.ToArray());
 
+                var proc_Sql = ScriptsLoader.Get("PATIENT_QUERY_BY_GENDER");
+                var patient = unitOfWork.ExecuteRawSql(proc_Sql, System.Data.CommandType.StoredProcedure,
+                    new RawParameter { Name = "@Gender", Value = "M" }
+                  , new RawParameter { Name = "@Offset", Value = 1 }
+                  , new RawParameter { Name = "@PageSize", Value = 1 });
             }
             catch (Exception ex)
             {

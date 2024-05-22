@@ -298,7 +298,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyInjectionResolver.cs" />
+    <Compile Include="DIResolver.cs" />
     <Compile Include="LoopHostService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

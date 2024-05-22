@@ -4,6 +4,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 using Demo.RawSql;
+using System.Collections.Generic;
 
 namespace Demo.Data.DapperRepository
 {
@@ -15,8 +16,17 @@ namespace Demo.Data.DapperRepository
 
         public IDbTransaction Transaction => trans;
 
-        public UnitOfWork(IDbContext context)
+        public IRawSqlExecutor SqlExecutor { get; private set; }
+
+        public UnitOfWork(IDbContext context, IRawSqlExecutor sqlExecutor = null)
         {
+            SqlExecutor = sqlExecutor;
+
+            if (SqlExecutor == null)
+            {
+                SqlExecutor = new DefaultDapperRawExecutor();
+            }
+
             Context = context;
         }
 
@@ -94,24 +104,27 @@ namespace Demo.Data.DapperRepository
             Context.CloseConnection();
         }
 
-        public object ExecuteRawScalar(string sql, params RawParameter[] parameters)
+        public object ExecuteRawScalar(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
-
-
-            var result = Context.Connection.ExecuteRawScalar(trans as DbTransaction, sql, parameters);
+            var result = SqlExecutor.ExecuteRawScalar(Context.Connection, trans as DbTransaction, sql, commandType, parameters);
 
             return result;
         }
 
-        public void ExecuteRawNoQuery(string sql, params RawParameter[] parameters)
+        public void ExecuteRawNoQuery(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
-            Context.Connection.ExecuteRawSql(trans as DbTransaction, sql, parameters);
+            SqlExecutor.ExecuteNoQueryRawSql(Context.Connection, trans as DbTransaction, sql, commandType, parameters);
 
         }
 
-        public DataTable ExecuteRawSql(string sql, params RawParameter[] parameters)
+        public DataTable ExecuteRawSql(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
-            return Context.Connection.ExecuteRawSql(trans as DbTransaction, sql, parameters);
+            return SqlExecutor.ExecuteRawSql(Context.Connection, trans as DbTransaction, sql, commandType, parameters);
+        }
+
+        public IEnumerable<T> ExecuteRawSql<T>(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
+        {
+            return SqlExecutor.ExecuteRawSql<T>(Context.Connection, trans as DbTransaction, sql, commandType, parameters);
         }
     }
 

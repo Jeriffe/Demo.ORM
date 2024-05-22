@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Data\Demo.Data.DapperRepository\Demo.Data.DapperRepository.csproj" />
     <ProjectReference Include="..\..\Data\Demo.Data.Models\Demo.Data.Models.csproj" />
+    <ProjectReference Include="..\..\Demo.DBScripts\Demo.DBScripts.csproj" />
     <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Demo.Services\Demo.Services.csproj" />
   </ItemGroup>

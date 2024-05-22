@@ -1,19 +1,21 @@
 ﻿using Demo.Infrastructure;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 
 namespace Demo.RawSql
 {
-    public static class SqlHelper
+    public class DataRawSqlExecutor : IRawSqlExecutor
     {
-
-        public static object ExecuteRawScalar(this DbConnection conn, DbTransaction trans, string sql, params RawParameter[] parameters)
+        public object ExecuteRawScalar(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
             conn.EnsureOpenConn();
             using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = sql;
+                cmd.CommandType = commandType;
                 cmd.Transaction = trans;
 
                 if (parameters != null && parameters.Length > 0)
@@ -30,12 +32,13 @@ namespace Demo.RawSql
             }
         }
 
-        public static void ExecuteNoQueryRawSql(this DbConnection conn, DbTransaction trans, string sql, params RawParameter[] parameters)
+        public void ExecuteNoQueryRawSql(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
             conn.EnsureOpenConn();
             using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = sql;
+                cmd.CommandType = commandType;
                 cmd.Transaction = trans;
 
                 if (parameters != null && parameters.Length > 0)
@@ -51,12 +54,13 @@ namespace Demo.RawSql
             }
         }
 
-        public static DataTable ExecuteRawSql(this DbConnection conn, DbTransaction trans, string sql, params RawParameter[] parameters)
+        public DataTable ExecuteRawSql(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
             conn.EnsureOpenConn();
             using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = sql;
+                cmd.CommandType = commandType;
                 cmd.Transaction = trans;
 
                 if (parameters != null && parameters.Length > 0)
@@ -81,6 +85,14 @@ namespace Demo.RawSql
                 return null;
 
             }
+        }
+
+        public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
+        {
+            var dt = ExecuteRawSql(conn, trans, sql, commandType, parameters);
+
+            //c# reflect to map DataTable to T object
+            throw new NotImplementedException("c# reflect to map DataTable to T object");
         }
     }
 }

@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\..\Data\Demo.Data.DapperRepository\Demo.Data.DapperRepository.csproj" />
     <ProjectReference Include="..\..\..\Data\Demo.Data.Models\Demo.Data.Models.csproj" />
     <ProjectReference Include="..\..\..\Data\Demo.Data.RepoDBRepository\Demo.Data.RepoDBRepository.csproj" />
+    <ProjectReference Include="..\..\..\Demo.DTOs\Demo.DTOs.csproj" />
     <ProjectReference Include="..\..\..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Demo.Services\Demo.Services.csproj" />
   </ItemGroup>

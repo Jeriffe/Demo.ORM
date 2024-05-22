@@ -1,25 +1,21 @@
 ﻿using Autofac;
-using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
-using Demo.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Configuration;
-using Microsoft.Extensions.Configuration;
 using Demo.Data.Models;
-using Demo.Services;
+
 //using Demo.Data.DapperRepository;
+//using Demo.Data.RepoDBRepository;
 using Demo.Data.RepoDBRepository;
-using System.Reflection;
-using Demo.DTOs;
 using Demo.DTOs.Mapper;
+using Demo.Infrastructure;
+using Demo.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 namespace Demo.NETConsole
 {
-    public class DependencyInjectionResolver
+    public class DIResolver
     {
         private static IServiceProvider _serviceProvider;
-        static DependencyInjectionResolver()
+        static DIResolver()
         {
             _serviceProvider = new Startup_Autofac().BuildServiceProvider();
         }
@@ -80,7 +76,7 @@ namespace Demo.NETConsole
 
             containerBuilder.RegisterType<GenericRepository<TPatient>>().As<IRepository<TPatient>>();
 
-            containerBuilder.RegisterType<PatientService>().As<IAppService<TPatient, Patient>>();
+            containerBuilder.RegisterType<PatientService>().As<IPatientSvc>();
 
 
             // Creating a new AutofacServiceProvider makes the container

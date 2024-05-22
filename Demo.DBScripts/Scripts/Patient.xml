@@ -58,9 +58,9 @@ WHERE MedRecNumber=@MedRecNumber
     ]]>
 		</Content>
 	</DBScript>
-	<DBScript name="PATIENT_QUERY_BY_CAREUNITID" type="Procedure">
+	<DBScript name="PATIENT_QUERY_BY_GENDER" type="Procedure">
 		<Content>
-			<![CDATA[dbo.GetPatientByCareUnitID]]>
+			<![CDATA[dbo.GetPatientByGender]]>
 		</Content>
 	</DBScript>
 

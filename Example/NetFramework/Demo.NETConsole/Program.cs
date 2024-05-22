@@ -27,7 +27,7 @@ namespace Demo.NETConsole
 
         private static void CallAppService()
         {
-            var service = DependencyInjectionResolver.Resolve<IAppService<TPatient, Patient>>();
+            var service = DIResolver.Resolve<IAppService<TPatient, Patient>>();
 
            var result= service.GetAll(new Infrastructure.PageFilter { });
 
@@ -35,7 +35,7 @@ namespace Demo.NETConsole
 
         static async void CallHostedService()
         {
-            var service = DependencyInjectionResolver.Resolve<IHostedService>();
+            var service = DIResolver.Resolve<IHostedService>();
 
             await service.StartAsync(new CancellationToken());
         }

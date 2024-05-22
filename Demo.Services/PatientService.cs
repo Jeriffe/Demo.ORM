@@ -2,16 +2,52 @@
 using Demo.Data.Models;
 using Demo.DTOs;
 using Demo.Infrastructure;
-using System.Collections.Generic;
+using System;
 
 namespace Demo.Services
 {
 
-    public class PatientService : BaseAppService<TPatient,Patient>, IAppService<TPatient, Patient>
+    public interface IPatientSvc : IAppService<TPatient, Patient>
     {
-        public PatientService(IUnitOfWork unitOfWork, IRepository<TPatient> repository,IMapper mapper)
-            : base(unitOfWork, repository,mapper)
+        void TransTest();
+    }
+    public class PatientService : BaseAppService<TPatient, Patient>, IPatientSvc
+    {
+        public PatientService(IUnitOfWork unitOfWork, IRepository<TPatient> repository, IMapper mapper)
+            : base(unitOfWork, repository, mapper)
         {
+
+            
+        }
+
+        public void TransTest()
+        {
+            var plist =GetAll(null);
+
+            //Use app service
+            unitOfWork.ProcessWithTrans(() =>
+            {
+                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                //Create
+                var dtoP = new Patient
+                {
+                    FirstName = $"FirstName{maxId}",
+                    LastName = $"LastName{maxId}",
+                    MedRecordNumber = $"MRN{maxId}",
+                    BirthDate = DateTime.Now,
+                    DisChargeDate = DateTime.Now,
+                };
+                dtoP = Create(dtoP);
+                dtoP.MiddleInitial += "BaseAppSvc";
+                Update(dtoP);
+                var updatedP = GetSingle(dtoP.PatientId);
+
+                // throw new Exception("Rollback trans");
+            });
+
+            int maxxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var pppp = GetSingle(maxxId);
+            Delete(pppp);
         }
     }
 }

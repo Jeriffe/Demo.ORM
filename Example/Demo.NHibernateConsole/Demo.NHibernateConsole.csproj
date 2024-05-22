@@ -45,6 +45,9 @@
     <Reference Include="AutoMapper.Extensions.Microsoft.DependencyInjection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=e767ac9c89543656, processorArchitecture=MSIL">
       <HintPath>..\..\packages\AutoMapper.Extensions.Microsoft.DependencyInjection.8.1.1\lib\netstandard2.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Dapper.2.1.35\lib\net461\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="FluentNHibernate, Version=3.3.0.0, Culture=neutral, PublicKeyToken=8aa435e3cb308880, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentNHibernate.3.3.0\lib\net461\FluentNHibernate.dll</HintPath>
     </Reference>
@@ -166,6 +169,10 @@
       <Project>{4C30C586-4D25-4EEE-BF81-94408F3D955E}</Project>
       <Name>Demo.Data.NHibernateRepository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Demo.DBScripts\Demo.DBScripts.csproj">
+      <Project>{1270a270-8e13-4194-bb9e-f4f6c5c443b9}</Project>
+      <Name>Demo.DBScripts</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Demo.DTOs\Demo.DTOs.csproj">
       <Project>{FCBB06C2-C7D0-4485-967E-F3C29ECC07D6}</Project>
       <Name>Demo.DTOs</Name>
@@ -173,6 +180,10 @@
     <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj">
       <Project>{2085A991-3952-4176-B984-5390E2190B3C}</Project>
       <Name>Demo.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Demo.RawSqlWithDapper\Demo.RawSqlWithDapper.csproj">
+      <Project>{219a314d-5f30-49e4-87b0-c419220de8d3}</Project>
+      <Name>Demo.RawSqlWithDapper</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Demo.RawSql\Demo.RawSql.csproj">
       <Project>{5ba0294b-1a3a-49ff-9d6f-8c32fbc35c06}</Project>

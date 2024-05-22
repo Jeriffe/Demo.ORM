@@ -13,10 +13,10 @@ using Demo.DTOs;
 
 namespace Demo.NETConsole
 {
-    public class DependencyInjectionResolver
+    public class DIResolver
     {
         private static IServiceProvider _serviceProvider;
-        static DependencyInjectionResolver()
+        static DIResolver()
         {
             _serviceProvider = new Startup_Autofac().BuildServiceProvider();
         }
@@ -78,7 +78,7 @@ namespace Demo.NETConsole
 
             containerBuilder.RegisterType<Data.RepoDBRepository.GenericRepository<TPatient>>().As<IRepository<Patient>>();
 
-            containerBuilder.RegisterType<PatientService>().As<IAppService<TPatient, Patient>>();
+            containerBuilder.RegisterType<PatientService>().As<IPatientSvc>();
 
 
             // Creating a new AutofacServiceProvider makes the container

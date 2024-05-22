@@ -1,6 +1,4 @@
-﻿using Demo.Data.Models;
-using Demo.DTOs;
-using Demo.NETConsole;
+﻿using Demo.NETConsole;
 using Demo.Services;
 
 Console.OutputEncoding = System.Text.Encoding.Unicode;
@@ -12,8 +10,10 @@ Console.ReadLine();
 
 static void CallAppService()
 {
-    var service = DependencyInjectionResolver.Resolve<IAppService<TPatient, Patient>>();
+    var service = DIResolver.Resolve<IPatientSvc>();
 
     var result = service.GetAll(new Demo.Infrastructure.PageFilter { });
+
+    service.TransTest();
 
 }

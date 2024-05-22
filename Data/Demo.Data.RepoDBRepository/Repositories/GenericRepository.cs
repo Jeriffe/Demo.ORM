@@ -49,7 +49,7 @@ namespace Demo.Data.RepoDBRepository
             return Context.Connection.Query(expr, transaction: unitOfWork.Transaction).FirstOrDefault();
         }
 
-        public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr=null)
+        public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr = null)
         {
             if (predicateExpr == null)
             {
@@ -59,7 +59,7 @@ namespace Demo.Data.RepoDBRepository
             return Context.Connection.Query(predicateExpr, transaction: unitOfWork.Transaction);
         }
 
-       
+
 
         private Order GetOrder(OrderSorting orderSorting)
         {
@@ -95,7 +95,6 @@ namespace Demo.Data.RepoDBRepository
         }
 
         /* Batch Operations */
-
 
 
         public virtual void Create(IEnumerable<TEntity> entities)
@@ -186,6 +185,6 @@ namespace Demo.Data.RepoDBRepository
             }
         }
 
-       
+
     }
 }
