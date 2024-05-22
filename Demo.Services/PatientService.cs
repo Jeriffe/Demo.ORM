@@ -17,15 +17,15 @@ namespace Demo.Services
             : base(unitOfWork, repository, mapper)
         {
 
-            
+
         }
 
         public void TransTest()
         {
-            var plist =GetAll(null);
+            var plist = GetAll(null);
 
             //Use app service
-            unitOfWork.ProcessWithTrans(() =>
+            unitOfWork.ProcessByTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
                 //Create
@@ -36,6 +36,7 @@ namespace Demo.Services
                     MedRecordNumber = $"MRN{maxId}",
                     BirthDate = DateTime.Now,
                     DisChargeDate = DateTime.Now,
+                    SiteId = 999,
                 };
                 dtoP = Create(dtoP);
                 dtoP.MiddleInitial += "BaseAppSvc";

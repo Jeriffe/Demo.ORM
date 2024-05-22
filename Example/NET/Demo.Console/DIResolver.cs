@@ -3,8 +3,8 @@ using Autofac.Extensions.DependencyInjection;
 using Demo.Data.Models;
 
 //using Demo.Data.DapperRepository;
+using Demo.Data.NHibernateRepository;
 //using Demo.Data.RepoDBRepository;
-using Demo.Data.RepoDBRepository;
 using Demo.DTOs.Mapper;
 using Demo.Infrastructure;
 using Demo.Services;
@@ -47,10 +47,10 @@ namespace Demo.NETConsole
             services.AddLogging();
 
 
-            var connstr =  Configuration.GetConnectionString("DBSTR");
+            var connstr =  Configuration.GetConnectionString("DB");
 
             //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
-            connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DBSTR"].ConnectionString;
+            connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
             services.AddScoped<IUnitOfWork,UnitOfWork>();

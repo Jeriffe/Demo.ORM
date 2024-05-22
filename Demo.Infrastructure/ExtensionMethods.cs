@@ -7,6 +7,24 @@ namespace Demo.Infrastructure
 {
     public static class ExtensionMethods
     {
+        public static void ProcessByTrans(this IUnitOfWork conn, Action action)
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    action();
+
+                    transaction.Complete();
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
         public static void ProcessWithTrans(this IUnitOfWork conn, Action action)
         {
             using (var transaction = new TransactionScope())
