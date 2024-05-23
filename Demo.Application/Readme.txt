@@ -1,0 +1,1 @@
+﻿NuGet\Install-Package MediatR.Extensions.Microsoft.DependencyInjection -Version 8.0.0

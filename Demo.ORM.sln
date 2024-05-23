@@ -60,7 +60,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.MSRawSql", "Demo.MSRaw
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RawSql", "RawSql", "{23B2F3CF-E507-488C-8238-4F8E837781E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.RawSqlWithDapper", "Demo.RawSqlWithDapper\Demo.RawSqlWithDapper.csproj", "{219A314D-5F30-49E4-87B0-C419220DE8D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.RawSqlWithDapper", "Demo.RawSqlWithDapper\Demo.RawSqlWithDapper.csproj", "{219A314D-5F30-49E4-87B0-C419220DE8D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.Application", "Demo.Application\Demo.Application.csproj", "{8C443B2C-FA7D-46C6-9B70-847FD28A0952}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo.MediatRConsole", "Example\Demo.MediatRConsole\Demo.MediatRConsole.csproj", "{5AFB71C1-9060-4ED4-AB7E-129D444EC2F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -146,6 +150,14 @@ Global
 		{219A314D-5F30-49E4-87B0-C419220DE8D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{219A314D-5F30-49E4-87B0-C419220DE8D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{219A314D-5F30-49E4-87B0-C419220DE8D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C443B2C-FA7D-46C6-9B70-847FD28A0952}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C443B2C-FA7D-46C6-9B70-847FD28A0952}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C443B2C-FA7D-46C6-9B70-847FD28A0952}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C443B2C-FA7D-46C6-9B70-847FD28A0952}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AFB71C1-9060-4ED4-AB7E-129D444EC2F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AFB71C1-9060-4ED4-AB7E-129D444EC2F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AFB71C1-9060-4ED4-AB7E-129D444EC2F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AFB71C1-9060-4ED4-AB7E-129D444EC2F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -167,6 +179,7 @@ Global
 		{5BA0294B-1A3A-49FF-9D6F-8C32FBC35C06} = {23B2F3CF-E507-488C-8238-4F8E837781E2}
 		{4B73B301-8496-4ECA-BE52-2E123C0F2888} = {23B2F3CF-E507-488C-8238-4F8E837781E2}
 		{219A314D-5F30-49E4-87B0-C419220DE8D3} = {23B2F3CF-E507-488C-8238-4F8E837781E2}
+		{5AFB71C1-9060-4ED4-AB7E-129D444EC2F7} = {F0153663-0F38-43F9-80C2-9092F9DC28D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {999D6782-C08D-4F6E-AC47-70CB6E8DCBDF}

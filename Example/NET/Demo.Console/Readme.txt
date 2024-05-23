@@ -1,5 +1,5 @@
 ﻿
-NuGet\Install-Package Microsoft.Extensions.DependencyInjection
+NuGet\Install-Package Microsoft.Extensions.DependencyInjection -version 8.0.0
 
 NuGet\Install-Package Microsoft.Extensions.Hosting
 
