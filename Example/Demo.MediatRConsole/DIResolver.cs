@@ -38,7 +38,7 @@ namespace Demo.MediatRConsole
 
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.AddMediatR(typeof(Demo.Application.GetPatientQuery));
+            services.AddMediatR(typeof(Demo.Application.GetPatientsQuery));
 
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
             services.AddScoped<IUnitOfWork,UnitOfWork>();
