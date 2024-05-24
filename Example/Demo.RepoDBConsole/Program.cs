@@ -19,7 +19,7 @@ namespace Demo.RepoDBConsole
 
         static void Main(string[] args)
         {
-            RawOperation();
+            //RawOperation();
 
             TestRepositories();
 
@@ -33,6 +33,7 @@ namespace Demo.RepoDBConsole
         private static void TestServices()
         {
             var context = new SqlDbContext(ConnectionString);
+            
             var unitOfWork = new UnitOfWork(context);
 
             var patientRepo = new GenericRepository<TPatient>(unitOfWork);
