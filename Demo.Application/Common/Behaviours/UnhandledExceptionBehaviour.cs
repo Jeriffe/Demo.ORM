@@ -1,6 +1,8 @@
 ﻿using MediatR;
+using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,8 +29,21 @@ namespace Demo.Application.Common.Behaviours
 
                 _logger.LogError(ex, "Unhandled Exception Behaviour Request: Unhandled Exception for Request {Name} {@Request}", requestName, request);
 
+                //NuGet\Install-Package Ben.Demystifier
+                ex.Demystify();
+
                 throw;
             }
         }
     }
+
+    public class RequestExceptionHandler<TRequest, TResponse> : IRequestExceptionHandler<TRequest, TResponse>
+    {
+        public Task Handle(TRequest request, Exception exception, RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
 }

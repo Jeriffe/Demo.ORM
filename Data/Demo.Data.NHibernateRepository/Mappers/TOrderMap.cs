@@ -13,6 +13,7 @@ namespace Demo.Data.NHibernateRepository
             Table("T_Order");
             Id(x => x.Id);
 
+            Map(x => x.CustomerID);
             Map(x => x.CreateDate);
             Map(x => x.Description);
             Map(x => x.TotalPrice);

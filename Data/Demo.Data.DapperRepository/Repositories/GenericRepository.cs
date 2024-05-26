@@ -55,7 +55,7 @@ namespace Demo.Data.DapperRepository
             return GetQuery().Where(predicateExpr);
         }
 
-        public TEntity GetByKey(int Id)
+        public TEntity GetByKey(object Id)
         {
             return Context.Connection.Get<TEntity>(Id);
         }

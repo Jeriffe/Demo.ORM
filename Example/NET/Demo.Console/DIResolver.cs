@@ -2,8 +2,8 @@
 using Autofac.Extensions.DependencyInjection;
 using Demo.Data.Models;
 
-//using Demo.Data.DapperRepository;
-using Demo.Data.NHibernateRepository;
+using Demo.Data.DapperRepository;
+//using Demo.Data.NHibernateRepository;
 //using Demo.Data.RepoDBRepository;
 using Demo.DTOs.Mapper;
 using Demo.Infrastructure;
@@ -52,13 +52,13 @@ namespace Demo.NETConsole
             });
 
 
-            var connstr =  Configuration.GetConnectionString("DB");
+            var connstr = Configuration.GetConnectionString("DB");
 
             //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
             connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
-            services.AddScoped<IUnitOfWork,UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper(typeof(MappingProfile));
 
@@ -80,8 +80,11 @@ namespace Demo.NETConsole
             // before or after Populate, however you choose.
 
             containerBuilder.RegisterType<GenericRepository<TPatient>>().As<IRepository<TPatient>>();
+            containerBuilder.RegisterType<GenericRepository<TOrder>>().As<IRepository<TOrder>>();
+
 
             containerBuilder.RegisterType<PatientService>().As<IPatientSvc>();
+            containerBuilder.RegisterType<OrderSvc>().As<IOrderSvc>();
 
 
             // Creating a new AutofacServiceProvider makes the container
@@ -95,6 +98,6 @@ namespace Demo.NETConsole
             return serviceProvider;
         }
 
-       
+
     }
 }

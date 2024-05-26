@@ -4,18 +4,12 @@ using System.Linq.Expressions;
 
 namespace Demo.Infrastructure
 {
-    public interface IRepository<TEntity> : IRepository<TEntity, int>
-         where TEntity : class, new()
-    {
-    }
-
-    public interface IRepository<TEntity, TKey> : IDisposable
+    public interface IRepository<TEntity> : IDisposable
         where TEntity : class, new()
-        where TKey : struct
     {
         IUnitOfWork UnitOfWork { get; }
 
-        TEntity GetByKey(TKey id);
+        TEntity GetByKey(object id);
 
         TEntity Get(Expression<Func<TEntity, bool>> predicateExpr);
 

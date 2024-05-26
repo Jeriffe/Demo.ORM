@@ -9,7 +9,7 @@ namespace Demo.Services
     {
         IEnumerable<TDTO> GetAll(PageFilter pageFilter);
 
-        TDTO GetSingle(int keyId);
+        TDTO GetSingle(object keyId);
 
         TDTO Create(TDTO item);
 
@@ -33,7 +33,7 @@ namespace Demo.Services
             this.mapper = mapper;
         }
 
-        public TDTO GetSingle(int keyId)
+        public TDTO GetSingle(object keyId)
         {
             var entity = entityRepository.GetByKey(keyId);
 

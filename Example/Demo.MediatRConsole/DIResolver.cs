@@ -1,4 +1,5 @@
 ﻿using Demo.Application.Common.Behaviours;
+using Demo.Application.Patients.Command;
 using Demo.Data.Models;
 
 //using Demo.Data.DapperRepository;
@@ -6,6 +7,7 @@ using Demo.Data.Models;
 using Demo.Data.RepoDBRepository;
 using Demo.DTOs.Mapper;
 using Demo.Infrastructure;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -45,9 +47,10 @@ namespace Demo.MediatRConsole
 
             services.AddAutoMapper(typeof(MappingProfile));
 
+            services.AddValidatorsFromAssembly(typeof(CreatePatientCommandValidator).Assembly);
+
 
             services.AddMediatR(typeof(Application.GetPatientsQuery));
-
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));

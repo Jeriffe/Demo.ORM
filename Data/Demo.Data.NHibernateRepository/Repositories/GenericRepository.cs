@@ -7,7 +7,8 @@ using System.Linq.Expressions;
 
 namespace Demo.Data.NHibernateRepository
 {
-    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class, new()
+     public class GenericRepository<TEntity> : IRepository<TEntity>
+        where TEntity : class, new()
     {
         private IUnitOfWork<IDbContext> unitOfWork;
 
@@ -87,11 +88,10 @@ namespace Demo.Data.NHibernateRepository
             return Session.Query<TEntity>().Where(predicateExpr).ToList();
         }
 
-        public TEntity GetByKey(int Id)
+        public TEntity GetByKey(object id)
         {
-            return Session.Get<TEntity>(Id);
+            return Session.Get<TEntity>(id);
         }
-
 
         public TEntity Get(Expression<Func<TEntity, bool>> predicateExpr)
         {
@@ -113,13 +113,14 @@ namespace Demo.Data.NHibernateRepository
             }
 
             return Trans(() =>
-                    {
-                        var obj = Session.Save(entity);
-                        var id = Convert.ToInt32(obj);
-                        var item = GetByKey(id);
+            {
+                var obj = Session.Save(entity);
+                var id = Convert.ToInt32(obj);
 
-                        return item;
-                    });
+                var item = GetByKey(id);
+
+                return item;
+            });
         }
 
 
@@ -192,3 +193,4 @@ namespace Demo.Data.NHibernateRepository
         #endregion
     }
 }
+

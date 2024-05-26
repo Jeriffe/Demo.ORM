@@ -1,7 +1,5 @@
 ﻿using Demo.Data.Models;
 using FluentNHibernate.Mapping;
-using NHibernate.Mapping.ByCode;
-using NHibernate.Mapping.ByCode.Conformist;
 
 
 namespace Demo.Data.NHibernateRepository

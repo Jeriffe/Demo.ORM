@@ -12,11 +12,17 @@ namespace Demo.Data.RepoDBRepository
         public static void Initialize()
         {
             var patienMapper = FluentMapper.Entity<TPatient>();
+
             patienMapper
             .Table("dbo.T_PATIENT")
             .Primary(e => e.PatientId)
             .Identity(e => e.PatientId);
             // .Column(e=>e.PatientId, "PatientId")
+
+            var orderMapper = FluentMapper.Entity<TOrder>();
+            orderMapper.Table("dbo.T_Order")
+                        .Primary(e => e.Id)
+                        .Identity(e => e.Id);
         }
     }
 }

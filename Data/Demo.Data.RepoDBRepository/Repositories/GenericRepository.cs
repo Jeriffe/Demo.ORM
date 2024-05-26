@@ -150,7 +150,7 @@ namespace Demo.Data.RepoDBRepository
             }
         }
 
-        public TEntity GetByKey(int id)
+        public TEntity GetByKey(object id)
         {
             return Context.Connection.Query<TEntity>(id, transaction: unitOfWork.Transaction).FirstOrDefault();
         }
