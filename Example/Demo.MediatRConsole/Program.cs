@@ -16,7 +16,23 @@ static void CallAppService()
 {
 
     var mediatR = DIResolver.Resolve<IMediator>();
+    TestOrder(mediatR);
 
+    TestPatient(mediatR);
+}
+static void TestOrder(IMediator mediatR)
+{
+    var items = mediatR.Send(new GetOrdersQuery() { PageFilter = new Demo.Infrastructure.PageFilter { } }).Result;
+
+    if (items.Count > 0)
+    {
+        var updatedPatient = mediatR.Send(new GetOrderQuery() { Id = items[0].Id }).Result;
+
+    }
+
+}
+static void TestPatient(IMediator mediatR)
+{
     var patients = mediatR.Send(new GetPatientsQuery() { PageFilter = new Demo.Infrastructure.PageFilter { } }).Result;
 
 

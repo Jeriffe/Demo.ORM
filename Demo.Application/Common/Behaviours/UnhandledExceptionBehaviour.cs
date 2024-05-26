@@ -37,13 +37,26 @@ namespace Demo.Application.Common.Behaviours
         }
     }
 
-    public class RequestExceptionHandler<TRequest, TResponse> : IRequestExceptionHandler<TRequest, TResponse>
-    {
-        public Task Handle(TRequest request, Exception exception, RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //public class RequestUnhandledExceptionHandler<TRequest, TResponse> : IRequestExceptionHandler<TRequest, TResponse>
+    //{
+    //    public Task Handle(TRequest request, Exception exception, RequestExceptionHandlerState<TResponse> state, CancellationToken cancellationToken)
+    //    {
+    //        try
+    //        {
+    //            //TODO
+    //            return Task.CompletedTask;
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            var requestName = typeof(TRequest).Name;
+
+    //            //NuGet\Install-Package Ben.Demystifier
+    //            ex.Demystify();
+
+    //            throw;
+    //        }
+    //    }
+    //}
 
 
 }

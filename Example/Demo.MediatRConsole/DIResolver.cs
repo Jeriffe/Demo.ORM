@@ -9,6 +9,7 @@ using Demo.DTOs.Mapper;
 using Demo.Infrastructure;
 using FluentValidation;
 using MediatR;
+using MediatR.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 namespace Demo.MediatRConsole
@@ -51,6 +52,9 @@ namespace Demo.MediatRConsole
 
 
             services.AddMediatR(typeof(Application.GetPatientsQuery));
+
+            
+            //services.AddTransient(typeof(IRequestExceptionHandler<,>), typeof(RequestUnhandledExceptionHandler<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
@@ -61,6 +65,8 @@ namespace Demo.MediatRConsole
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IRepository<TPatient>, GenericRepository<TPatient>>();
+            services.AddScoped<IRepository<TOrder>, GenericRepository<TOrder>>();
+
 
             Console.WriteLine($"ConnectionString={connstr}");
 
