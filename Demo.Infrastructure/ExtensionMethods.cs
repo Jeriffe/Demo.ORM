@@ -25,27 +25,27 @@ namespace Demo.Infrastructure
             }
         }
 
-        public static void ProcessWithTrans(this IUnitOfWork conn, Action action)
-        {
-            using (var transaction = new TransactionScope())
-            {
-                try
-                {
-                    conn.BeginTrans();
+        //public static void ProcessByTrans(this IUnitOfWork conn, Action action)
+        //{
+        //    using (var transaction = new TransactionScope())
+        //    {
+        //        try
+        //        {
+        //            conn.BeginTrans();
 
-                    action();
+        //            action();
 
-                    conn.Commit();
+        //            conn.Commit();
 
-                    transaction.Complete();
+        //            transaction.Complete();
 
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
-            }
-        }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw ex;
+        //        }
+        //    }
+        //}
 
         public static void EnsureOpenConn(this DbConnection conn)
         {

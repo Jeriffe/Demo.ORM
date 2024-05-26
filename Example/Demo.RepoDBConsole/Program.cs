@@ -49,7 +49,7 @@ namespace Demo.RepoDBConsole
             var service = new ReportService(new UnitOfWork(context));
 
             //Use app service
-            unitOfWork.ProcessWithTrans(() =>
+            unitOfWork.ProcessByTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
                 //Create
@@ -138,7 +138,7 @@ namespace Demo.RepoDBConsole
             // Delete
             patientRepo.Delete(newPatient);
 
-            unitOfWork.ProcessWithTrans(() =>
+            unitOfWork.ProcessByTrans(() =>
             {
                 int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
 

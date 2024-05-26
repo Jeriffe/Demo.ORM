@@ -1,5 +1,6 @@
 ﻿using Demo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -7,12 +8,7 @@ using System.Text;
 
 namespace Demo.Date.EFCoreRepository
 {
-    public interface IRepoDBRepository<TEntity> : IRepository<TEntity> where TEntity : class, new()
-    {
-
-    }
-
-    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity>
+    public class GenericRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, new()
     {
         public GenericRepository(IUnitOfWork unitOfWork)
@@ -59,9 +55,9 @@ namespace Demo.Date.EFCoreRepository
             throw new NotImplementedException();
         }
 
-        public TEntity GetByKey(int id)
+        public TEntity GetByKey(object id)
         {
-          return DBContext.Find<TEntity>(id);
+            return DBContext.Find<TEntity>(id);
         }
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr = null)
@@ -72,6 +68,38 @@ namespace Demo.Date.EFCoreRepository
         public void Update(TEntity item)
         {
             throw new NotImplementedException();
+        }
+
+
+
+        public void Create(IEnumerable<TEntity> entities)
+        {
+            DBContext.BulkInsert(entities, 
+                options => 
+                { 
+                    options.BatchSize = 2000;
+                    options.BatchTimeout = 180;
+                });
+        }
+
+        public void Update(IEnumerable<TEntity> entities)
+        {
+            DBContext.BulkUpdate(entities,
+                options =>
+                {
+                    options.BatchSize = 2000;
+                    options.BatchTimeout = 180;
+                });
+        }
+
+        public void Delete(IEnumerable<TEntity> entities)
+        {
+            DBContext.BulkDelete(entities,
+                options =>
+                {
+                    options.BatchSize = 2000;
+                    options.BatchTimeout = 180;
+                });
         }
     }
 }

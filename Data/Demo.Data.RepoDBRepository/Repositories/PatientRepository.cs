@@ -2,12 +2,11 @@
 using Demo.DBScripts;
 using Demo.Infrastructure;
 using System.Collections.Generic;
-using System.Data;
 
 namespace Demo.Data.RepoDBRepository
 {
 
-    public interface IPatientRepository : IRepoDBRepository<TPatient>
+    public interface IPatientRepository : IRepository<TPatient>
     {
         TPatient GetPatientByAccountNumber(string accountNumber);
         IEnumerable<TPatient> GetActivePatients(PageFilter pagFilter);

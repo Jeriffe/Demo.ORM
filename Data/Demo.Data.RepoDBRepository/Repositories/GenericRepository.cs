@@ -3,27 +3,19 @@ using RepoDb;
 using RepoDb.Enumerations;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Demo.Data.RepoDBRepository
 {
-    public interface IRepoDBRepository<TEntity> : IRepository<TEntity>
-        where TEntity : class, new()
-    {
-        void Create(IEnumerable<TEntity> entities);
-
-        void Update(IEnumerable<TEntity> entities);
-
-        void Delete(IEnumerable<TEntity> entities);
-    }
-
-    public class GenericRepository<TEntity> : IRepoDBRepository<TEntity>
+    public class GenericRepository<TEntity> : IRepository<TEntity>
         where TEntity : class, new()
     {
         public string ConnectionString { get; }
 
-        private const int BatchNumber = 100;
+        private const int BatchNumber = 1000;
 
         private IUnitOfWork<IDbContext> unitOfWork;
 
@@ -99,55 +91,24 @@ namespace Demo.Data.RepoDBRepository
 
         public virtual void Create(IEnumerable<TEntity> entities)
         {
-            var isBatch = entities.Count() >= BatchNumber;
             var rows = default(int);
-            if (isBatch)
-            {
-                rows = Context.Connection.InsertAll<TEntity>(entities, batchSize: BatchNumber, transaction: unitOfWork.Transaction);
-            }
-            else
-            {
-                foreach (var entity in entities)
-                {
-                    Context.Connection.Insert(entity, transaction: unitOfWork.Transaction);
-                    rows++;
-                }
-            }
+            //You can adjust the size of your batch by simply passing the value at the batchSize argument.By default, the value is 10
+            rows = Context.Connection.InsertAll<TEntity>(entities, batchSize: BatchNumber, transaction: unitOfWork.Transaction);
         }
 
         public virtual void Update(IEnumerable<TEntity> entities)
         {
-            var isBatch = entities.Count() >= BatchNumber;
             var rows = default(int);
-            if (isBatch)
-            {
-                rows = Context.Connection.UpdateAll<TEntity>(entities, transaction: unitOfWork.Transaction);
-            }
-            else
-            {
-                foreach (var entity in entities)
-                {
-                    rows += Context.Connection.Update(entity, transaction: unitOfWork.Transaction);
-                }
-            }
+
+            rows = Context.Connection.UpdateAll<TEntity>(entities, transaction: unitOfWork.Transaction);
 
         }
 
         public virtual void Delete(IEnumerable<TEntity> entities)
         {
-            var isBatch = entities.Count() >= BatchNumber;
             var rows = default(int);
-            if (isBatch)
-            {
-                rows = Context.Connection.DeleteAll<TEntity>(entities, transaction: unitOfWork.Transaction);
-            }
-            else
-            {
-                foreach (var entity in entities)
-                {
-                    rows += Context.Connection.Delete(entity, transaction: unitOfWork.Transaction);
-                }
-            }
+
+            rows = Context.Connection.DeleteAll<TEntity>(entities, transaction: unitOfWork.Transaction);
         }
 
         public TEntity GetByKey(object id)

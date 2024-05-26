@@ -13,18 +13,19 @@ namespace Demo.Data.NHibernateRepository
     {
         public string ConnectionString { get; set; }
         public NHibernate.ISession Session { get; private set; }
+        public static ISessionFactory SessionFactory { get; private set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
 
         static SqlDbContext()
         {
-            sessionFactory = CreateSessionFactory();
+            SessionFactory = CreateSessionFactory();
         }
 
         public SqlDbContext(string connectionString)
         {
             ConnectionString = connectionString;
 
-            Session = sessionFactory.OpenSession();
+            Session = SessionFactory.OpenSession();
         }
 
         private DbConnection conn;
@@ -52,7 +53,7 @@ namespace Demo.Data.NHibernateRepository
 
             Connection = null;
         }
-        static ISessionFactory sessionFactory;
+
         static ISessionFactory CreateSessionFactory()
         {
             var connStr = ConfigurationManager.ConnectionStrings["DB"].ConnectionString; ;

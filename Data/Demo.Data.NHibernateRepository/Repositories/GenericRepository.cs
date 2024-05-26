@@ -7,8 +7,8 @@ using System.Linq.Expressions;
 
 namespace Demo.Data.NHibernateRepository
 {
-     public class GenericRepository<TEntity> : IRepository<TEntity>
-        where TEntity : class, new()
+    public class GenericRepository<TEntity> : IRepository<TEntity>
+       where TEntity : class, new()
     {
         private IUnitOfWork<IDbContext> unitOfWork;
 
@@ -26,6 +26,8 @@ namespace Demo.Data.NHibernateRepository
             if (this.unitOfWork.Context is SqlDbContext)
             {
                 Session = (this.unitOfWork.Context as SqlDbContext).Session;
+
+
             }
         }
 
@@ -33,33 +35,6 @@ namespace Demo.Data.NHibernateRepository
         public IUnitOfWork UnitOfWork
         {
             get { return unitOfWork; }
-        }
-
-        public void Trans(Action action)
-        {
-            //Fix:NHibernate.NonUniqueObjectException: 'a different object with the same identifier value was already associated
-            Session.Clear();
-            using (ITransaction trans = Session.BeginTransaction())
-            {
-                action();
-
-                trans.Commit();
-            }
-
-        }
-        public T Trans<T>(Func<T> action)
-        {
-            //Fix:NHibernate.NonUniqueObjectException: 'a different object with the same identifier value was already associated
-            Session.Clear();
-            using (ITransaction transaction = Session.BeginTransaction())
-            {
-                var result = action();
-
-                transaction.Commit();
-
-                return result;
-            }
-
         }
 
         public bool Any(Expression<Func<TEntity, bool>> predicateExpr)
@@ -187,6 +162,115 @@ namespace Demo.Data.NHibernateRepository
                 }
 
                 disposed = true;
+            }
+        }
+
+        public void Create(IEnumerable<TEntity> entities)
+        {
+            if (entities == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+
+            if (entities.Count() == 0)
+            {
+                return;
+            }
+
+            //Trans(() =>
+            //{
+            //    //https://nhibernate.info/doc/nhibernate-reference/batch.html
+
+            //    var list = entities.ToList();
+
+            //    for (int index = 0; index < list.Count; index++)
+            //    {
+            //        var obj = Session.Save(list[index]);
+
+            //        var item = GetByKey(obj);
+
+            //        // 20, same as the ADO batch size
+            //        if (index % 20 == 0)
+            //        {
+            //            // flush a batch of inserts and release memory:
+            //            Session.Flush();
+            //            Session.Clear();
+            //        }
+            //    }
+            //});
+
+            TransStateless((IStatelessSession session) =>
+            {
+                foreach (var entity in entities)
+                {
+                    session.Insert(entity);
+                }
+
+            });
+
+        }
+
+        public void Update(IEnumerable<TEntity> entities)
+        {
+            TransStateless((IStatelessSession session) =>
+            {
+                foreach (var entity in entities)
+                {
+                    session.Update(entity);
+                }
+
+            });
+        }
+
+        public void Delete(IEnumerable<TEntity> entities)
+        {
+            TransStateless((IStatelessSession session) =>
+            {
+                foreach (var entity in entities)
+                {
+                    session.Delete(entity);
+                }
+
+            });
+        }
+
+
+        public void Trans(Action action)
+        {
+            //Fix:NHibernate.NonUniqueObjectException: 'a different object with the same identifier value was already associated
+            Session.Clear();
+            using (ITransaction trans = Session.BeginTransaction())
+            {
+                action();
+
+                trans.Commit();
+            }
+
+        }
+        public T Trans<T>(Func<T> action)
+        {
+            //Fix:NHibernate.NonUniqueObjectException: 'a different object with the same identifier value was already associated
+            Session.Clear();
+            using (ITransaction transaction = Session.BeginTransaction())
+            {
+                var result = action();
+
+                transaction.Commit();
+
+                return result;
+            }
+
+        }
+        private   void TransStateless(Action<IStatelessSession> action)
+        {
+            //https://nhibernate.info/blog/2008/10/30/bulk-data-operations-with-nhibernate-s-stateless-sessions.html
+
+            using (IStatelessSession statelessSession = SqlDbContext.SessionFactory.OpenStatelessSession())
+            using (ITransaction trans = statelessSession.BeginTransaction())
+            {
+                action(statelessSession);
+
+                trans.Commit();
             }
         }
 

@@ -20,6 +20,13 @@ namespace Demo.Infrastructure
         void Update(TEntity item);
 
         void Delete(TEntity item);
+
+
+        void Create(IEnumerable<TEntity> entities);
+
+        void Update(IEnumerable<TEntity> entities);
+
+        void Delete(IEnumerable<TEntity> entities);
     }
 
     public enum OrderSorting

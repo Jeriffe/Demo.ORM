@@ -1,0 +1,1 @@
+﻿NuGet\Install-Package Z.EntityFramework.Plus.EFCore -Version 3.102.2.5

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Z.Dapper.Plus;
 
 namespace Demo.Data.DapperRepository
 {
@@ -144,6 +145,25 @@ namespace Demo.Data.DapperRepository
 
                 disposed = true;
             }
+        }
+
+        public void Create(IEnumerable<TEntity> entities)
+        {
+            //Z.Dapper.Plus :  https://dapper-plus.net/bulk-insert
+            Context.Connection.BulkInsert(entities);
+
+            //Context.Connection.UseBulkOptions(options => options.InsertIfNotExists = true)
+            //          .BulkInsert(entities);
+        }
+
+        public void Update(IEnumerable<TEntity> entities)
+        {
+            Context.Connection.BulkUpdate(entities);
+        }
+
+        public void Delete(IEnumerable<TEntity> entities)
+        {
+            Context.Connection.BulkDelete(entities);
         }
 
         #endregion
