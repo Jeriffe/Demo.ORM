@@ -1,4 +1,5 @@
-﻿using Demo.Data.Models;
+﻿using Demo.Application.Common.Behaviours;
+using Demo.Data.Models;
 
 //using Demo.Data.DapperRepository;
 //using Demo.Data.NHibernateRepository;
@@ -7,6 +8,7 @@ using Demo.DTOs.Mapper;
 using Demo.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 namespace Demo.MediatRConsole
 {
     public class DIResolver
@@ -34,14 +36,23 @@ namespace Demo.MediatRConsole
             var services = new ServiceCollection();
 
             //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
-          var  connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+            var connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+
+            services.AddLogging(config =>
+               {
+                   config.AddConsole();
+               });
 
             services.AddAutoMapper(typeof(MappingProfile));
 
-            services.AddMediatR(typeof(Demo.Application.GetPatientsQuery));
+            
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddMediatR(typeof(Application.GetPatientsQuery));
 
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
-            services.AddScoped<IUnitOfWork,UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IRepository<TPatient>, GenericRepository<TPatient>>();
 
@@ -50,6 +61,6 @@ namespace Demo.MediatRConsole
             return services.BuildServiceProvider();
         }
 
-       
+
     }
 }

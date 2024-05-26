@@ -10,6 +10,7 @@ using Demo.Infrastructure;
 using Demo.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 namespace Demo.NETConsole
 {
     public class DIResolver
@@ -44,7 +45,11 @@ namespace Demo.NETConsole
 
             // The Microsoft.Extensions.Logging package provides this one-liner
             // to add logging services.
-            services.AddLogging();
+            services.AddLogging(config =>
+            {
+                config.AddDebug();
+                config.AddConsole();
+            });
 
 
             var connstr =  Configuration.GetConnectionString("DB");

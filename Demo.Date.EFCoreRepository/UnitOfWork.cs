@@ -47,7 +47,6 @@ namespace Demo.Date.EFCoreRepository
 
         public object ExecuteRawScalar(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
-            Context.
             throw new NotImplementedException();
         }
 
