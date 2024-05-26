@@ -35,6 +35,8 @@ static void CallAppService()
     newPatient.MiddleInitial = "BaseAppSvc";
 
     mediatR.Send(new UpdatePatientCommand { Patient = newPatient });
+
+
     var updatedPatient = mediatR.Send(new GetPatientQuery() { Id = newPatient.PatientId }).Result;
 
     mediatR.Send(new DeletePatientCommand { Id = newPatient.PatientId });

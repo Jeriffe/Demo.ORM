@@ -45,11 +45,14 @@ namespace Demo.MediatRConsole
 
             services.AddAutoMapper(typeof(MappingProfile));
 
-            
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
 
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             services.AddMediatR(typeof(Application.GetPatientsQuery));
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
 
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
