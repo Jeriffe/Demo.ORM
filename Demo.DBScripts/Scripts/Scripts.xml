@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LinkFiles>
-	    <LinkFile src="Formulary.xml" />
-		<LinkFile src="Patient.xml" />
+	<LinkFile src="Formulary.xml" />
+	<LinkFile src="Patient.xml" />
+	<LinkFile src="Order.xml" />
 </LinkFiles>

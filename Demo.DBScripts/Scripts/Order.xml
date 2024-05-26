@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DBScripts>
+	<DBScript name="ORDER_QUERY_ORDERLITE" type="Text">
+		<Content>
+			<![CDATA[
+SELECT TOP (1000) 
+	   O.[Id] AS OrderId
+      ,[CustomerID]
+	  ,C.Name AS CustomerName
+      ,[Description]
+      ,[TotalPrice]
+  FROM [ORM_DEMO].[dbo].[T_Order] AS O
+  INNER JOIN dbo.T_Customer AS C
+	ON O.CustomerID=C.Id
+			]]>
+		</Content>
+	</DBScript>
+</DBScripts>

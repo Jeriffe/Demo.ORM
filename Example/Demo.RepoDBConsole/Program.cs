@@ -3,6 +3,7 @@ using Demo.Data.Models;
 using Demo.Data.RepoDBRepository;
 using Demo.DBScripts;
 using Demo.DTOs;
+using Demo.DTOs.Orders;
 using Demo.Infrastructure;
 using Demo.RawSql;
 using Demo.Services;
@@ -19,7 +20,7 @@ namespace Demo.RepoDBConsole
 
         static void Main(string[] args)
         {
-            //RawOperation();
+            RawOperation();
 
             TestRepositories();
 
@@ -85,6 +86,12 @@ namespace Demo.RepoDBConsole
                 var unitOfWork = new UnitOfWork(context, sqlExecutor);
 
                 //var unitOfWork = new UnitOfWork(context);
+
+
+                var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
+                var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
+
+
 
                 unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
                parameters: new List<RawParameter> {

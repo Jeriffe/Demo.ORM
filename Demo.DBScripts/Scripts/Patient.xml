@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <DBScripts>
-  <DBScript name="PATIENT_QUERY_ALL">
-    <Content>
-      <![CDATA[
+	<DBScript name="PATIENT_QUERY_ALL">
+		<Content>
+			<![CDATA[
 SELECT 
        [PatientID]
       ,[FirstName]
@@ -18,12 +18,11 @@ ORDER BY PatientID
 OFFSET @Offset ROWS
 FETCH NEXT @PageSize ROWS ONLY
     ]]>
-    </Content>
-  </DBScript>
-  
-  <DBScript name="PATIENT_SINGLE_BY_MRN">
-    <Content>
-    <![CDATA[
+		</Content>
+	</DBScript>
+	<DBScript name="PATIENT_SINGLE_BY_MRN">
+		<Content>
+			<![CDATA[
 SELECT
        [PatientID]
       ,[FirstName]
@@ -37,8 +36,8 @@ SELECT
 FROM [DapperTest].[dbo].[T_PATIENT]
 WHERE MedRecNumber=@MedRecNumber
     ]]>
-    </Content>
-  </DBScript>
+		</Content>
+	</DBScript>
 	<DBScript name="PATIENT_SINGLE_BY_ACCT">
 		<Content>
 			<![CDATA[
@@ -63,7 +62,6 @@ WHERE MedRecNumber=@MedRecNumber
 			<![CDATA[dbo.GetPatientByGender]]>
 		</Content>
 	</DBScript>
-
 	<DBScript name="PATIENT_QUERY_BY_DISCHARGEDATE" type="Text">
 		<Content>
 			<![CDATA[
@@ -86,5 +84,4 @@ WHERE MedRecNumber=@MedRecNumber
 			]]>
 		</Content>
 	</DBScript>
-	
 </DBScripts>

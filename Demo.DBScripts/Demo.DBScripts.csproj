@@ -8,6 +8,9 @@
     <None Update="Scripts\Formulary.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Scripts\Order.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Scripts\Patient.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -3,6 +3,7 @@ using Demo.Data.DapperRepository;
 using Demo.Data.Models;
 using Demo.DBScripts;
 using Demo.DTOs;
+using Demo.DTOs.Orders;
 using Demo.Infrastructure;
 using Demo.Services;
 using System.Configuration;
@@ -129,6 +130,11 @@ namespace Demo.DapperConsole
             {
                 var context = new SqlDbContext(ConnectionString);
                 var unitOfWork = new UnitOfWork(context);
+
+
+                var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
+                var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
+
 
                 unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
                    parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
