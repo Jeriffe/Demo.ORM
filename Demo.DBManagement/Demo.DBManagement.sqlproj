@@ -57,22 +57,23 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="Table" />
     <Folder Include="PostDeployment" />
     <Folder Include="PublishSetttings" />
+    <Folder Include="Objects" />
+    <Folder Include="Objects\StoredProcedures" />
+    <Folder Include="Objects\Views" />
+    <Folder Include="Objects\Functions" />
+    <Folder Include="Objects\Tables" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Table\T_OrderItem.sql" />
-    <Build Include="Table\T_Customer.sql" />
-    <Build Include="Table\T_PATIENT.sql" />
     <None Include="PostDeployment\InitialPatient.sql" />
+    <Build Include="Objects\Tables\T_PATIENT.sql" />
+    <Build Include="Objects\Tables\T_Customer.sql" />
+    <Build Include="Objects\Tables\T_Order.sql" />
+    <Build Include="Objects\Tables\T_OrderItem.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />
-  </ItemGroup>
-  <ItemGroup>
-    <Build Include="Table\T_Order.sql" />
-    <Build Include="Table\T_Product.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment\Script.PostDeployment1.sql" />
@@ -84,5 +85,10 @@
     <None Include="PublishSetttings\RecreateDB.publish.xml" />
     <None Include="PublishSetttings\UpdateWithTableDrop.publish.xml" />
     <None Include="PostDeployment\InitialOrderItem.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Objects\Tables\T_Product.sql" />
+    <Build Include="Objects\StoredProcedures\GetPatientByMedRecNumber.sql" />
+    <Build Include="Objects\StoredProcedures\GetPatientByGender.sql" />
   </ItemGroup>
 </Project>
