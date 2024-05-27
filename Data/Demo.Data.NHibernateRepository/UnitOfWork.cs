@@ -1,9 +1,9 @@
 ﻿using Demo.Infrastructure;
+using Demo.RawSql;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using Demo.RawSql;
-using System.Collections.Generic;
 
 namespace Demo.Data.NHibernateRepository
 {
@@ -24,7 +24,7 @@ namespace Demo.Data.NHibernateRepository
 
             if (SqlExecutor == null)
             {
-                SqlExecutor = new DataRawSqlExecutor();
+                SqlExecutor = new DapperRawExecutor();
             }
 
             Context = context;

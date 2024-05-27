@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Demo.Infrastructure\Demo.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Demo.RawSql\Demo.RawSql.csproj" />
     <ProjectReference Include="..\Demo.Data.Models\Demo.Data.Models.csproj" />
+    <ProjectReference Include="..\RawSql\Demo.RawSqlWithDapper\Demo.RawSqlWithDapper.csproj" />
   </ItemGroup>
 
 </Project>
