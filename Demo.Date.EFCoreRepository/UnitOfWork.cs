@@ -1,4 +1,5 @@
 ﻿using Demo.Infrastructure;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,7 +17,7 @@ namespace Demo.Date.EFCoreRepository
 
             if (SqlExecutor == null)
             {
-                SqlExecutor = new DefaultRepoDEFcORERawExecutor();
+                SqlExecutor = new DefaultEFCoreRawExecutor((SqlDBcontext)context);
             }
 
             Context = context;
@@ -57,8 +58,20 @@ namespace Demo.Date.EFCoreRepository
 
         public IEnumerable<T> ExecuteRawSql<T>(string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
         {
-            throw new NotImplementedException();
+            return SqlExecutor.ExecuteRawSql<T>(null, null,sql,parameters: parameters);
         }
+
+        public IEnumerable<T> ExecuteRawSql<T>(string sql, CommandType commandType = CommandType.Text, params SqlParameter[] parameters) where T : class, new()
+        {
+            return (SqlExecutor as DefaultEFCoreRawExecutor).ExecuteRawSql<T>(null, null, sql, parameters: parameters);
+        }
+
+        public void ExecuteRawNoQuery<T>(string sql, CommandType commandType = CommandType.Text, params SqlParameter[] parameters) where T : class, new()
+        {
+            (SqlExecutor as DefaultEFCoreRawExecutor).ExecuteNoQueryRawSql<T>(null, null, sql, parameters: parameters);
+        }
+
+
 
         public void Rollback()
         {
