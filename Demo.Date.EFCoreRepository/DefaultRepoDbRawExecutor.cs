@@ -1,12 +1,20 @@
 ﻿using Demo.Infrastructure;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
 namespace Demo.Date.EFCoreRepository
 {
-    internal class DefaultRepoDEFcORERawExecutor : IRawSqlExecutor
+    internal class DefaultEFCoreRawExecutor : IRawSqlExecutor
     {
+        private readonly SqlDBcontext dbContext;
+
+        public DefaultEFCoreRawExecutor(SqlDBcontext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
         public void ExecuteNoQueryRawSql(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
             throw new System.NotImplementedException();
@@ -24,7 +32,18 @@ namespace Demo.Date.EFCoreRepository
 
         public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
         {
-            throw new System.NotImplementedException();
+            return dbContext.Set<T>().FromSqlRaw(string.Format(sql, parameters));
+        }
+
+        public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params SqlParameter[] parameters) where T : class, new()
+        {
+            return dbContext.Set<T>().FromSqlRaw(sql, parameters);
+        }
+
+        public void ExecuteNoQueryRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params SqlParameter[] parameters) where T : class, new()
+        {
+            dbContext.Database.ExecuteSqlRaw(sql, parameters);
+
         }
     }
 }

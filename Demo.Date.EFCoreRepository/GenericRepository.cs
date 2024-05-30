@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -36,13 +37,15 @@ namespace Demo.Date.EFCoreRepository
         public TEntity Create(TEntity item)
         {
             var model = DBContext.Add(item);
-
+            DBContext.SaveChanges();
             return model.Entity;
         }
 
         public void Delete(TEntity item)
         {
             DBContext.Remove(item);
+            DBContext.SaveChanges();
+
         }
 
         public void Dispose()
@@ -52,7 +55,8 @@ namespace Demo.Date.EFCoreRepository
 
         public TEntity Get(Expression<Func<TEntity, bool>> predicateExpr)
         {
-            throw new NotImplementedException();
+            return DBContext.Set<TEntity>().Where(predicateExpr).FirstOrDefault();
+
         }
 
         public TEntity GetByKey(object id)
@@ -62,12 +66,17 @@ namespace Demo.Date.EFCoreRepository
 
         public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr = null)
         {
-            throw new NotImplementedException();
+            if (predicateExpr == null)
+            {
+                return DBContext.Set<TEntity>();
+            }
+            return DBContext.Set<TEntity>().Where(predicateExpr);
         }
 
         public void Update(TEntity item)
         {
-            throw new NotImplementedException();
+            DBContext.Entry(item).State = EntityState.Modified;
+            DBContext.SaveChanges();
         }
 
 
