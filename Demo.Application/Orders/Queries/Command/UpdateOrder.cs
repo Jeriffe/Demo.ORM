@@ -36,10 +36,11 @@ namespace Demo.Application.Orders.Command
 
             var updateOrderItems = dbOrderItems.Intersect(model.OrderItems, new OrderItemComparer());
             var newOrderItems = model.OrderItems.Except(dbOrderItems, new OrderItemComparer());
-            var deleteOrderItems = model.OrderItems.Except(updateOrderItems).Except(newOrderItems);
+            var deleteOrderItems = dbOrderItems.Except(updateOrderItems, new OrderItemComparer());
 
             orderItemRepository.BulkUpdate(updateOrderItems);
 
+            newOrderItems.ToList().ForEach(o => o.OrderId = model.Id);
             orderItemRepository.BulkCreate(newOrderItems);
 
             orderItemRepository.BulkDelete(deleteOrderItems);

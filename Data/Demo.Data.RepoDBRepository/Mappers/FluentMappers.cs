@@ -23,6 +23,13 @@ namespace Demo.Data.RepoDBRepository
             orderMapper.Table("dbo.T_Order")
                         .Primary(e => e.Id)
                         .Identity(e => e.Id);
+
+            var orderItemMapper = FluentMapper.Entity<TOrderItem>();
+            orderItemMapper.Table("dbo.T_OrderItem")
+                        .Primary(e => e.Id)
+                        .Identity(e => e.Id);
+                       
+                       
         }
     }
 }

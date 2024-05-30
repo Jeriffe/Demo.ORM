@@ -15,19 +15,25 @@ namespace Demo.Application.Orders.Command
     public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand>
     {
         private IMapper mapper;
-        private IRepository<TOrder> entityRepository;
+        private IRepository<TOrder> orderRepository;
+        private IRepository<TOrderItem> orderItemRepository;
 
-        public DeleteOrderCommandHandler(IRepository<TOrder> repository, IMapper mapper)
+        public DeleteOrderCommandHandler(IRepository<TOrder> orderRepository, IRepository<TOrderItem> orderItemRepository, IMapper mapper)
         {
-            entityRepository = repository;
+            this.orderRepository = orderRepository;
+            this.orderItemRepository = orderItemRepository;
             this.mapper = mapper;
         }
 
         public Task<Unit> Handle(DeleteOrderCommand request, CancellationToken cancellationToken)
         {
-            var model = entityRepository.GetByKey(request.Id);
+            var model = orderRepository.GetByKey(request.Id);
 
-            entityRepository.Delete(model);
+            var orderItems = orderItemRepository.GetList(o => o.OrderId == model.Id);
+
+            orderItemRepository.BulkDelete(orderItems);
+
+            orderRepository.Delete(model);
 
             return Task.FromResult(Unit.Value);
         }

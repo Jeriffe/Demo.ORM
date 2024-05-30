@@ -12,7 +12,7 @@ namespace Demo.Application.Orders.Command
             RuleFor(v => v.Order.OrderItems)
                 .NotEmpty();
 
-            RuleFor(v => v.Order.TCustomer)
+            RuleFor(v => v.Order.Customer)
                .NotEmpty();
         }
     }

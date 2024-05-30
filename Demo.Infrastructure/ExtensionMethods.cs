@@ -45,28 +45,48 @@ namespace Demo.Infrastructure
             }
         }
 
-        //public static void ProcessByTrans(this IUnitOfWork conn, Action action)
-        //{
-        //    using (var transaction = new TransactionScope())
-        //    {
-        //        try
-        //        {
-        //            conn.BeginTrans();
+        public static void ProcessWithTrans(this IUnitOfWork conn, Action action)
+        {
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    conn.BeginTrans();
 
-        //            action();
+                    action();
 
-        //            conn.Commit();
+                    conn.Commit();
 
-        //            transaction.Complete();
+                    transaction.Complete();
 
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            throw ex;
-        //        }
-        //    }
-        //}
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+        public static TEntity ProcessWithTrans<TEntity>(this IUnitOfWork conn, Func<TEntity> action) where TEntity : class
+        {
+            using (var trans = new TransactionScope())
+            {
+                try
+                {
+                    conn.BeginTrans(); 
+                    var result = action();
+                    conn.Commit();
 
+                    trans.Complete();
+
+                    return result;
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
         public static void EnsureOpenConn(this DbConnection conn)
         {
             if (conn.State != ConnectionState.Open)

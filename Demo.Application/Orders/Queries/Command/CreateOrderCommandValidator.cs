@@ -11,7 +11,7 @@ namespace Demo.Application.Patients.Command
             RuleFor(v => v.Order.OrderItems)
                 .NotEmpty();
 
-            RuleFor(v => v.Order.TCustomer)
+            RuleFor(v => v.Order.Customer)
                .NotEmpty();
         }
     }

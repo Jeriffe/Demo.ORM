@@ -20,21 +20,90 @@ namespace Demo.RepoDBConsole
 
         static void Main(string[] args)
         {
-            RawOperation();
 
-            TestRepositories();
+            TestOrders();
 
-            TestServices();
+            //RawOperation();
+
+            //TestRepositories();
+
+            //TestServices();
 
             Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
 
             Console.ReadLine();
         }
+        private static void TestOrders()
+        {
+            var context = new SqlDbContext(ConnectionString);
+
+            var unitOfWork = new UnitOfWork(context);
+
+            var orderRepo = new GenericRepository<TOrder>(unitOfWork);
+            var orderItemRep = new GenericRepository<TOrderItem>(unitOfWork);
+
+            var _configuration = new MapperConfiguration(config =>
+          config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
+
+            var mapper = _configuration.CreateMapper();
+            var svc = new OrderSvc(unitOfWork, orderRepo, orderItemRep, mapper);
+
+            var plist = svc.GetAll(null);
+
+
+            var maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
+            //Create
+            var dtoP = new Order
+            {
+                Customer = new Customer { Id = 4 },
+                Description = $"{maxId}",
+                TotalPrice = 8888.88,
+                OrderItems = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        ProductId=2,Price=99.99,
+                        Description="Desc,P2,Price99.99",
+                        CreateDate=DateTime.Now
+                    },
+                    new OrderItem
+                    {
+                        ProductId=10,Price=88.88,
+                        Description="Desc,P10,Price88.88",
+                        CreateDate=DateTime.Now
+                    }
+                }
+            };
+            dtoP = svc.Create(dtoP);
+
+
+            //Update
+            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
+            var order = svc.GetSingle(maxId);
+            var orderItems = orderItemRep.GetList(o => o.OrderId == order.Id);
+            order.OrderItems = mapper.Map<List<OrderItem>>(orderItems);
+            order.TotalPrice = 999.99;
+            order.OrderItems.RemoveAt(0);
+            order.OrderItems[0].Price += 10;
+            order.OrderItems.Add(new OrderItem {
+                ProductId = 5,
+                Price = 66.66,
+                Description = "Desc,P5,Price66.66",
+                CreateDate = DateTime.Now
+            });
+
+            svc.Update(order);
+
+            //Delete
+            svc.Delete(order);
+
+            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM dbo.T_Order");
+        }
 
         private static void TestServices()
         {
             var context = new SqlDbContext(ConnectionString);
-            
+
             var unitOfWork = new UnitOfWork(context);
 
             var patientRepo = new GenericRepository<TPatient>(unitOfWork);
