@@ -147,7 +147,7 @@ namespace Demo.Data.DapperRepository
             }
         }
 
-        public void Create(IEnumerable<TEntity> entities)
+        public void BulkCreate(IEnumerable<TEntity> entities)
         {
             //Z.Dapper.Plus :  https://dapper-plus.net/bulk-insert
             Context.Connection.BulkInsert(entities);
@@ -156,12 +156,12 @@ namespace Demo.Data.DapperRepository
             //          .BulkInsert(entities);
         }
 
-        public void Update(IEnumerable<TEntity> entities)
+        public void BulkUpdate(IEnumerable<TEntity> entities)
         {
             Context.Connection.BulkUpdate(entities);
         }
 
-        public void Delete(IEnumerable<TEntity> entities)
+        public void BulkDelete(IEnumerable<TEntity> entities)
         {
             Context.Connection.BulkDelete(entities);
         }

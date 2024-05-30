@@ -72,7 +72,7 @@ namespace Demo.Date.EFCoreRepository
 
 
 
-        public void Create(IEnumerable<TEntity> entities)
+        public void BulkCreate(IEnumerable<TEntity> entities)
         {
             DBContext.BulkInsert(entities, 
                 options => 
@@ -82,7 +82,7 @@ namespace Demo.Date.EFCoreRepository
                 });
         }
 
-        public void Update(IEnumerable<TEntity> entities)
+        public void BulkUpdate(IEnumerable<TEntity> entities)
         {
             DBContext.BulkUpdate(entities,
                 options =>
@@ -92,7 +92,7 @@ namespace Demo.Date.EFCoreRepository
                 });
         }
 
-        public void Delete(IEnumerable<TEntity> entities)
+        public void BulkDelete(IEnumerable<TEntity> entities)
         {
             DBContext.BulkDelete(entities,
                 options =>

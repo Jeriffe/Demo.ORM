@@ -64,6 +64,7 @@
     <Folder Include="Objects\Views" />
     <Folder Include="Objects\Functions" />
     <Folder Include="Objects\Tables" />
+    <Folder Include="Doc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PostDeployment\InitialPatient.sql" />
@@ -71,6 +72,7 @@
     <Build Include="Objects\Tables\T_Customer.sql" />
     <Build Include="Objects\Tables\T_Order.sql" />
     <Build Include="Objects\Tables\T_OrderItem.sql" />
+    <None Include="Doc\Working with Database Projects.pdf" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Database.refactorlog" />

@@ -18,7 +18,7 @@ namespace Demo.DTOs.Mapper
             CreateMap<TCustomer, Customer>().ReverseMap(); 
 
             CreateMap<TOrder, Order>().ReverseMap(); 
-            CreateMap<TOrderitem, OrderItem>().ReverseMap(); 
+            CreateMap<TOrderItem, OrderItem>().ReverseMap(); 
 
             CreateMap<TProduct, Product>().ReverseMap(); 
         }

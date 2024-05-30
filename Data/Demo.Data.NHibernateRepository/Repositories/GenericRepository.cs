@@ -165,7 +165,7 @@ namespace Demo.Data.NHibernateRepository
             }
         }
 
-        public void Create(IEnumerable<TEntity> entities)
+        public void BulkCreate(IEnumerable<TEntity> entities)
         {
             if (entities == null)
             {
@@ -210,7 +210,7 @@ namespace Demo.Data.NHibernateRepository
 
         }
 
-        public void Update(IEnumerable<TEntity> entities)
+        public void BulkUpdate(IEnumerable<TEntity> entities)
         {
             TransStateless((IStatelessSession session) =>
             {
@@ -222,7 +222,7 @@ namespace Demo.Data.NHibernateRepository
             });
         }
 
-        public void Delete(IEnumerable<TEntity> entities)
+        public void BulkDelete(IEnumerable<TEntity> entities)
         {
             TransStateless((IStatelessSession session) =>
             {

@@ -4,7 +4,7 @@ using System;
 namespace Demo.Data.Models
 {
 
-    public class TOrderitem {
+    public class TOrderItem {
         public virtual long Id { get; set; }
         public virtual long OrderId { get; set; }
         public virtual long ProductId { get; set; }

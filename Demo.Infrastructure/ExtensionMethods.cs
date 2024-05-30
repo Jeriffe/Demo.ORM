@@ -25,6 +25,26 @@ namespace Demo.Infrastructure
             }
         }
 
+        public static TEntity ProcessByTrans<TEntity>(this IUnitOfWork conn, Func<TEntity> action) where TEntity : class
+        {
+            using (var trans = new TransactionScope())
+            {
+                try
+                {
+                    var result = action();
+
+                    trans.Complete();
+
+                    return result;
+
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
         //public static void ProcessByTrans(this IUnitOfWork conn, Action action)
         //{
         //    using (var transaction = new TransactionScope())

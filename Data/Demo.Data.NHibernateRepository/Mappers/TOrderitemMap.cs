@@ -6,7 +6,7 @@ namespace Demo.Data.NHibernateRepository
 {
 
 
-    public class TOrderitemMap : ClassMap<TOrderitem>
+    public class TOrderitemMap : ClassMap<TOrderItem>
     {
 
         public TOrderitemMap()

@@ -33,7 +33,7 @@ namespace Demo.Services
             this.mapper = mapper;
         }
 
-        public TDTO GetSingle(object keyId)
+        public virtual TDTO GetSingle(object keyId)
         {
             var entity = entityRepository.GetByKey(keyId);
 
@@ -49,7 +49,7 @@ namespace Demo.Services
             return dtos;
         }
 
-        public TDTO Create(TDTO item)
+        public virtual TDTO Create(TDTO item)
         {
             var model = mapper.Map<TEntity>(item);
 
@@ -60,7 +60,7 @@ namespace Demo.Services
             return dto;
         }
 
-        public void Delete(TDTO item)
+        public virtual void Delete(TDTO item)
         {
             var model = mapper.Map<TEntity>(item);
 
@@ -68,7 +68,7 @@ namespace Demo.Services
 
         }
 
-        public void Update(TDTO item)
+        public virtual void Update(TDTO item)
         {
             var model = mapper.Map<TEntity>(item);
 

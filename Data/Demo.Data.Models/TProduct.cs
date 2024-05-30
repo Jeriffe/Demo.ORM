@@ -9,6 +9,6 @@ namespace Demo.Data.Models
         public virtual double Price { get; set; }
         public virtual string Description { get; set; }
 
-        public virtual IList<TOrderitem> OrderItems { get;}
+        public virtual IList<TOrderItem> OrderItems { get;}
     }
 }

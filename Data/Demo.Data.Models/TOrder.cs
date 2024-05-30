@@ -18,7 +18,7 @@ namespace Demo.Data.Models
 
         public virtual TCustomer TCustomer { get; set; }
 
-        public virtual IList<TOrderitem> OrderItems { get; set; }
+        public virtual IList<TOrderItem> OrderItems { get; set; }
 
     }
 }

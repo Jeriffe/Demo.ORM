@@ -22,11 +22,11 @@ namespace Demo.Infrastructure
         void Delete(TEntity item);
 
 
-        void Create(IEnumerable<TEntity> entities);
+        void BulkCreate(IEnumerable<TEntity> entities);
 
-        void Update(IEnumerable<TEntity> entities);
+        void BulkUpdate(IEnumerable<TEntity> entities);
 
-        void Delete(IEnumerable<TEntity> entities);
+        void BulkDelete(IEnumerable<TEntity> entities);
     }
 
     public enum OrderSorting

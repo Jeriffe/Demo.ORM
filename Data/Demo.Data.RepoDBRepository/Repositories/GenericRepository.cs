@@ -89,14 +89,14 @@ namespace Demo.Data.RepoDBRepository
         /* Batch Operations */
 
 
-        public virtual void Create(IEnumerable<TEntity> entities)
+        public virtual void BulkCreate(IEnumerable<TEntity> entities)
         {
             var rows = default(int);
             //You can adjust the size of your batch by simply passing the value at the batchSize argument.By default, the value is 10
             rows = Context.Connection.InsertAll<TEntity>(entities, batchSize: BatchNumber, transaction: unitOfWork.Transaction);
         }
 
-        public virtual void Update(IEnumerable<TEntity> entities)
+        public virtual void BulkUpdate(IEnumerable<TEntity> entities)
         {
             var rows = default(int);
 
@@ -104,7 +104,7 @@ namespace Demo.Data.RepoDBRepository
 
         }
 
-        public virtual void Delete(IEnumerable<TEntity> entities)
+        public virtual void BulkDelete(IEnumerable<TEntity> entities)
         {
             var rows = default(int);
 
