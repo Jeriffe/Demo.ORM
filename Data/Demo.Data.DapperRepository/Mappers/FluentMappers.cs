@@ -2,6 +2,7 @@
 using Dapper.FluentMap.Dommel;
 using Dapper.FluentMap.Dommel.Mapping;
 using Demo.Data.Models;
+using Z.Dapper.Plus;
 
 namespace Demo.Data.DapperRepository.Mappers
 {
@@ -12,8 +13,9 @@ namespace Demo.Data.DapperRepository.Mappers
             FluentMapper.Initialize(config =>
             {
                 config.AddMap(new PatientMap());
+                config.AddMap(new OrderItemMap());
                 config.AddMap(new OrderMap());
-
+                
                 config.ForDommel();
             });
         }
@@ -40,5 +42,20 @@ namespace Demo.Data.DapperRepository.Mappers
             ToTable("T_Order", "dbo");
             Map(p => p.Id).IsIdentity().IsKey();
         }
+    }
+
+    public class OrderItemMap : DommelEntityMap<TOrderItem>
+    {
+
+        public OrderItemMap()
+        {
+            ToTable("T_OrderItem", "dbo");
+            Map(p => p.Id).IsIdentity().IsKey();
+            Map(p => p.Order).Ignore();
+            Map(p => p.Product).Ignore();
+
+        }
+
+        
     }
 }

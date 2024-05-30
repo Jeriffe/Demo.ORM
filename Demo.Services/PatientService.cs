@@ -7,7 +7,7 @@ using System;
 namespace Demo.Services
 {
 
-    public interface IPatientSvc : IAppService<TPatient, Patient>
+    public interface IPatientSvc : IAppService<Patient>
     {
         void TransTest();
     }

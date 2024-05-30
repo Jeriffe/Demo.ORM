@@ -13,6 +13,8 @@ namespace Demo.Data.DapperRepository
         static SqlDbContext()
         {
             FluentMappers.Initialize();
+
+            DapperPlusMapper.Initialize();
         }
 
         public SqlDbContext(string connectionString)

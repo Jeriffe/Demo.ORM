@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Demo.Services
 {
-    public interface IAppService<TEntity, TDTO> where TEntity : class, new()
+    public interface IAppService<TDTO>
         where TDTO : class, new()
     {
         IEnumerable<TDTO> GetAll(PageFilter pageFilter);
@@ -18,7 +18,7 @@ namespace Demo.Services
         void Delete(TDTO item);
     }
 
-    public abstract class BaseAppService<TEntity, TDTO> : IAppService<TEntity, TDTO>
+    public abstract class BaseAppService<TEntity, TDTO> : IAppService<TDTO>
         where TEntity : class, new()
         where TDTO : class, new()
 

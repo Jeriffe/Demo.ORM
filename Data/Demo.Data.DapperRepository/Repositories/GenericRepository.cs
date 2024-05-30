@@ -150,6 +150,7 @@ namespace Demo.Data.DapperRepository
         public void BulkCreate(IEnumerable<TEntity> entities)
         {
             //Z.Dapper.Plus :  https://dapper-plus.net/bulk-insert
+            //https://dapper-plus.net/map
             Context.Connection.BulkInsert(entities);
 
             //Context.Connection.UseBulkOptions(options => options.InsertIfNotExists = true)

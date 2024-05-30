@@ -81,6 +81,7 @@ namespace Demo.NETConsole
 
             containerBuilder.RegisterType<GenericRepository<TPatient>>().As<IRepository<TPatient>>();
             containerBuilder.RegisterType<GenericRepository<TOrder>>().As<IRepository<TOrder>>();
+            containerBuilder.RegisterType<GenericRepository<TOrderItem>>().As<IRepository<TOrderItem>>();
 
 
             containerBuilder.RegisterType<PatientService>().As<IPatientSvc>();
