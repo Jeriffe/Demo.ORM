@@ -9,8 +9,10 @@ using Demo.DTOs.Mapper;
 using Demo.Infrastructure;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.Configuration;
 namespace Demo.MediatRConsole
 {
     public class DIResolver
@@ -20,40 +22,66 @@ namespace Demo.MediatRConsole
         {
             _serviceProvider = BuildServiceProvider();
         }
+
         private static IServiceProvider BuildServiceProvider()
         {
             var services = new ServiceCollection();
-
-            //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
-            var connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
 
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddValidatorsFromAssembly(typeof(CreatePatientCommandValidator).Assembly);
 
-            services.AddMediatR(typeof(Application.GetPatientsQuery));
+            ConfigureMediatR(services);
 
-            services.AddDistributedMemoryCache();
-            //services.Configure<CacheSettings>(config.GetSection("CacheSettings"));
+            ConfigureCache(services);
 
             ConfigureLogger(services);
 
-            ConfigureServices(services, connstr);
+            ConfigureServices(services);
 
-            Log.Logger.Information($"ConnectionString={connstr}");
 
             return services.BuildServiceProvider();
         }
 
-        private static void ConfigureServices(ServiceCollection services, string connstr)
+        private static void ConfigureMediatR(ServiceCollection services)
         {
+            services.AddMediatR(typeof(Application.GetPatientsQuery));
+
             //services.AddTransient(typeof(IRequestExceptionHandler<,>), typeof(RequestUnhandledExceptionHandler<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+        }
 
+        private static void ConfigureCache(ServiceCollection services)
+        {
+            //services.Configure<CacheSettings>(config.GetSection("CacheSettings"));
+
+            services.AddDistributedMemoryCache();
+
+            ////Install-Package Microsoft.Extensions.Caching.StackExchangeRedis
+            //services.AddStackExchangeRedisCache(options =>
+            //{
+            //    options.Configuration = "localhost:4455";
+            //});
+        }
+
+        private static void ConfigureServices(ServiceCollection services)
+        {
+            //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
+            var connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+
+            //NuGet\Install-Package Microsoft.Extensions.Configuration
+            var configuration = new ConfigurationBuilder()
+                            //NuGet\Install-Package Microsoft.Extensions.Configuration.Json
+                            .AddJsonFile("appsettings.json")
+                            .Build();
+
+            var connectionString = configuration.GetConnectionString("DB");
+           
+            Log.Logger.Information($"ConnectionString={connstr}");
 
 
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
@@ -77,7 +105,7 @@ namespace Demo.MediatRConsole
                    // .WriteTo.File(@"Logs\log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
                    .CreateLogger();
             }
-           
+
             services.AddLogging(config => config.AddSerilog(Log.Logger));
         }
 
