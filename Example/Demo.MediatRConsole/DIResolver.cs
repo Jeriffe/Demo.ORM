@@ -33,6 +33,9 @@ namespace Demo.MediatRConsole
 
             services.AddMediatR(typeof(Application.GetPatientsQuery));
 
+            services.AddDistributedMemoryCache();
+            //services.Configure<CacheSettings>(config.GetSection("CacheSettings"));
+
             ConfigureLogger(services);
 
             ConfigureServices(services, connstr);
@@ -45,10 +48,12 @@ namespace Demo.MediatRConsole
         private static void ConfigureServices(ServiceCollection services, string connstr)
         {
             //services.AddTransient(typeof(IRequestExceptionHandler<,>), typeof(RequestUnhandledExceptionHandler<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CachingBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
 
 
             services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));

@@ -14,12 +14,34 @@ Console.ReadLine();
 
 static void CallAppService()
 {
-
+    
     var mediatR = DIResolver.Resolve<IMediator>();
-    TestOrder(mediatR);
 
-    TestPatient(mediatR);
+    TestOrderCache(mediatR);
+
+    //TestOrder(mediatR);
+
+    //TestPatient(mediatR);
 }
+
+static void TestOrderCache(IMediator mediatR)
+{
+    var items = mediatR.Send(new GetOrdersQuery() { PageFilter = new Demo.Infrastructure.PageFilter { } }).Result;
+
+    var index = 1;
+    foreach (var item in items)
+    {
+        var updatedPatient = mediatR.Send(new GetOrderQuery() { Id = item.Id }).Result;
+
+        updatedPatient = mediatR.Send(new GetOrderQuery() { Id = item.Id }).Result;
+
+        if (index++ > 1)
+        {
+            break;
+        }
+    }
+}
+
 static void TestOrder(IMediator mediatR)
 {
     var items = mediatR.Send(new GetOrdersQuery() { PageFilter = new Demo.Infrastructure.PageFilter { } }).Result;

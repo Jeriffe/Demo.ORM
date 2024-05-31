@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Demo.Application.Common.Behaviours;
 using Demo.Data.Models;
 using Demo.DTOs;
 using Demo.Infrastructure;
@@ -8,8 +9,10 @@ using System.Threading.Tasks;
 
 namespace Demo.Application
 {
-    public class GetOrderQuery : IRequest<Order>
+    public class GetOrderQuery : CacheableMediatrQuery, ICacheableMediatrQuery, IRequest<Order>
     {
+        public override string CacheKey => this.GetType().FullName+$"_Order{Id}";
+
         public long Id { get; set; }
     }
 

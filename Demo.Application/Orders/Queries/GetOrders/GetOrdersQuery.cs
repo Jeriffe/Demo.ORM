@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Demo.Application.Common.Behaviours;
 using Demo.Data.Models;
 using Demo.DTOs;
 using Demo.Infrastructure;
@@ -10,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace Demo.Application
 {
-    public class GetOrdersQuery : IRequest<List<Order>>
+    public class GetOrdersQuery : CacheableMediatrQuery, ICacheableMediatrQuery, IRequest<List<Order>>
     {
+        public override string CacheKey => this.GetType().FullName;
         public PageFilter PageFilter { get; set; }
     }
 
@@ -20,7 +22,7 @@ namespace Demo.Application
         private IMapper mapper;
         private IUnitOfWork unitOfWork;
         private IRepository<TOrder> entityRepository;
-    
+
         public GetOrdersQueryHandler(IUnitOfWork uow, IRepository<TOrder> repository, IMapper mapper)
         {
             unitOfWork = uow;
