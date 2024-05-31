@@ -13,7 +13,7 @@ namespace Demo.Application
 {
     public class GetOrdersQuery : CacheableMediatrQuery, ICacheableMediatrQuery, IRequest<List<Order>>
     {
-        public override string CacheKey => this.GetType().FullName;
+        public override string CacheKey => this.GetType().FullName + "_Orders";
         public PageFilter PageFilter { get; set; }
     }
 

@@ -1,4 +1,5 @@
-﻿using Demo.Application.Common.Behaviours;
+﻿using AutoMapper.Configuration;
+using Demo.Application.Common.Behaviours;
 using Demo.Application.Patients.Command;
 using Demo.Data.Models;
 
@@ -18,6 +19,8 @@ namespace Demo.MediatRConsole
     public class DIResolver
     {
         private static IServiceProvider _serviceProvider;
+        private static string ConnStr = string.Empty;
+
         static DIResolver()
         {
             _serviceProvider = BuildServiceProvider();
@@ -25,25 +28,53 @@ namespace Demo.MediatRConsole
 
         private static IServiceProvider BuildServiceProvider()
         {
+
             var services = new ServiceCollection();
 
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddValidatorsFromAssembly(typeof(CreatePatientCommandValidator).Assembly);
 
+            ConfigureLogger(services);
+
+            ConfgirureConfiguration(services);
+
             ConfigureMediatR(services);
 
             ConfigureCache(services);
 
-            ConfigureLogger(services);
-
             ConfigureServices(services);
-
 
             return services.BuildServiceProvider();
         }
 
-        private static void ConfigureMediatR(ServiceCollection services)
+        private static void ConfgirureConfiguration(IServiceCollection services)
+        {
+            ////NuGet\Install-Package Microsoft.Extensions.Configuration
+            // var configuration = new ConfigurationBuilder()
+            //              //NuGet\Install-Package Microsoft.Extensions.Configuration.Json
+            //              .AddJsonFile("appsettings.json")
+            //              .Build();
+            // var connectionString = configuration.GetConnectionString("DB");
+            //services.Configure<CacheSettings>(configuration.GetSection("CacheSettings"));
+
+            var configMgr = new Microsoft.Extensions.Configuration.ConfigurationManager();
+            configMgr.AddJsonFile("appsettings.json");
+
+            var connectionString = configMgr.GetConnectionString("DB");
+
+            //NuGet\Install-Package Microsoft.Extensions.Options
+            services.AddOptions()
+                    .Configure<CacheSettings>(configMgr.GetSection("CacheSettings"));
+
+            //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
+            ConnStr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+
+
+            Log.Logger.Information($"ConnectionString={ConnStr}");
+        }
+
+        private static void ConfigureMediatR(IServiceCollection services)
         {
             services.AddMediatR(typeof(Application.GetPatientsQuery));
 
@@ -55,7 +86,7 @@ namespace Demo.MediatRConsole
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         }
 
-        private static void ConfigureCache(ServiceCollection services)
+        private static void ConfigureCache(IServiceCollection services)
         {
             //services.Configure<CacheSettings>(config.GetSection("CacheSettings"));
 
@@ -67,24 +98,9 @@ namespace Demo.MediatRConsole
             //    options.Configuration = "localhost:4455";
             //});
         }
-
-        private static void ConfigureServices(ServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
-            //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
-            var connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
-
-            //NuGet\Install-Package Microsoft.Extensions.Configuration
-            var configuration = new ConfigurationBuilder()
-                            //NuGet\Install-Package Microsoft.Extensions.Configuration.Json
-                            .AddJsonFile("appsettings.json")
-                            .Build();
-
-            var connectionString = configuration.GetConnectionString("DB");
-           
-            Log.Logger.Information($"ConnectionString={connstr}");
-
-
-            services.AddScoped<IDbContext>(c => new SqlDbContext(connstr));
+            services.AddScoped<IDbContext>(c => new SqlDbContext(ConnStr));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IRepository<TPatient>, GenericRepository<TPatient>>();
