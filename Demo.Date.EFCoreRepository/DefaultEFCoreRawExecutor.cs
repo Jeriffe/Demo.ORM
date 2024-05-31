@@ -32,7 +32,7 @@ namespace Demo.Date.EFCoreRepository
 
         public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
         {
-            return dbContext.Set<T>().FromSqlRaw(string.Format(sql, parameters));
+            return dbContext.Set<T>().FromSqlRaw(string.Format(sql, BuilderDynamicParameters(parameters)));
         }
 
         public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params SqlParameter[] parameters) where T : class, new()
@@ -45,5 +45,33 @@ namespace Demo.Date.EFCoreRepository
             dbContext.Database.ExecuteSqlRaw(sql, parameters);
 
         }
+
+        private static SqlParameter[] BuilderDynamicParameters(RawParameter[] parameters)
+        {
+            if (!HasParameters(parameters))
+            {
+                return null;
+            }
+
+            var sqlParaArray = new SqlParameter[parameters.Length];
+            int i = 0;
+            foreach (var originPara in parameters)
+            {
+                var para = new SqlParameter()
+                {
+                    ParameterName = originPara.Name,
+                    Value = originPara.Value
+                };
+                sqlParaArray[i] = para;
+                i++;
+            }
+            return sqlParaArray;
+        }
+
+        private static bool HasParameters(RawParameter[] parameters)
+        {
+            return parameters != null && parameters.Length > 0;
+        }
+
     }
 }
