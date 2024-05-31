@@ -22,7 +22,7 @@ namespace Demo.Services
         public void TransTest()
         {
 
-            logger?.LogInformation("PatientService.TransTest......");
+            logger?.LogInformation("Start  PatientService.TransTest......");
             var plist = GetAll(null);
 
             //Use app service

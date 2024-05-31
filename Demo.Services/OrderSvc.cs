@@ -2,6 +2,7 @@
 using Demo.Data.Models;
 using Demo.DTOs;
 using Demo.Infrastructure;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,14 +16,16 @@ namespace Demo.Services
     {
         protected IRepository<TOrderItem> orderItemRepository;
 
-        public OrderSvc(IUnitOfWork unitOfWork, IRepository<TOrder> repository, IRepository<TOrderItem> orderItemrepository, IMapper mapper)
-            : base(unitOfWork, repository, mapper)
+        public OrderSvc(IUnitOfWork unitOfWork, IRepository<TOrder> repository, IRepository<TOrderItem> orderItemrepository, IMapper mapper, ILogger<IAppService<Order>> logger)
+            : base(unitOfWork, repository, mapper, logger)
         {
             this.orderItemRepository = orderItemrepository;
         }
 
         public override Order GetSingle(object keyId)
         {
+            logger?.LogInformation("Start  OrderSvc.GetSingle......");
+
             var order = base.GetSingle(keyId);
 
             var dbOrderItems = orderItemRepository.GetList(o => o.OrderId == order.Id);
@@ -34,6 +37,8 @@ namespace Demo.Services
 
         public override Order Create(Order item)
         {
+            logger?.LogInformation("Start  OrderSvc.Create......");
+
             var order = unitOfWork.ProcessWithTrans(() =>
              {
                  var dbModel = base.Create(item);

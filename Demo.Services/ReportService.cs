@@ -1,4 +1,6 @@
-﻿using Demo.Infrastructure;
+﻿using Demo.DTOs;
+using Demo.Infrastructure;
+using Microsoft.Extensions.Logging;
 using System.Data;
 
 namespace Demo.Services
@@ -6,13 +8,17 @@ namespace Demo.Services
     public class ReportService
     {
         private IUnitOfWork unitOfWork;
-        public ReportService(IUnitOfWork unitOfWork)
+        private ILogger<ReportService> logger;
+        public ReportService(IUnitOfWork unitOfWork, ILogger<ReportService> logger)
         {
             this.unitOfWork = unitOfWork;
         }
 
         public DataTable GetPatientByCareUnitID(int careUnitID, PageFilter pageFilter)
         {
+            logger?.LogInformation("Start ReportService.GetPatientByCareUnitID......");
+
+
             var sql = @"
     SELECT 
 	     P.PatientID
