@@ -67,14 +67,34 @@ namespace Demo.NETConsole
 
         private static void ConfigureLogger(ServiceCollection services)
         {
-            Log.Logger = new LoggerConfiguration()
-               .ReadFrom.AppSettings()
-               .WriteTo.Console()
-               .CreateLogger();
+            //https://github.com/serilog/serilog-sinks-file
 
+            ////Serilog.Settings.AppSettings
+            /////https://github.com/serilog/serilog-settings-appsettings
+            {
+                Log.Logger = new LoggerConfiguration()
+                   .ReadFrom.AppSettings()
+                   //     .WriteTo.Console()
+                   ////RollingInterval.Day --> log20240531.txt
+                   // .WriteTo.File(@"Logs\log.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
+                   .CreateLogger();
+            }
+
+            //Serilog.Settings.Configuration 
+            //https://github.com/serilog/serilog-settings-configuration
+            //{
+            //    var configuration = new ConfigurationBuilder()
+            //        .SetBasePath(Directory.GetCurrentDirectory())
+            //        .AddJsonFile("appsettings.json")
+            //        //  .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+            //        .Build();
+
+            //    Log.Logger = new LoggerConfiguration()
+            //        .ReadFrom.Configuration(configuration)
+            //        .CreateLogger();
+            //}
             //This is very important to bridge autofac with Microsoft.Host.DependencyInjection
             services.AddLogging(configure => configure.AddSerilog(Log.Logger));
-
             //services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
             //services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
