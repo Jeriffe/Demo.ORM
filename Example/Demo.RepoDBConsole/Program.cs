@@ -7,6 +7,7 @@ using Demo.DTOs.Orders;
 using Demo.Infrastructure;
 using Demo.RawSql;
 using Demo.Services;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,9 +18,20 @@ namespace Demo.RepoDBConsole
     class Program
     {
         static string ConnectionString { get; } = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
-
+        static ILoggerFactory loggerFactory;
         static void Main(string[] args)
         {
+            //NuGet\Install-Package Microsoft.Extensions.Logging -Version 8.0.0
+            loggerFactory = LoggerFactory.Create(builder =>
+                  //NuGet\Install-Package Microsoft.Extensions.Logging.Console -Version 8.0.0
+                  builder.AddSimpleConsole(options =>
+                  {
+                      options.IncludeScopes = true;
+                      options.SingleLine = true;
+                      options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+                  }));
+
+            var log = loggerFactory.CreateLogger<Program>();
 
             TestOrders();
 
@@ -29,7 +41,7 @@ namespace Demo.RepoDBConsole
 
             //TestServices();
 
-            Console.WriteLine("Welcome to use RepoDB, the fastest ROM in the world!");
+            log.LogInformation("Welcome to use RepoDB, the fastest ORM in the world!");
 
             Console.ReadLine();
         }
@@ -46,7 +58,9 @@ namespace Demo.RepoDBConsole
           config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
 
             var mapper = _configuration.CreateMapper();
-            var svc = new OrderSvc(unitOfWork, orderRepo, orderItemRep, mapper);
+
+            var log = loggerFactory.CreateLogger<OrderSvc>();
+            var svc = new OrderSvc(unitOfWork, orderRepo, orderItemRep, mapper, log);
 
             var plist = svc.GetAll(null);
 
@@ -112,11 +126,11 @@ namespace Demo.RepoDBConsole
           config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
 
             var mapper = _configuration.CreateMapper();
-            var pservice = new PatientService(unitOfWork, patientRepo, mapper, null);
+
+            var log = loggerFactory.CreateLogger<PatientService>();
+            var pservice = new PatientService(unitOfWork, patientRepo, mapper, log);
 
             var plist = pservice.GetAll(null);
-
-            var service = new ReportService(new UnitOfWork(context));
 
             //Use app service
             unitOfWork.ProcessByTrans(() =>

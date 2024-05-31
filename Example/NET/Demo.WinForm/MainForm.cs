@@ -30,6 +30,9 @@ namespace Demo.NETWinForm
         private async void button1_Click(object sender, EventArgs e)
         {
             logger.LogInformation("Show Form2");
+
+            var orders = orderSvc.GetAll(null);
+            var order = orderSvc.GetSingle(orders.ToList()[0].Id);
         }
 
 

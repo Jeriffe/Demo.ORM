@@ -40,6 +40,8 @@ namespace Demo.Services
 
         public virtual TDTO GetSingle(object keyId)
         {
+            logger?.LogInformation($"Start {logger.GetType().Name}-->.BaseAppService.GetSingle......");
+
             var entity = entityRepository.GetByKey(keyId);
 
             var dto = mapper.Map<TDTO>(entity);
@@ -48,6 +50,8 @@ namespace Demo.Services
         }
         public IEnumerable<TDTO> GetAll(PageFilter pageFilter)
         {
+            logger?.LogInformation($"Start {logger.GetType().Name}-->.BaseAppService.GetAll......");
+
             var models = entityRepository.GetList();
 
             var dtos = mapper.Map<List<TDTO>>(models);
@@ -56,6 +60,7 @@ namespace Demo.Services
 
         public virtual TDTO Create(TDTO item)
         {
+            logger?.LogInformation($"Start {logger.GetType().Name}-->.BaseAppService.Create......");
             var model = mapper.Map<TEntity>(item);
 
             var dbModel = entityRepository.Create(model);
@@ -67,6 +72,7 @@ namespace Demo.Services
 
         public virtual void Delete(TDTO item)
         {
+            logger?.LogInformation($"Start {logger.GetType().Name}-->.BaseAppService.Delete......");
             var model = mapper.Map<TEntity>(item);
 
             entityRepository.Delete(model);
@@ -75,6 +81,7 @@ namespace Demo.Services
 
         public virtual void Update(TDTO item)
         {
+            logger?.LogInformation($"Start {logger.GetType().Name}-->.BaseAppService.Update......");
             var model = mapper.Map<TEntity>(item);
 
             entityRepository.Update(model);

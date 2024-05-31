@@ -90,9 +90,8 @@ namespace Demo.Data.NHibernateRepository
             return Trans(() =>
             {
                 var obj = Session.Save(entity);
-                var id = Convert.ToInt32(obj);
 
-                var item = GetByKey(id);
+                var item = GetByKey(obj);
 
                 return item;
             });

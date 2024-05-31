@@ -47,6 +47,13 @@ namespace Demo.Infrastructure
 
         public static void ProcessWithTrans(this IUnitOfWork conn, Action action)
         {
+            if (conn.GetType().FullName == "Demo.Data.NHibernateRepository.UnitOfWork")
+            {
+                conn.ProcessByTrans(action);
+
+                return;
+            }
+
             using (var transaction = new TransactionScope())
             {
                 try
@@ -68,11 +75,16 @@ namespace Demo.Infrastructure
         }
         public static TEntity ProcessWithTrans<TEntity>(this IUnitOfWork conn, Func<TEntity> action) where TEntity : class
         {
+            if (conn.GetType().FullName == "Demo.Data.NHibernateRepository.UnitOfWork")
+            {
+                return conn.ProcessByTrans(action);
+            }
+
             using (var trans = new TransactionScope())
             {
                 try
                 {
-                    conn.BeginTrans(); 
+                    conn.BeginTrans();
                     var result = action();
                     conn.Commit();
 
@@ -87,6 +99,14 @@ namespace Demo.Infrastructure
                 }
             }
         }
+
+        private static void Transby<TEntity>(Func<TEntity> action, TransactionScope trans) where TEntity : class
+        {
+            var result = action();
+
+            trans.Complete();
+        }
+
         public static void EnsureOpenConn(this DbConnection conn)
         {
             if (conn.State != ConnectionState.Open)

@@ -88,24 +88,10 @@ namespace Demo.NETWinForm
                    .CreateLogger();
             }
 
-            //Serilog.Settings.Configuration 
-            //https://github.com/serilog/serilog-settings-configuration
-            //{
-            //    var configuration = new ConfigurationBuilder()
-            //        .SetBasePath(Directory.GetCurrentDirectory())
-            //        .AddJsonFile("appsettings.json")
-            //        //  .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
-            //        .Build();
+            services.AddSerilog(Log.Logger);
 
-            //    Log.Logger = new LoggerConfiguration()
-            //        .ReadFrom.Configuration(configuration)
-            //        .CreateLogger();
-            //}
-            //This is very important to bridge autofac with Microsoft.Host.DependencyInjection
-            services.AddLogging(configure => configure.AddSerilog(Log.Logger));
-            //services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
-
-            //services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            //we can also use the following  statement to configure log
+            //services.AddLogging(configure => configure.AddSerilog(Log.Logger));//This is very important to bridge autofac with Microsoft.Host.DependencyInjection
         }
 
         private static IServiceProvider ServiceProvider { get; set; }

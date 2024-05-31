@@ -95,6 +95,7 @@ namespace Demo.NETConsole
             //}
             //This is very important to bridge autofac with Microsoft.Host.DependencyInjection
             services.AddLogging(configure => configure.AddSerilog(Log.Logger));
+
             //services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
 
             //services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
