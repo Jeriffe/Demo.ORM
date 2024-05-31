@@ -2,6 +2,7 @@
 using Demo.Data.Models;
 using Demo.DTOs;
 using Demo.Infrastructure;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Demo.Services
@@ -13,15 +14,15 @@ namespace Demo.Services
     }
     public class PatientService : BaseAppService<TPatient, Patient>, IPatientSvc
     {
-        public PatientService(IUnitOfWork unitOfWork, IRepository<TPatient> repository, IMapper mapper)
-            : base(unitOfWork, repository, mapper)
+        public PatientService(IUnitOfWork unitOfWork, IRepository<TPatient> repository, IMapper mapper, ILogger<IAppService<Patient>> logger )
+            : base(unitOfWork, repository, mapper,logger)
         {
-
-
         }
 
         public void TransTest()
         {
+
+            logger?.LogInformation("PatientService.TransTest......");
             var plist = GetAll(null);
 
             //Use app service

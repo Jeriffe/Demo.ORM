@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Demo.DTOs;
 using Demo.Infrastructure;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 namespace Demo.Services
@@ -23,14 +25,17 @@ namespace Demo.Services
         where TDTO : class, new()
 
     {
+        protected ILogger<IAppService<TDTO>>   logger;
+
         protected IRepository<TEntity> entityRepository;
         protected IUnitOfWork unitOfWork;
         protected IMapper mapper;
-        public BaseAppService(IUnitOfWork uow, IRepository<TEntity> repository, IMapper mapper)
+        public BaseAppService(IUnitOfWork uow, IRepository<TEntity> repository, IMapper mapper, ILogger<IAppService<TDTO>>  logger=null)
         {
             unitOfWork = uow;
             entityRepository = repository;
             this.mapper = mapper;
+            this.logger=logger;
         }
 
         public virtual TDTO GetSingle(object keyId)

@@ -38,7 +38,8 @@ namespace Demo.DapperConsole
           config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
 
             var mapper = _configuration.CreateMapper();
-            var pservice = new PatientService(unitOfWork, patientRepo, mapper);
+
+            var pservice = new PatientService(unitOfWork, patientRepo, mapper,null);
 
             var plist = pservice.GetAll(null);
 

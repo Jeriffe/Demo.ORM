@@ -27,7 +27,7 @@ namespace Demo.NETConsole
 
         private static void CallAppService()
         {
-            var service = DIResolver.Resolve<IAppService<TPatient, Patient>>();
+            var service = DIResolver.Resolve<IAppService<Patient>>();
 
            var result= service.GetAll(new Infrastructure.PageFilter { });
 

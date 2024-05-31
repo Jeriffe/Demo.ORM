@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Data\Demo.Data.Models\Demo.Data.Models.csproj" />
     <ProjectReference Include="..\Demo.DTOs\Demo.DTOs.csproj" />
     <ProjectReference Include="..\Demo.Infrastructure\Demo.Infrastructure.csproj" />

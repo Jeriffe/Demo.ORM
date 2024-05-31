@@ -1,12 +1,8 @@
-﻿using AutoMapper;
-using Demo.Data.Models;
-using Demo.DTOs;
+﻿using Demo.DTOs;
 using Demo.NETConsole;
 using Demo.Services;
-using RepoDb.Enumerations;
 
 Console.OutputEncoding = System.Text.Encoding.Unicode;
-
 
 CallAppService();
 
@@ -14,9 +10,9 @@ Console.ReadLine();
 
 static void CallAppService()
 {
-   // TestPatient();
+    TestPatient();
 
-    TestOrder();
+    // TestOrder();
 
 }
 

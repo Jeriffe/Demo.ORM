@@ -55,7 +55,5 @@ namespace Demo.Data.DapperRepository.Mappers
             Map(p => p.Product).Ignore();
 
         }
-
-        
     }
 }
