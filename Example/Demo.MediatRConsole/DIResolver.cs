@@ -51,6 +51,7 @@ namespace Demo.MediatRConsole
         private static void ConfgirureConfiguration(IServiceCollection services)
         {
             ////NuGet\Install-Package Microsoft.Extensions.Configuration
+            /////public class ConfigurationBuilder : IConfigurationBuilder
             // var configuration = new ConfigurationBuilder()
             //              //NuGet\Install-Package Microsoft.Extensions.Configuration.Json
             //              .AddJsonFile("appsettings.json")
@@ -58,6 +59,7 @@ namespace Demo.MediatRConsole
             // var connectionString = configuration.GetConnectionString("DB");
             //services.Configure<CacheSettings>(configuration.GetSection("CacheSettings"));
 
+            //public sealed class ConfigurationManager : IConfigurationManager, IConfiguration, IConfigurationBuilder, IConfigurationRoot, IDisposable
             var configMgr = new Microsoft.Extensions.Configuration.ConfigurationManager();
             configMgr.AddJsonFile("appsettings.json");
 
@@ -97,6 +99,38 @@ namespace Demo.MediatRConsole
             //{
             //    options.Configuration = "localhost:4455";
             //});
+
+            //Install-Package Microsoft.Extensions.Caching.SqlServer -Version 8.0.0
+
+            /*We need to create the cache table before we use it, here is an example by "dotnet sql-cache " command,
+             * BTW, there are 3 parameters,  
+                 * 1: ConnectionString; 
+                 * 2:schema name; 
+                 * 3: Cache Table Name
+             
+                dotnet tool install --global dotnet-sql-cache
+                dotnet sql-cache create "Your ConnectionString;" dbo SqlServerCache
+
+
+            *The created script of the cache table is as follows: 
+                CREATE TABLE [dbo].[SqlServerCache]
+                (
+	                [Id]                            NVARCHAR(449)       NOT NULL,
+	                [Value]                         VARBINARY(MAX)      NOT NULL,
+	                [ExpiresAtTime]                 DATETIMEOFFSET(7)   NOT NULL,
+	                [SlidingExpirationInSeconds]    BIGINT              NULL,
+	                [AbsoluteExpiration]            DATETIMEOFFSET(7)   NULL,
+
+	                PRIMARY KEY CLUSTERED ([Id] ASC)
+                )
+            */
+            //services.AddDistributedSqlServerCache(options =>
+            //{
+            //    options.ConnectionString = ConnStr;
+            //    options.SchemaName = "dbo";
+            //    options.TableName = "SqlServerCache";
+            //});
+
         }
         private static void ConfigureServices(IServiceCollection services)
         {
