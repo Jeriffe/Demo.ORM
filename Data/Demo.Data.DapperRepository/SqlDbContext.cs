@@ -46,7 +46,44 @@ namespace Demo.Data.DapperRepository
             {
                 //NuGet\Install-Package Microsoft.Data.Sqlite -Version 8.0.6
                 case "SQLite":
-                 
+                 /*Storage Class	Meaning
+                 NULL	    values mean missing information or unknown.
+                 INTEGER	    values are whole numbers (either positive or negative). 
+                 REAL	    values are real numbers with decimal values that use 8-byte floats.
+                 TEXT	    is used to store character data. The maximum length of TEXT is unlimited. 
+                 BLOB	    stands for a binary large object that can store any kind of data. the maximum size of BLOB is unlimited.
+
+                 INTEGER	
+                        INT
+                        INTEGER
+                        TINYINT
+                        SMALLINT
+                        MEDIUMINT
+                        BIGINT
+                        UNSIGNED BIG INT
+                        INT2
+                        INT8	
+                 TEXT
+                        CHARACTER(20)
+                        VARCHAR(255)
+                        VARYING CHARACTER(255)
+                        NCHAR(55)
+                        NATIVE CHARACTER(70)
+                        NVARCHAR(100)
+                        TEXT
+                        CLOB		
+                BLOB
+ 	                    BLOB
+                REAL
+                        DOUBLE
+                        DOUBLE PRECISION
+                        FLOAT
+                NUMERIC
+                        DECIMAL(10,5)
+                        BOOLEAN
+                        DATE
+                        DATETIME
+                     */
 
                     return new SqliteConnection(ConnectionString);
                 //NuGet\Install-Package Npgsql -Version 8.0.3
