@@ -28,23 +28,97 @@ namespace Demo.DapperConsole
                       options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
                   }));
 
-         var log=  loggerFactory.CreateLogger<Program>();
+            var log = loggerFactory.CreateLogger<Program>();
 
-            TestOrders();
-            
-            TestServices(); 
-            
-            RawOperation();
 
-            TestRepositories();
+            TestSqliteRepositories();
+
+            //TestOrders();
+
+            //TestServices(); 
+
+            //RawOperation();
+
+            //TestRepositories();
 
             log.LogInformation("Welcome to use Dapper, the fastest ORM in the world!");
 
             Console.ReadLine();
         }
+        private static SqlDbContext BuildSqlContext()
+        {
+            //Sqlite
+            FluentMappers.Sql_Schema = string.Empty;
+
+            return new SqlDbContext(ConnectionString, "SQLite");
+
+            //SqlServer
+           // return new SqlDbContext(ConnectionString, "SQL Server");
+           // return new SqlDbContext(ConnectionString);
+        }
+        private static void TestSqliteRepositories()
+        {
+            SqliteRawOperation();
+
+            var context = BuildSqlContext();
+            var unitOfWork = new UnitOfWork(context);
+            var repo = new GenericRepository<TProduct>(unitOfWork);
+
+            //Use repository
+            var item = repo.GetByKey(2);
+            var items1 = repo.Get(p => p.Name == "Wireless Earbuds");
+
+            var items = repo.Get(p => p.Price > 100);
+
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
+
+            //Create
+            var np = repo.Create(new TProduct
+            {
+                Name = $"tName{maxId}",
+                Description = $"Description{maxId}",
+                Price = 998.99
+            });
+
+            var newPatient = repo.GetByKey(np.Id);
+            newPatient.Description += "UPDATE";
+            //Update
+            repo.Update(newPatient);
+
+            // Delete
+            repo.Delete(newPatient);
+
+            unitOfWork.ProcessByTrans(() =>
+            {
+                var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
+
+                var sss = repo.GetByKey(maxId);
+
+                sss = repo.Create(new TProduct
+                {
+                    Name = $"tName{maxId}",
+                    Description = $"Description{maxId}",
+                    Price = 998.99
+                });
+
+                sss.Description += "UPDATE";
+
+                //Update
+                repo.Update(sss);
+            });
+
+            var nmaxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
+            var lastproduct = repo.GetByKey(nmaxId);
+            // Delete
+            repo.Delete(lastproduct);
+
+        }
+
+      
+
         private static void TestOrders()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = BuildSqlContext();
 
             var unitOfWork = new UnitOfWork(context);
 
@@ -114,7 +188,7 @@ namespace Demo.DapperConsole
 
         private static void TestServices()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = BuildSqlContext();
             var unitOfWork = new UnitOfWork(context);
             var patientRepo = new GenericRepository<TPatient>(unitOfWork);
 
@@ -158,7 +232,7 @@ namespace Demo.DapperConsole
         }
         private static void TestRepositories()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = BuildSqlContext();
             var unitOfWork = new UnitOfWork(context);
             var patientRepo = new GenericRepository<TPatient>(unitOfWork);
 
@@ -168,7 +242,7 @@ namespace Demo.DapperConsole
 
             var patients = patientRepo.Get(p => p.Gender == "F");
 
-            int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
 
             //Create
             var np = patientRepo.Create(new TPatient
@@ -188,7 +262,7 @@ namespace Demo.DapperConsole
 
             unitOfWork.ProcessByTrans(() =>
             {
-                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
 
                 var newPatient = patientRepo.GetByKey(maxId);
 
@@ -196,7 +270,10 @@ namespace Demo.DapperConsole
                 {
                     FirstName = $"FirstName{maxId}",
                     LastName = $"LastName{maxId}",
-                    MedRecNumber = $"MRN{maxId}"
+                    MedRecNumber = $"MRN{maxId}",
+                    BirthDate=DateTime.Now.AddYears(-30),
+                    DisChargeDate=DateTime.Now.AddYears(-1).AddDays(-20)
+
                 });
 
                 newPatient.MiddleInitial += "UPDATE";
@@ -204,12 +281,13 @@ namespace Demo.DapperConsole
                 patientRepo.Update(newPatient);
             });
 
-            int nmaxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var nmaxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
             var nnewPatient = patientRepo.GetByKey(nmaxId);
             // Delete
             patientRepo.Delete(nnewPatient);
 
         }
+
 
         private static void RawOperation()
         {
@@ -218,25 +296,55 @@ namespace Demo.DapperConsole
                 var context = new SqlDbContext(ConnectionString);
                 var unitOfWork = new UnitOfWork(context);
 
+                //var unitOfWork = new UnitOfWork(context);
+
 
                 var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
                 var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
 
 
+
                 unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
-                   parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
+               parameters: new List<RawParameter> {
+                    new RawParameter { Name = "@Gender", Value = "F" },
+                    new RawParameter { Name = "@PatientId", Value = 6 }}.ToArray());
 
                 unitOfWork.ExecuteRawNoQuery("UPDATE dbo.T_PATIENT SET BirthDate=DATEADD(YEAR,-30,GETDATE()) WHERE PatientId=@PatientId",
                     parameters: new RawParameter { Name = "@PatientId", Value = 3 });
 
                 var dataTable = unitOfWork.ExecuteRawSql("SELECT TOP (100) * FROM [ORM_DEMO].[dbo].[T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId",
-                        parameters: [new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 }]);
+                        parameters: new List<RawParameter> { new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 } }.ToArray());
 
                 var proc_Sql = ScriptsLoader.Get("PATIENT_QUERY_BY_GENDER");
                 var patient = unitOfWork.ExecuteRawSql(proc_Sql, System.Data.CommandType.StoredProcedure,
                     new RawParameter { Name = "@Gender", Value = "M" }
                   , new RawParameter { Name = "@Offset", Value = 1 }
                   , new RawParameter { Name = "@PageSize", Value = 1 });
+            }
+            catch (Exception ex)
+            {
+                ex = ex;
+            }
+        }
+
+        private static void SqliteRawOperation()
+        {
+            try
+            {
+                var context = BuildSqlContext();
+                var unitOfWork = new UnitOfWork(context);
+
+
+             var id=   unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
+                   parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
+
+                //SELECT DATE('2050-08-21', '+10 days'); DATE('2050-08-21', '+1 month'); DATE('now', '+1 years');
+                unitOfWork.ExecuteRawNoQuery("UPDATE T_PATIENT SET BirthDate=DATE('now', '-1 month') WHERE PatientId=@PatientId",
+                    parameters: new RawParameter { Name = "@PatientId", Value = 1 });
+
+                //SELECT  column_list  FROM table LIMIT {ROW_COUNT};
+                var dataTable = unitOfWork.ExecuteRawSql("SELECT  * FROM  [T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId LIMIT 100",
+                        parameters: [new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 }]);
 
             }
             catch (Exception ex)

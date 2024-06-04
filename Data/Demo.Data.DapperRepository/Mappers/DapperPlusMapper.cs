@@ -1,7 +1,7 @@
 ﻿using Demo.Data.Models;
 using Z.Dapper.Plus;
 
-namespace Demo.Data.DapperRepository.Mappers
+namespace Demo.Data.DapperRepository
 {
     /// <summary>
     ///https://dapper-plus.net/map

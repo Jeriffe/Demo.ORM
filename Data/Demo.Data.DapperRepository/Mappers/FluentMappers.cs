@@ -2,12 +2,13 @@
 using Dapper.FluentMap.Dommel;
 using Dapper.FluentMap.Dommel.Mapping;
 using Demo.Data.Models;
-using Z.Dapper.Plus;
 
-namespace Demo.Data.DapperRepository.Mappers
+namespace Demo.Data.DapperRepository
 {
     public class FluentMappers
     {
+
+        public static string Sql_Schema = "dbo";
         public static void Initialize()
         {
             FluentMapper.Initialize(config =>
@@ -15,6 +16,7 @@ namespace Demo.Data.DapperRepository.Mappers
                 config.AddMap(new PatientMap());
                 config.AddMap(new OrderItemMap());
                 config.AddMap(new OrderMap());
+                config.AddMap(new ProductItemMap());
                 
                 config.ForDommel();
             });
@@ -26,8 +28,19 @@ namespace Demo.Data.DapperRepository.Mappers
 
         public PatientMap()
         {
-            ToTable("T_PATIENT", "dbo");
-            Map(p => p.PatientId).IsIdentity().IsKey();
+            if (string.IsNullOrEmpty(FluentMappers.Sql_Schema))
+            {
+                ToTable("T_PATIENT");
+            }
+            else
+            {
+                ToTable("T_PATIENT", FluentMappers.Sql_Schema);
+            }
+
+            Map(p => p.PatientId)
+                .IsIdentity()
+                .IsKey()
+                .SetGeneratedOption(  System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity);
             // Map(p => p.PatientId).ToColumn("PatientId").IsIdentity().IsKey();
             // Map(p => p.MedRecNumber).ToColumn("MedRecNumber");
             // Map(p => p.FullName).Ignore();
@@ -39,7 +52,16 @@ namespace Demo.Data.DapperRepository.Mappers
 
         public OrderMap()
         {
-            ToTable("T_Order", "dbo");
+            if (string.IsNullOrEmpty(FluentMappers.Sql_Schema))
+            {
+                ToTable("T_Order");
+            }
+            else
+            {
+                ToTable("T_Order", FluentMappers.Sql_Schema);
+            }
+
+            
             Map(p => p.Id).IsIdentity().IsKey();
         }
     }
@@ -49,10 +71,39 @@ namespace Demo.Data.DapperRepository.Mappers
 
         public OrderItemMap()
         {
-            ToTable("T_OrderItem", "dbo");
+            if (string.IsNullOrEmpty(FluentMappers.Sql_Schema))
+            {
+                ToTable("T_OrderItem");
+            }
+            else
+            {
+                ToTable("T_OrderItem", FluentMappers.Sql_Schema);
+            }
+
+           
             Map(p => p.Id).IsIdentity().IsKey();
             Map(p => p.Order).Ignore();
             Map(p => p.Product).Ignore();
+
+        }
+    }
+
+    public class ProductItemMap : DommelEntityMap<TProduct>
+    {
+
+        public ProductItemMap()
+        {
+            if (string.IsNullOrEmpty(FluentMappers.Sql_Schema))
+            {
+                ToTable("T_Product");
+            }
+            else
+            {
+                ToTable("T_Product", FluentMappers.Sql_Schema);
+            }
+
+
+            Map(p => p.Id).IsIdentity().IsKey();
 
         }
     }
