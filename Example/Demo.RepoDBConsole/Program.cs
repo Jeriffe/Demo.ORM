@@ -35,13 +35,17 @@ namespace Demo.RepoDBConsole
 
             var log = loggerFactory.CreateLogger<Program>();
 
+            ConfigureSqlite();
+
             TestSqliteRepositories();
+
+
+         //   TestRepositories();
+
 
             TestOrders();
 
             //RawOperation();
-
-            TestRepositories();
 
             TestServices();
 
@@ -62,10 +66,7 @@ namespace Demo.RepoDBConsole
         }
         private static void TestSqliteRepositories()
         {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var dbFullName = Path.Combine(baseDir, @"Data\ORM_DEMO.db");
-
-            ConnectionString = $"Data Source = {dbFullName};";
+          
 
             SqliteRawOperation();
 
@@ -123,6 +124,14 @@ namespace Demo.RepoDBConsole
 
         }
 
+        private static void ConfigureSqlite()
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var dbFullName = Path.Combine(baseDir, @"Data\ORM_DEMO.db");
+
+            ConnectionString = $"Data Source = {dbFullName};";
+        }
+
         private static void TestOrders()
         {
             var context = BuildSqlContext();
@@ -140,27 +149,33 @@ namespace Demo.RepoDBConsole
             var log = loggerFactory.CreateLogger<OrderSvc>();
             var svc = new OrderSvc(unitOfWork, orderRepo, orderItemRep, mapper, log);
 
+
+
+
+            var maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM T_Order");
+
+            var maxOrder = svc.GetSingle(maxId);
+
+
             var plist = svc.GetAll(null);
 
-
-            var maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
             //Create
             var dtoP = new Order
             {
                 Customer = new Customer { Id = 4 },
                 Description = $"{maxId}",
-                TotalPrice = 8888.88,
+                TotalPrice = 8888.88d,
                 OrderItems = new List<OrderItem>
                 {
                     new OrderItem
                     {
-                        ProductId=2,Price=99.99,
+                        ProductId=2,Price=99.99d,
                         Description="Desc,P2,Price99.99",
                         CreateDate=DateTime.Now
                     },
                     new OrderItem
                     {
-                        ProductId=10,Price=88.88,
+                        ProductId=10,Price=88.88d,
                         Description="Desc,P10,Price88.88",
                         CreateDate=DateTime.Now
                     }
@@ -170,14 +185,15 @@ namespace Demo.RepoDBConsole
 
 
             //Update
-            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
+            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM T_Order");
             var order = svc.GetSingle(maxId);
             var orderItems = orderItemRep.GetList(o => o.OrderId == order.Id);
             order.OrderItems = mapper.Map<List<OrderItem>>(orderItems);
             order.TotalPrice = 999.99;
             order.OrderItems.RemoveAt(0);
             order.OrderItems[0].Price += 10;
-            order.OrderItems.Add(new OrderItem {
+            order.OrderItems.Add(new OrderItem
+            {
                 ProductId = 5,
                 Price = 66.66,
                 Description = "Desc,P5,Price66.66",
@@ -189,7 +205,7 @@ namespace Demo.RepoDBConsole
             //Delete
             svc.Delete(order);
 
-            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM dbo.T_Order");
+            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Order");
         }
 
         private static void TestServices()
@@ -288,7 +304,7 @@ namespace Demo.RepoDBConsole
             var patient1 = patientRepo.Get(p => p.MedRecNumber == "938417");
 
             var patients = patientRepo.Get(p => p.Gender == "F");
-            int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
 
             //Create
             var np = patientRepo.Create(new TPatient
@@ -308,7 +324,7 @@ namespace Demo.RepoDBConsole
 
             unitOfWork.ProcessByTrans(() =>
             {
-                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
 
                 var newPatient = patientRepo.GetByKey(maxId);
 
@@ -324,7 +340,7 @@ namespace Demo.RepoDBConsole
                 patientRepo.Update(newPatient);
             });
 
-            int nmaxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var nmaxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
             var nnewPatient = patientRepo.GetByKey(nmaxId);
             // Delete
             patientRepo.Delete(nnewPatient);

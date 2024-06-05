@@ -24,27 +24,29 @@ namespace Demo.Data.RepoDBRepository
             .Table($"{ownerPrefix}T_PATIENT")
             .Primary(e => e.PatientId)
             .Identity(e => e.PatientId)
-            .DbType(e => e.BirthDate, System.Data.DbType.DateTime2)
-            .DbType(e => e.DisChargeDate, System.Data.DbType.DateTime2);
+            .DbType(e => e.BirthDate, System.Data.DbType.DateTime)
+            .DbType(e => e.DisChargeDate, System.Data.DbType.DateTime);
             // .Column(e=>e.PatientId, "PatientId")
 
             var orderMapper = FluentMapper.Entity<TOrder>();
             orderMapper.Table($"{ownerPrefix}T_Order")
                         .Primary(e => e.Id)
                         .Identity(e => e.Id)
-                        .DbType(e => e.CreateDate, System.Data.DbType.DateTime2);
+                        .DbType(e => e.TotalPrice, System.Data.DbType.Decimal)
+                        .DbType(e => e.CreateDate, System.Data.DbType.DateTime);
 
             var orderItemMapper = FluentMapper.Entity<TOrderItem>();
             orderItemMapper.Table($"{ownerPrefix}T_OrderItem")
                         .Primary(e => e.Id)
                         .Identity(e => e.Id)
-                        .DbType(e => e.CreateDate, System.Data.DbType.DateTime2);
+                        .DbType(e => e.Price, System.Data.DbType.Decimal)
+                        .DbType(e => e.CreateDate, System.Data.DbType.DateTime);
 
             var customerMapper = FluentMapper.Entity<TCustomer>();
             customerMapper.Table($"{ownerPrefix}T_Customer")
                         .Primary(e => e.Id)
                         .Identity(e => e.Id)
-                        .DbType(e => e.Birthday, System.Data.DbType.DateTime2);
+                        .DbType(e => e.Birthday, System.Data.DbType.DateTime);
 
 
             var productMapper = FluentMapper.Entity<TProduct>();

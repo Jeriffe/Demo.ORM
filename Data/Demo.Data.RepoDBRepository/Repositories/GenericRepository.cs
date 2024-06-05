@@ -45,7 +45,7 @@ namespace Demo.Data.RepoDBRepository
         {
             if (predicateExpr == null)
             {
-                return Context.Connection.QueryAll<TEntity>(transaction: unitOfWork.Transaction).ToList();
+                return Context.Connection.Query(predicateExpr, transaction: unitOfWork.Transaction).ToList();
             }
 
             return Context.Connection.Query(predicateExpr, transaction: unitOfWork.Transaction);
