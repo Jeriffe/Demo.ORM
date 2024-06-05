@@ -8,8 +8,16 @@ namespace Demo.Infrastructure
         string ConnectionString { get; set; }
         DbConnection Connection { get; }
 
-        DbConnection  CreateConnection();
+        DbConnection CreateConnection();
 
         void CloseConnection();
+    }
+
+    public enum DataProviderType
+    {
+        SQLServer=1,
+        PostgreSQL,
+        MySQL,
+        Sqlite
     }
 }

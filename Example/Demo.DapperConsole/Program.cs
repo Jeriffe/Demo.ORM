@@ -50,11 +50,11 @@ namespace Demo.DapperConsole
             //Sqlite
             FluentMappers.Sql_Schema = string.Empty;
 
-            return new SqlDbContext(ConnectionString, "SQLite");
+            return new SqlDbContext(ConnectionString, DataProviderType.Sqlite);
 
             //SqlServer
-           // return new SqlDbContext(ConnectionString, "SQL Server");
-           // return new SqlDbContext(ConnectionString);
+            // return new SqlDbContext(ConnectionString, DataProviderType.SQLServer);
+            // return new SqlDbContext(ConnectionString);
         }
         private static void TestSqliteRepositories()
         {

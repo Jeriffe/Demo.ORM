@@ -1,5 +1,8 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Demo.Infrastructure;
+using Microsoft.Data.Sqlite;
+using MySql.Data.MySqlClient;
 using Npgsql;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -9,7 +12,7 @@ namespace Demo.Data.DapperRepository
     public class SqlDbContext : Infrastructure.IDbContext
     {
         public string ConnectionString { get; set; }
-        public string ProviderName { get; set; }
+        public DataProviderType ProviderName { get; set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
 
         static SqlDbContext()
@@ -18,10 +21,10 @@ namespace Demo.Data.DapperRepository
             DapperPlusMapper.Initialize();
         }
 
-        public SqlDbContext(string connectionString,string providerName= "SQL Server")
+        public SqlDbContext(string connectionString, DataProviderType providerName = DataProviderType.SQLServer)
         {
             //ProviderName = "SQL Server";
-            ProviderName = providerName ;
+            ProviderName = providerName;
 
             ConnectionString = connectionString;
 
@@ -45,53 +48,57 @@ namespace Demo.Data.DapperRepository
             switch (ProviderName)
             {
                 //NuGet\Install-Package Microsoft.Data.Sqlite -Version 8.0.6
-                case "SQLite":
-                 /*Storage Class	Meaning
-                 NULL	    values mean missing information or unknown.
-                 INTEGER	    values are whole numbers (either positive or negative). 
-                 REAL	    values are real numbers with decimal values that use 8-byte floats.
-                 TEXT	    is used to store character data. The maximum length of TEXT is unlimited. 
-                 BLOB	    stands for a binary large object that can store any kind of data. the maximum size of BLOB is unlimited.
+                case DataProviderType.Sqlite:
 
-                 INTEGER	
-                        INT
-                        INTEGER
-                        TINYINT
-                        SMALLINT
-                        MEDIUMINT
-                        BIGINT
-                        UNSIGNED BIG INT
-                        INT2
-                        INT8	
-                 TEXT
-                        CHARACTER(20)
-                        VARCHAR(255)
-                        VARYING CHARACTER(255)
-                        NCHAR(55)
-                        NATIVE CHARACTER(70)
-                        NVARCHAR(100)
-                        TEXT
-                        CLOB		
-                BLOB
- 	                    BLOB
-                REAL
-                        DOUBLE
-                        DOUBLE PRECISION
-                        FLOAT
-                NUMERIC
-                        DECIMAL(10,5)
-                        BOOLEAN
-                        DATE
-                        DATETIME
-                     */
+                    /*Storage Class	Meaning
+                    NULL	    values mean missing information or unknown.
+                    INTEGER	    values are whole numbers (either positive or negative). 
+                    REAL	    values are real numbers with decimal values that use 8-byte floats.
+                    TEXT	    is used to store character data. The maximum length of TEXT is unlimited. 
+                    BLOB	    stands for a binary large object that can store any kind of data. the maximum size of BLOB is unlimited.
+
+                    INTEGER	
+                           INT
+                           INTEGER
+                           TINYINT
+                           SMALLINT
+                           MEDIUMINT
+                           BIGINT
+                           UNSIGNED BIG INT
+                           INT2
+                           INT8	
+                    TEXT
+                           CHARACTER(20)
+                           VARCHAR(255)
+                           VARYING CHARACTER(255)
+                           NCHAR(55)
+                           NATIVE CHARACTER(70)
+                           NVARCHAR(100)
+                           TEXT
+                           CLOB		
+                   BLOB
+                           BLOB
+                   REAL
+                           DOUBLE
+                           DOUBLE PRECISION
+                           FLOAT
+                   NUMERIC
+                           DECIMAL(10,5)
+                           BOOLEAN
+                           DATE
+                           DATETIME
+                        */
 
                     return new SqliteConnection(ConnectionString);
                 //NuGet\Install-Package Npgsql -Version 8.0.3
-                case "PostgreSQL ":
+                case DataProviderType.PostgreSQL:
+
                     return new NpgsqlConnection(ConnectionString);
-                //case "MySQL":
-                //    break;
-                case "SQL Server":
+                case DataProviderType.MySQL:
+                    //NuGet\Install-Package MySql.Data -Version 8.4.0
+                    return new MySqlConnection(ConnectionString);
+                case DataProviderType.SQLServer:
+
                 default:
                     return new SqlConnection(ConnectionString);
             }
