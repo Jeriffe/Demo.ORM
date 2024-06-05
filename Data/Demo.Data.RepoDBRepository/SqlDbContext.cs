@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Demo.Infrastructure;
+using Microsoft.Data.SqlClient;
 using RepoDb;
 using System.Data;
 using System.Data.Common;
@@ -9,20 +10,23 @@ namespace Demo.Data.RepoDBRepository
     {
         public string ConnectionString { get; set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
+        public DataProviderType ProviderName { get; set; }
 
         static SqlDbContext()
         {
-            GlobalConfiguration.Setup().UseSqlServer();
-
             FluentMappers.Initialize();
         }
 
-        public SqlDbContext(string connectionString)
+        public SqlDbContext(string connectionString, DataProviderType providerName = DataProviderType.SQLServer)
         {
             ConnectionString = connectionString;
+
+            ProviderName = providerName;
+
+            GlobalConfiguration.Setup().UseSqlServer();
         }
 
-     
+
         private DbConnection conn;
         public DbConnection CreateConnection()
         {

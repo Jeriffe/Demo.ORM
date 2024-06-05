@@ -18,17 +18,17 @@ namespace Demo.Data.DapperRepository
         static SqlDbContext()
         {
             FluentMappers.Initialize();
+
             DapperPlusMapper.Initialize();
         }
 
         public SqlDbContext(string connectionString, DataProviderType providerName = DataProviderType.SQLServer)
         {
-            //ProviderName = "SQL Server";
+            //ProviderName = connectionString;
             ProviderName = providerName;
 
             ConnectionString = connectionString;
 
-            ConnectionString = @"Data Source=D:\\Jeriffe\\Examples\\C#\\git\\Demo.ORM\\0_DB\ORM_DEMO.db;";
         }
 
         private DbConnection conn;

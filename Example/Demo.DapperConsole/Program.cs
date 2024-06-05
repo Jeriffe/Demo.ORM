@@ -13,7 +13,7 @@ namespace Demo.DapperConsole
 {
     class Program
     {
-        static string ConnectionString { get; } = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+        static string ConnectionString { get; set; } = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
         static ILoggerFactory loggerFactory;
 
         static void Main(string[] args)
@@ -58,6 +58,11 @@ namespace Demo.DapperConsole
         }
         private static void TestSqliteRepositories()
         {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var dbFullName = Path.Combine(baseDir, @"Data\ORM_DEMO.db");
+
+            ConnectionString = $"Data Source = {dbFullName};";
+
             SqliteRawOperation();
 
             var context = BuildSqlContext();
@@ -114,7 +119,7 @@ namespace Demo.DapperConsole
 
         }
 
-      
+
 
         private static void TestOrders()
         {
@@ -271,8 +276,8 @@ namespace Demo.DapperConsole
                     FirstName = $"FirstName{maxId}",
                     LastName = $"LastName{maxId}",
                     MedRecNumber = $"MRN{maxId}",
-                    BirthDate=DateTime.Now.AddYears(-30),
-                    DisChargeDate=DateTime.Now.AddYears(-1).AddDays(-20)
+                    BirthDate = DateTime.Now.AddYears(-30),
+                    DisChargeDate = DateTime.Now.AddYears(-1).AddDays(-20)
 
                 });
 
@@ -335,8 +340,8 @@ namespace Demo.DapperConsole
                 var unitOfWork = new UnitOfWork(context);
 
 
-             var id=   unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
-                   parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
+                var id = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
+                      parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
 
                 //SELECT DATE('2050-08-21', '+10 days'); DATE('2050-08-21', '+1 month'); DATE('now', '+1 years');
                 unitOfWork.ExecuteRawNoQuery("UPDATE T_PATIENT SET BirthDate=DATE('now', '-1 month') WHERE PatientId=@PatientId",

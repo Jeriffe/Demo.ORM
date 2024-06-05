@@ -70,6 +70,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.RawSql", "Data\RawSql\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.RawSqlWithDapper", "Data\RawSql\Demo.RawSqlWithDapper\Demo.RawSqlWithDapper.csproj", "{D910C9D1-758A-4DF5-B411-EDE2963B7DC2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0_DB", "0_DB", "{902EF44E-8409-403A-BAF9-3C9F6FEC3199}"
+	ProjectSection(SolutionItems) = preProject
+		0_DB\How To Handle Date and Time in SQLite.pdf = 0_DB\How To Handle Date and Time in SQLite.pdf
+		0_DB\ORM_DEMO.db = 0_DB\ORM_DEMO.db
+		0_DB\Scripts_Sqlite.sql = 0_DB\Scripts_Sqlite.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
