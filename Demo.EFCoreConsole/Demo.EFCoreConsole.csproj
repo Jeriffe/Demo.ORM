@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Demo.Date.EFCoreRepository\Demo.Date.EFCoreRepository.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="SET Source=$(SolutionDir)\0_DB\&#xD;&#xA;&#xD;&#xA;SET TARGET=$(TargetDir)&#xD;&#xA;rmdir /S/Q &quot;%25TARGET%25\Data\&quot;&#xD;&#xA;&#xD;&#xA;xcopy /Y/S &quot;%25Source%25\*.db&quot; &quot;%25TARGET%25\Data\&quot;" />
+  </Target>
+
 </Project>

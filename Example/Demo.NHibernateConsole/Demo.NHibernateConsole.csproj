@@ -229,4 +229,12 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Data.SqlClient.SNI.5.2.0\build\net462\Microsoft.Data.SqlClient.SNI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Data.SqlClient.SNI.5.2.0\build\net462\Microsoft.Data.SqlClient.SNI.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>SET Source=$(SolutionDir)\0_DB\
+
+SET TARGET=$(TargetDir)
+rmdir /S/Q "%25TARGET%25\Data\"
+
+xcopy /Y/S "%25Source%25\*.db" "%25TARGET%25\Data\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

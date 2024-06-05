@@ -11,16 +11,18 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Reflection;
 
 namespace Demo.RepoDBConsole
 {
     class Program
     {
-        static string ConnectionString { get; } = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+        static string ConnectionString { get; set; } = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
         static ILoggerFactory loggerFactory;
         static void Main(string[] args)
         {
+
             //NuGet\Install-Package Microsoft.Extensions.Logging -Version 8.0.0
             loggerFactory = LoggerFactory.Create(builder =>
                   //NuGet\Install-Package Microsoft.Extensions.Logging.Console -Version 8.0.0
@@ -33,21 +35,97 @@ namespace Demo.RepoDBConsole
 
             var log = loggerFactory.CreateLogger<Program>();
 
+            TestSqliteRepositories();
+
             TestOrders();
 
             //RawOperation();
 
-            //TestRepositories();
+            TestRepositories();
 
-            //TestServices();
+            TestServices();
 
             log.LogInformation("Welcome to use RepoDB, the fastest ORM in the world!");
 
             Console.ReadLine();
         }
+        private static SqlDbContext BuildSqlContext()
+        {
+            //Sqlite
+            FluentMappers.Sql_Schema = string.Empty;
+
+            return new SqlDbContext(ConnectionString, DataProviderType.Sqlite);
+
+            //SqlServer
+            // return new SqlDbContext(ConnectionString, DataProviderType.SQLServer);
+            // return BuildSqlContext();
+        }
+        private static void TestSqliteRepositories()
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var dbFullName = Path.Combine(baseDir, @"Data\ORM_DEMO.db");
+
+            ConnectionString = $"Data Source = {dbFullName};";
+
+            SqliteRawOperation();
+
+            var context = BuildSqlContext();
+            var unitOfWork = new UnitOfWork(context);
+            var repo = new GenericRepository<TProduct>(unitOfWork);
+
+            //Use repository
+            var item = repo.GetByKey(2);
+            var items1 = repo.Get(p => p.Name == "Laptop Pro");
+
+            var items = repo.GetList(p => p.Price > 100f);
+
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
+
+            //Create
+            var np = repo.Create(new TProduct
+            {
+                Name = $"tName{maxId}",
+                Description = $"Description{maxId}",
+                Price = 998.99d
+            });
+
+            var newPatient = repo.GetByKey(np.Id);
+            newPatient.Description += "UPDATE";
+            //Update
+            repo.Update(newPatient);
+
+            // Delete
+            repo.Delete(newPatient);
+
+            unitOfWork.ProcessByTrans(() =>
+            {
+                var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
+
+                var sss = repo.GetByKey(maxId);
+
+                sss = repo.Create(new TProduct
+                {
+                    Name = $"tName{maxId}",
+                    Description = $"Description{maxId}",
+                    Price = 998.99
+                });
+
+                sss.Description += "UPDATE";
+
+                //Update
+                repo.Update(sss);
+            });
+
+            var nmaxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
+            var lastproduct = repo.GetByKey(nmaxId);
+            // Delete
+            repo.Delete(lastproduct);
+
+        }
+
         private static void TestOrders()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = BuildSqlContext();
 
             var unitOfWork = new UnitOfWork(context);
 
@@ -116,7 +194,7 @@ namespace Demo.RepoDBConsole
 
         private static void TestServices()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = BuildSqlContext();
 
             var unitOfWork = new UnitOfWork(context);
 
@@ -164,7 +242,7 @@ namespace Demo.RepoDBConsole
         {
             try
             {
-                var context = new SqlDbContext(ConnectionString);
+                var context = BuildSqlContext();
                 var sqlExecutor = new DapperRawExecutor();
                 var unitOfWork = new UnitOfWork(context, sqlExecutor);
 
@@ -201,7 +279,7 @@ namespace Demo.RepoDBConsole
 
         private static void TestRepositories()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = BuildSqlContext();
             var unitOfWork = new UnitOfWork(context);
             var patientRepo = new PatientRepository(unitOfWork);
 
@@ -251,6 +329,31 @@ namespace Demo.RepoDBConsole
             // Delete
             patientRepo.Delete(nnewPatient);
 
+        }
+        private static void SqliteRawOperation()
+        {
+            try
+            {
+                var context = BuildSqlContext();
+                var unitOfWork = new UnitOfWork(context);
+
+
+                var id = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
+                      parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
+
+                //SELECT DATE('2050-08-21', '+10 days'); DATE('2050-08-21', '+1 month'); DATE('now', '+1 years');
+                unitOfWork.ExecuteRawNoQuery("UPDATE T_PATIENT SET BirthDate=DATE('now', '-1 month') WHERE PatientId=@PatientId",
+                    parameters: new RawParameter { Name = "@PatientId", Value = 1 });
+
+                //SELECT  column_list  FROM table LIMIT {ROW_COUNT};
+                var dataTable = unitOfWork.ExecuteRawSql("SELECT  * FROM  [T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId LIMIT 100",
+                        parameters: [new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 }]);
+
+            }
+            catch (Exception ex)
+            {
+                ex = ex;
+            }
         }
 
     }

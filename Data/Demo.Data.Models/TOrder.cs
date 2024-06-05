@@ -12,7 +12,9 @@ namespace Demo.Data.Models
 
         public virtual long CustomerID { get; set; }
 
-        public virtual DateTime? CreateDate { get; set; }
+        public virtual DateTime CreateDate { get; set; }
+       // public virtual DateTime? CreateDate { get; set; }
+
         public virtual string Description { get; set; }
         public virtual double? TotalPrice { get; set; }
 
