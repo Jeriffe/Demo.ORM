@@ -15,7 +15,8 @@ namespace Demo.Date.EFCoreRepository
 
             builder.ToTable("T_PATIENT");
 
-            builder.Property(p => p.PatientType).HasColumnType("smallint");
+            //Changed PatientType to int in DB
+            builder.Property(p => p.PatientType);
 
         }
     }

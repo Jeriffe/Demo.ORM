@@ -1,11 +1,6 @@
 ﻿using Demo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Demo.Date.EFCoreRepository
 {
@@ -14,9 +9,14 @@ namespace Demo.Date.EFCoreRepository
     {
         public GenericRepository(IUnitOfWork unitOfWork)
         {
+            if (unitOfWork is null)
+            {
+                throw new ArgumentNullException("unitOfWork");
+            }
+
             if (!(unitOfWork is IUnitOfWork<IDbContext>))
             {
-                throw new ArgumentException("Expected IUnitOfWork<IDbContext from RepoDb>");
+                throw new ArgumentException("Expected IUnitOfWork<IDbContext from EFCore>");
             }
 
             this.unitOfWork = unitOfWork as IUnitOfWork<IDbContext>;
@@ -83,9 +83,9 @@ namespace Demo.Date.EFCoreRepository
 
         public void BulkCreate(IEnumerable<TEntity> entities)
         {
-            DBContext.BulkInsert(entities, 
-                options => 
-                { 
+            DBContext.BulkInsert(entities,
+                options =>
+                {
                     options.BatchSize = 2000;
                     options.BatchTimeout = 180;
                 });
