@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo.DBScripts", "Demo.DBSc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0_Doc", "0_Doc", "{66A11594-E318-4B54-AA5E-25751DEC23B8}"
 	ProjectSection(SolutionItems) = preProject
+		0_Doc\Entity Framework Core in Action 2nd.pdf = 0_Doc\Entity Framework Core in Action 2nd.pdf
+		0_Doc\MySQL必知必会.pdf = 0_Doc\MySQL必知必会.pdf
+		0_Doc\PostgreSQL即学即用中文第2版.pdf = 0_Doc\PostgreSQL即学即用中文第2版.pdf
 		0_Doc\readme.txt = 0_Doc\readme.txt
+		0_Doc\[SQLite权威指南（第二版）].pdf = 0_Doc\[SQLite权威指南（第二版）].pdf
 	EndProjectSection
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Demo.DBManagement", "Demo.DBManagement\Demo.DBManagement.sqlproj", "{211CA9BE-E33D-4261-A258-841FB369AA45}"
