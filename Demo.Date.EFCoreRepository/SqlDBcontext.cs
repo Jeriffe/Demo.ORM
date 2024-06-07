@@ -1,9 +1,8 @@
 ﻿using Demo.Data.Models;
 using Demo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using System;
 using System.Data.Common;
+
 
 namespace Demo.Date.EFCoreRepository
 {
@@ -38,18 +37,21 @@ namespace Demo.Date.EFCoreRepository
             switch (ProviderName)
             {
                 case DataProviderType.Sqlite:
+                    //Install-Package Microsoft.EntityFrameworkCore.Sqlite
                     optionsBuilder.UseSqlite(ConnectionString);
 
                     break;
                 case DataProviderType.PostgreSQL:
+                    //NuGet\Install - Package Npgsql.EntityFrameworkCore.PostgreSQL - Version 8.0.4
+                    optionsBuilder.UseNpgsql();
+                    break;
                 case DataProviderType.MySQL:
-
-                    throw new NotImplementedException();
-
+                    //NuGet\Install-Package Pomelo.EntityFrameworkCore.MySql -Version 8.0.2
+                    optionsBuilder.UseMySql(ServerVersion.AutoDetect(ConnectionString));
+                    break;
                 case DataProviderType.SQLServer:
-
                 default:
-
+                    //NuGet\Install-Package Microsoft.EntityFrameworkCore.SqlServer - Version 8.0.6
                     optionsBuilder.UseSqlServer(ConnectionString);
 
                     break;
