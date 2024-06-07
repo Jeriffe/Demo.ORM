@@ -17,7 +17,8 @@ namespace Demo.Data.DapperRepository
                 config.AddMap(new OrderItemMap());
                 config.AddMap(new OrderMap());
                 config.AddMap(new ProductItemMap());
-                
+                config.AddMap(new CustomerItemMap());
+
                 config.ForDommel();
             });
         }
@@ -100,6 +101,26 @@ namespace Demo.Data.DapperRepository
             else
             {
                 ToTable("T_Product", FluentMappers.Sql_Schema);
+            }
+
+
+            Map(p => p.Id).IsIdentity().IsKey();
+
+        }
+    }
+
+    public class CustomerItemMap : DommelEntityMap<TCustomer>
+    {
+
+        public CustomerItemMap()
+        {
+            if (string.IsNullOrEmpty(FluentMappers.Sql_Schema))
+            {
+                ToTable("T_Customer");
+            }
+            else
+            {
+                ToTable("T_Customer", FluentMappers.Sql_Schema);
             }
 
 
