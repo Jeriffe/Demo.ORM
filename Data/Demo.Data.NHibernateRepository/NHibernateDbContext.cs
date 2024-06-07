@@ -9,19 +9,19 @@ using FluentNHibernate.Cfg;
 
 namespace Demo.Data.NHibernateRepository
 {
-    public class SqlDbContext : Infrastructure.IDbContext
+    public class NHibernateDbContext : Infrastructure.IDbContext
     {
         public string ConnectionString { get; set; }
         public NHibernate.ISession Session { get; private set; }
         public static ISessionFactory SessionFactory { get; private set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
 
-        static SqlDbContext()
+        static NHibernateDbContext()
         {
             SessionFactory = CreateSessionFactory();
         }
 
-        public SqlDbContext(string connectionString)
+        public NHibernateDbContext(string connectionString)
         {
             ConnectionString = connectionString;
 

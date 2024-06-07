@@ -9,20 +9,20 @@ using System.Data.SqlClient;
 
 namespace Demo.Data.DapperRepository
 {
-    public class SqlDbContext : Infrastructure.IDbContext
+    public class DapperDbContext : Infrastructure.IDbContext
     {
         public string ConnectionString { get; set; }
         public DataProviderType ProviderName { get; set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
 
-        static SqlDbContext()
+        static DapperDbContext()
         {
             FluentMappers.Initialize();
 
             DapperPlusMapper.Initialize();
         }
 
-        public SqlDbContext(string connectionString, DataProviderType providerName = DataProviderType.SQLServer)
+        public DapperDbContext(string connectionString, DataProviderType providerName = DataProviderType.SQLServer)
         {
             //ProviderName = connectionString;
             ProviderName = providerName;

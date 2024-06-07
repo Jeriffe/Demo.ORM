@@ -21,9 +21,9 @@ namespace Demo.Date.EFCoreRepository
 
             this.unitOfWork = unitOfWork as IUnitOfWork<IDbContext>;
 
-            if (this.unitOfWork.Context is SqlDBcontext)
+            if (this.unitOfWork.Context is EFCoreDBcontext)
             {
-                DBContext = (this.unitOfWork.Context as SqlDBcontext);
+                DBContext = (this.unitOfWork.Context as EFCoreDBcontext);
             }
         }
         public DbContext DBContext;

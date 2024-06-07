@@ -5,7 +5,7 @@ namespace Demo.Infrastructure
 {
     public interface IDbContext : IDisposable
     {
-        string ConnectionString { get; set; }
+        string ConnectionString { get; }
         DbConnection Connection { get; }
 
         DbConnection CreateConnection();

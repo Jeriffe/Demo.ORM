@@ -134,7 +134,7 @@ namespace Demo.MediatRConsole
         }
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IDbContext>(c => new SqlDbContext(ConnStr));
+            services.AddScoped<IDbContext>(c => new RepoDbContext(ConnStr));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<IRepository<TPatient>, GenericRepository<TPatient>>();

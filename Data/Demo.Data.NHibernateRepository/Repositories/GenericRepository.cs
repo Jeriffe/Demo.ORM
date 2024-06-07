@@ -23,9 +23,9 @@ namespace Demo.Data.NHibernateRepository
 
             this.unitOfWork = unitOfWork as IUnitOfWork<IDbContext>;
 
-            if (this.unitOfWork.Context is SqlDbContext)
+            if (this.unitOfWork.Context is NHibernateDbContext)
             {
-                Session = (this.unitOfWork.Context as SqlDbContext).Session;
+                Session = (this.unitOfWork.Context as NHibernateDbContext).Session;
 
 
             }
@@ -264,7 +264,7 @@ namespace Demo.Data.NHibernateRepository
         {
             //https://nhibernate.info/blog/2008/10/30/bulk-data-operations-with-nhibernate-s-stateless-sessions.html
 
-            using (IStatelessSession statelessSession = SqlDbContext.SessionFactory.OpenStatelessSession())
+            using (IStatelessSession statelessSession = NHibernateDbContext.SessionFactory.OpenStatelessSession())
             using (ITransaction trans = statelessSession.BeginTransaction())
             {
                 action(statelessSession);

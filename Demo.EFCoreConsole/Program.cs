@@ -30,9 +30,9 @@ namespace Demo.EFCoreConsole
             ConnectionString = $"Data Source = {dbFullName};";
         }
 
-        private static SqlDBcontext BuildSqlContext()
+        private static EFCoreDBcontext BuildSqlContext()
         {
-            return new SqlDBcontext(ConnectionString, DataProviderType.Sqlite);
+            return new EFCoreDBcontext(ConnectionString, DataProviderType.Sqlite);
 
             //SqlServer
             // return new SqlDbContext(ConnectionString, DataProviderType.SQLServer);
@@ -131,10 +131,11 @@ namespace Demo.EFCoreConsole
             var repo = new GenericRepository<TPatient>(unitOfWork);
 
             var sql = "select * from T_PATIENT where PatientID = @PatientId";
-            var list2 = unitOfWork.ExecuteRawSql<TPatient>(sql: sql, parameters: new SqlParameter("@PatientId", 1));
+            var list2 = unitOfWork.ExecuteRawSql<TPatient>(sql: sql, parameters: new RawParameter { Name = "@PatientId", Value = 1 });
 
             var sqlUpdate = "update T_PATIENT set FirstName = @FirstName where PatientID = @PatientId";
-            unitOfWork.ExecuteRawNoQuery<TPatient>(sqlUpdate, CommandType.Text, new SqlParameter("@FirstName", "hahaha"), new SqlParameter("@PatientId", 1));
+            unitOfWork.ExecuteRawSql<TPatient>(sqlUpdate, CommandType.Text,
+                parameters: [new RawParameter { Name = "@FirstName", Value = "hahaha" }, new RawParameter { Name = "@PatientId", Value = 1 }]);
 
             var patient = repo.GetByKey(2);
 

@@ -47,7 +47,7 @@ namespace Demo.NHibernateConsole
         }
         private static void TestOrders()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = new NHibernateDbContext(ConnectionString);
 
             var unitOfWork = new UnitOfWork(context);
 
@@ -117,7 +117,7 @@ namespace Demo.NHibernateConsole
 
         private static void TestServices()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = new NHibernateDbContext(ConnectionString);
             var unitOfWork = new UnitOfWork(context);
             var patientRepo = new GenericRepository<TPatient>(unitOfWork);
 
@@ -172,7 +172,7 @@ namespace Demo.NHibernateConsole
 
         private static void TestRepositories()
         {
-            var context = new SqlDbContext(ConnectionString);
+            var context = new NHibernateDbContext(ConnectionString);
             var unitOfWork = new UnitOfWork(context);
             var patientRepo = new GenericRepository<TPatient>(unitOfWork);
 
@@ -225,7 +225,7 @@ namespace Demo.NHibernateConsole
         {
             try
             {
-                var context = new SqlDbContext(ConnectionString);
+                var context = new NHibernateDbContext(ConnectionString);
 
                 //NuGet\Install-Package Dapper -Version 2.1.35
                 var sqlExecutor = new DapperRawExecutor();

@@ -53,7 +53,7 @@ namespace Demo.NETConsole
             //use :NuGet\Install-Package System.Configuration.ConfigurationManager  to get ConnStr from app.config
             var connstr = System.Configuration.ConfigurationManager.ConnectionStrings["DBSTR"].ConnectionString;
 
-            services.AddScoped<IDbContext>(c => new Data.RepoDBRepository.SqlDbContext(connstr));
+            services.AddScoped<IDbContext>(c => new Data.RepoDBRepository.RepoDbContext(connstr));
             services.AddScoped<IUnitOfWork, Data.RepoDBRepository.UnitOfWork>();
 
 

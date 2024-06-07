@@ -1,12 +1,13 @@
 ﻿using Demo.Data.Models;
 using Demo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Data.Common;
 
 
 namespace Demo.Date.EFCoreRepository
 {
-    public class SqlDBcontext : DbContext, IDbContext
+    public class EFCoreDBcontext : DbContext, IDbContext
     {
         static bool IsDataBaseTypeSettinged = false;
 
@@ -14,7 +15,7 @@ namespace Demo.Date.EFCoreRepository
 
         public DataProviderType ProviderName { get; set; }
 
-        public SqlDBcontext(string connectionString, DataProviderType providerName = DataProviderType.Sqlite)
+        public EFCoreDBcontext(string connectionString, DataProviderType providerName = DataProviderType.Sqlite)
         {
             this.ConnectionString = connectionString;
             this.ProviderName = providerName;
@@ -69,19 +70,18 @@ namespace Demo.Date.EFCoreRepository
             modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         }
 
+        public string ConnectionString { get; private set; }
 
-        public string ConnectionString { get; set; }
-
-        public DbConnection Connection => throw new NotImplementedException();
+        public DbConnection Connection => Database.GetDbConnection();
 
         public void CloseConnection()
         {
-            throw new NotImplementedException();
+            this.Database.GetDbConnection().Close();
         }
 
         public DbConnection CreateConnection()
         {
-            throw new NotImplementedException();
+            return this.Database.GetDbConnection();
         }
 
         public void Dispose()

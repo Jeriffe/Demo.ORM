@@ -53,12 +53,12 @@ namespace Demo.RepoDBConsole
 
             Console.ReadLine();
         }
-        private static SqlDbContext BuildSqlContext()
+        private static RepoDbContext BuildSqlContext()
         {
             //Sqlite
             FluentMappers.Sql_Schema = string.Empty;
 
-            return new SqlDbContext(ConnectionString, DataProviderType.Sqlite);
+            return new RepoDbContext(ConnectionString, DataProviderType.Sqlite);
 
             //SqlServer
             // return new SqlDbContext(ConnectionString, DataProviderType.SQLServer);

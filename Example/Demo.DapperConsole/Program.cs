@@ -45,12 +45,12 @@ namespace Demo.DapperConsole
 
             Console.ReadLine();
         }
-        private static SqlDbContext BuildSqlContext()
+        private static DapperDbContext BuildSqlContext()
         {
             //Sqlite
             FluentMappers.Sql_Schema = string.Empty;
 
-            return new SqlDbContext(ConnectionString, DataProviderType.Sqlite);
+            return new DapperDbContext(ConnectionString, DataProviderType.Sqlite);
 
             //SqlServer
             // return new SqlDbContext(ConnectionString, DataProviderType.SQLServer);
@@ -298,7 +298,7 @@ namespace Demo.DapperConsole
         {
             try
             {
-                var context = new SqlDbContext(ConnectionString);
+                var context = new DapperDbContext(ConnectionString);
                 var unitOfWork = new UnitOfWork(context);
 
                 //var unitOfWork = new UnitOfWork(context);

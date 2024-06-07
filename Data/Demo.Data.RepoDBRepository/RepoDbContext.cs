@@ -10,18 +10,18 @@ using System.Data.SQLite;
 
 namespace Demo.Data.RepoDBRepository
 {
-    public class SqlDbContext : Infrastructure.IDbContext
+    public class RepoDbContext : Infrastructure.IDbContext
     {
         public string ConnectionString { get; set; }
         public DbConnection Connection { get { return CreateConnection(); } set { conn = value; } }
         public DataProviderType ProviderName { get; set; }
 
-        static SqlDbContext()
+        static RepoDbContext()
         {
             FluentMappers.Initialize();
         }
 
-        public SqlDbContext(string connectionString, DataProviderType providerName = DataProviderType.SQLServer)
+        public RepoDbContext(string connectionString, DataProviderType providerName = DataProviderType.SQLServer)
         {
             ConnectionString = connectionString;
 
