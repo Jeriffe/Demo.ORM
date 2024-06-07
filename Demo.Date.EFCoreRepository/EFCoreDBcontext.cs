@@ -30,10 +30,10 @@ namespace Demo.Date.EFCoreRepository
 
         private void SetDataBaseType(DbContextOptionsBuilder optionsBuilder)
         {
-            if (IsDataBaseTypeSettinged)
-            {
-                return;
-            }
+            //if (IsDataBaseTypeSettinged)
+            //{
+            //    return;
+            //}
 
             switch (ProviderName)
             {

@@ -78,7 +78,7 @@ namespace Demo.RepoDBConsole
             var item = repo.GetByKey(2);
             var items1 = repo.Get(p => p.Name == "Laptop Pro");
 
-            var items = repo.GetList(p => p.Price > 100f);
+            var items = repo.GetList(p => p.Price > 100m);
 
             var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
 
@@ -87,7 +87,7 @@ namespace Demo.RepoDBConsole
             {
                 Name = $"tName{maxId}",
                 Description = $"Description{maxId}",
-                Price = 998.99d
+                Price = 998.99m
             });
 
             var newPatient = repo.GetByKey(np.Id);
@@ -108,7 +108,7 @@ namespace Demo.RepoDBConsole
                 {
                     Name = $"tName{maxId}",
                     Description = $"Description{maxId}",
-                    Price = 998.99
+                    Price = 998.99m
                 });
 
                 sss.Description += "UPDATE";

@@ -82,7 +82,7 @@ namespace Demo.DapperConsole
             {
                 Name = $"tName{maxId}",
                 Description = $"Description{maxId}",
-                Price = 998.99
+                Price = 998.99m
             });
 
             var newPatient = repo.GetByKey(np.Id);
@@ -103,7 +103,7 @@ namespace Demo.DapperConsole
                 {
                     Name = $"tName{maxId}",
                     Description = $"Description{maxId}",
-                    Price = 998.99
+                    Price = 998.99m
                 });
 
                 sss.Description += "UPDATE";

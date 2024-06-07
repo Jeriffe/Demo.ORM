@@ -14,8 +14,6 @@ namespace Demo.EFCoreConsole
 
         static void Main(string[] args)
         {
-            ConfigureSqlite();
-
             TestSqliteRepositories();
 
             TestDBContext();
@@ -32,6 +30,8 @@ namespace Demo.EFCoreConsole
 
         private static EFCoreDBcontext BuildSqlContext()
         {
+            ConfigureSqlite();
+
             return new EFCoreDBcontext(ConnectionString, DataProviderType.Sqlite);
 
             //SqlServer
@@ -41,9 +41,18 @@ namespace Demo.EFCoreConsole
 
         private static void TestSqliteRepositories()
         {
+          var  context1 = BuildSqlContext();
 
+            context1 = null;
 
-            SqliteRawOperation();
+            var  context2 = BuildSqlContext();
+            context1 = null;
+
+            var context3 = BuildSqlContext();
+
+            context3 = null;
+
+         //   SqliteRawOperation();
 
             var context = BuildSqlContext();
             var unitOfWork = new UnitOfWork(context);
@@ -53,7 +62,7 @@ namespace Demo.EFCoreConsole
             var item = repo.GetByKey(2l);
             var items1 = repo.Get(p => p.Name == "Laptop Pro");
 
-            var items = repo.GetList(p => p.Price > 100f);
+            var items = repo.GetList(p => p.Price > 100m);
 
             var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Product");
 
@@ -62,7 +71,7 @@ namespace Demo.EFCoreConsole
             {
                 Name = $"tName{maxId}",
                 Description = $"Description{maxId}",
-                Price = 998.99d
+                Price = 998.99m
             });
 
             var newPatient = repo.GetByKey(np.Id);
@@ -83,7 +92,7 @@ namespace Demo.EFCoreConsole
                 {
                     Name = $"tName{maxId}",
                     Description = $"Description{maxId}",
-                    Price = 998.99
+                    Price = 998.99m
                 });
 
                 sss.Description += "UPDATE";
@@ -115,7 +124,7 @@ namespace Demo.EFCoreConsole
 
                 //SELECT  column_list  FROM table LIMIT {ROW_COUNT};
                 var dataTable = unitOfWork.ExecuteRawSql("SELECT  * FROM  [T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId LIMIT 100",
-                        parameters: [new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 }]);
+                        parameters: [new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 1 }]);
 
             }
             catch (Exception ex)

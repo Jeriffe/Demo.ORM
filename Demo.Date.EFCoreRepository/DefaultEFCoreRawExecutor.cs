@@ -33,14 +33,16 @@ namespace Demo.Date.EFCoreRepository
 
         public DataTable ExecuteRawSql(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters)
         {
-            throw new System.NotImplementedException();
+            var result = ExecuteToDataTable(conn, sql, commandType, BuilderDynamicParameters(parameters));
+
+            return result;
         }
 
         public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
         {
             return dbContext.Set<T>().FromSqlRaw(string.Format(sql, BuilderDynamicParameters(parameters)));
         }
-         
+
 
         private DbParameter[] BuilderDynamicParameters(RawParameter[] parameters)
         {
@@ -71,7 +73,7 @@ namespace Demo.Date.EFCoreRepository
                 throw new NotImplementedException("Not found relative DataProvider!");
             }
         }
-        
+
         private static DbParameter[] BuildNpgsqlParatmets(RawParameter[] parameters)
         {
             var sqlParaArray = new NpgsqlParameter[parameters.Length];
@@ -175,6 +177,36 @@ namespace Demo.Date.EFCoreRepository
             }
 
             return value;
+        }
+
+        public static DataTable ExecuteToDataTable(DbConnection conn, string sql, CommandType commandType = CommandType.Text, params DbParameter[] parameters)
+        {
+            var dataTable = new DataTable();
+
+            using (var cmd = conn.CreateCommand())
+            {
+                if (conn.State != ConnectionState.Open)
+                {
+                    cmd.Connection.Open();
+                }
+                cmd.CommandText = sql;
+
+                cmd.CommandType = commandType;
+
+                if (parameters != null)
+                {
+                    cmd.Parameters.AddRange(parameters);
+                }
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        dataTable.Load(reader);
+                    }
+                }
+            }
+
+            return dataTable;
         }
     }
 }
