@@ -83,7 +83,7 @@ namespace Demo.Services
         {
             logger?.LogInformation($"Start {logger.GetType().Name}-->.BaseAppService.Update......");
             var model = mapper.Map<TEntity>(item);
-
+            
             entityRepository.Update(model);
 
         }

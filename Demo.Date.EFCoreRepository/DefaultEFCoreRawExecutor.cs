@@ -2,10 +2,8 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using MySqlConnector;
 using Npgsql;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
@@ -40,9 +38,32 @@ namespace Demo.Date.EFCoreRepository
 
         public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
         {
-            return dbContext.Set<T>().FromSqlRaw(string.Format(sql, BuilderDynamicParameters(parameters)));
+            if (!HasParameters(parameters))
+            {
+                var objParas = BuilderFormatParameterValues(ref sql, parameters);
+
+                return dbContext.Set<T>().FromSqlRaw(sql, objParas).ToList();
+            }
+
+            var result = dbContext.Set<T>().FromSqlRaw(sql).ToList();
+
+            return result;
         }
 
+        private object[] BuilderFormatParameterValues(ref string sql, RawParameter[] parameters)
+        {
+            var sqlParaArray = new object[parameters.Length];
+            int i = 0;
+            foreach (var originPara in parameters)
+            {
+                sql = sql.Replace(originPara.Name, string.Format("{{0}}", i));
+
+                sqlParaArray[i] = originPara.Value;
+                i++;
+            }
+
+            return sqlParaArray;
+        }
 
         private DbParameter[] BuilderDynamicParameters(RawParameter[] parameters)
         {

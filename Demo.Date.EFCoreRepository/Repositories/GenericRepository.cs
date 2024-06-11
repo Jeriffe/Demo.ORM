@@ -1,5 +1,8 @@
 ﻿using Demo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace Demo.Date.EFCoreRepository
@@ -33,21 +36,6 @@ namespace Demo.Date.EFCoreRepository
         }
         private IUnitOfWork<IDbContext> unitOfWork;
 
-
-        public TEntity Create(TEntity item)
-        {
-            var model = DBContext.Add(item);
-            DBContext.SaveChanges();
-            return model.Entity;
-        }
-
-        public void Delete(TEntity item)
-        {
-            DBContext.Remove(item);
-            DBContext.SaveChanges();
-
-        }
-
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -56,7 +44,6 @@ namespace Demo.Date.EFCoreRepository
         public TEntity Get(Expression<Func<TEntity, bool>> predicateExpr)
         {
             return DBContext.Set<TEntity>().Where(predicateExpr).FirstOrDefault();
-
         }
 
         public TEntity GetByKey(object id)
@@ -68,18 +55,34 @@ namespace Demo.Date.EFCoreRepository
         {
             if (predicateExpr == null)
             {
-                return DBContext.Set<TEntity>();
+                return DBContext.Set<TEntity>().AsNoTracking();
             }
             return DBContext.Set<TEntity>().Where(predicateExpr);
         }
 
+        public TEntity Create(TEntity item)
+        {
+            var model = DBContext.Add(item);
+            DBContext.SaveChanges();
+
+            return model.Entity;
+        }
         public void Update(TEntity item)
         {
-            DBContext.Entry(item).State = EntityState.Modified;
+            DBContext.ChangeTracker.Clear();
+
+            DBContext.Update(item);
             DBContext.SaveChanges();
         }
 
+        public void Delete(TEntity item)
+        {
+            DBContext.ChangeTracker.Clear();
 
+            DBContext.Remove(item);
+
+            DBContext.SaveChanges();
+        }
 
         public void BulkCreate(IEnumerable<TEntity> entities)
         {

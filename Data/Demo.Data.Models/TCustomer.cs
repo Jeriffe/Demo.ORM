@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
 
 
@@ -8,7 +7,6 @@ namespace Demo.Data.Models
 
     public class TCustomer
     {
-        public TCustomer() { }
         public virtual long Id { get; set; }
         public virtual string Name { get; set; }
         public virtual bool Gender { get; set; }

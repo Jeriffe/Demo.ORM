@@ -6,11 +6,17 @@ namespace Demo.Date.EFCoreRepository
 {
     internal class ProductMap : IEntityTypeConfiguration<TProduct>
     {
-        public void Configure(EntityTypeBuilder<TProduct> builder)
+        public void Configure(EntityTypeBuilder<TProduct> entity)
         {
-            builder.HasKey(p => p.Id);
+            entity.HasKey(p => p.Id);
 
-            builder.ToTable("T_Product");
+            entity.ToTable("T_Product");
+
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+            entity.Property(e => e.Price).HasColumnType("NUMERIC(18, 4)");
         }
     }
 }

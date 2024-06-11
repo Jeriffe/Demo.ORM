@@ -1,23 +1,25 @@
 ﻿using Demo.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Demo.Date.EFCoreRepository
 {
     internal class PatientMap : IEntityTypeConfiguration<TPatient>
     {
-        public void Configure(EntityTypeBuilder<TPatient> builder)
+        public void Configure(EntityTypeBuilder<TPatient> entity)
         {
-            builder.HasKey(p => p.PatientId);
+            entity.HasKey(e => e.PatientId);
 
-            builder.ToTable("T_PATIENT");
+            entity.ToTable("T_PATIENT");
 
             //Changed PatientType to int in DB
-            builder.Property(p => p.PatientType);
-
+            entity.Property(e => e.PatientType);
+            entity.Property(e => e.FirstName).HasMaxLength(255);
+            entity.Property(e => e.Gender).HasMaxLength(255);
+            entity.Property(e => e.LastName).HasMaxLength(255);
+            entity.Property(e => e.MedRecNumber).HasMaxLength(255);
+            entity.Property(e => e.MiddleInitial).HasMaxLength(255);
+            entity.Property(e => e.SiteId).HasColumnName("SiteID");
         }
     }
 

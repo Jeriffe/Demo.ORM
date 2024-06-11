@@ -28,7 +28,7 @@ namespace Demo.Services
 
             var order = base.GetSingle(keyId);
 
-            var dbOrderItems = orderItemRepository.GetList(o => o.OrderId == order.Id);
+            var dbOrderItems = orderItemRepository.GetList(o => o.OrderId == order.Id).ToList();
 
             order.OrderItems = mapper.Map<List<OrderItem>>(dbOrderItems);
 
@@ -62,11 +62,14 @@ namespace Demo.Services
         {
             unitOfWork.ProcessWithTrans(() =>
             {
+                var orderItems = item.OrderItems;
+                item.OrderItems = null;
+
                 base.Update(item);
 
                 var dbOrderItems = orderItemRepository.GetList(o => o.OrderId == item.Id);
 
-                var modelOrderItems = mapper.Map<List<TOrderItem>>(item.OrderItems);
+                var modelOrderItems = mapper.Map<List<TOrderItem>>(orderItems);
 
                 var updateOrderItems = modelOrderItems.Intersect(dbOrderItems, new OrderItemComparer());
 
@@ -89,9 +92,11 @@ namespace Demo.Services
             {
                 var orderItems = orderItemRepository.GetList(o => o.OrderId == item.Id);
 
+                base.Delete(item);
+
                 orderItemRepository.BulkDelete(orderItems);
 
-                base.Delete(item);
+                
 
             });
         }

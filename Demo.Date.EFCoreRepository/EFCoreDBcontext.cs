@@ -9,16 +9,22 @@ namespace Demo.Date.EFCoreRepository
 {
     public class EFCoreDBcontext : DbContext, IDbContext
     {
-        static bool IsDataBaseTypeSettinged = false;
+        public virtual DbSet<TCustomer> TCustomer { get; set; }
 
-        public DbSet<TPatient> Patients { get; set; }
+        public virtual DbSet<TOrder> TOrder { get; set; }
 
-        public DataProviderType ProviderName { get; set; }
+        public virtual DbSet<TOrderItem> TOrderItem { get; set; }
 
-        public EFCoreDBcontext(string connectionString, DataProviderType providerName = DataProviderType.Sqlite)
+        public virtual DbSet<TPatient> TPatient { get; set; }
+
+        public virtual DbSet<TProduct> TProduct { get; set; }
+
+        public DataProviderType ProviderType { get; set; }
+
+        public EFCoreDBcontext(string connectionString, DataProviderType providerType = DataProviderType.SQLServer)
         {
             this.ConnectionString = connectionString;
-            this.ProviderName = providerName;
+            this.ProviderType = providerType;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -30,12 +36,7 @@ namespace Demo.Date.EFCoreRepository
 
         private void SetDataBaseType(DbContextOptionsBuilder optionsBuilder)
         {
-            //if (IsDataBaseTypeSettinged)
-            //{
-            //    return;
-            //}
-
-            switch (ProviderName)
+            switch (ProviderType)
             {
                 case DataProviderType.Sqlite:
                     //Install-Package Microsoft.EntityFrameworkCore.Sqlite
@@ -57,9 +58,6 @@ namespace Demo.Date.EFCoreRepository
 
                     break;
             }
-
-            IsDataBaseTypeSettinged = true;
-
         }
 
 

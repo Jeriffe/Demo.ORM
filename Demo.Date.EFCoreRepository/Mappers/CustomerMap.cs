@@ -1,21 +1,22 @@
 ﻿using Demo.Data.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Demo.Date.EFCoreRepository
 {
     internal class CustomerMap : IEntityTypeConfiguration<TCustomer>
     {
-        public void Configure(EntityTypeBuilder<TCustomer> builder)
+        public void Configure(EntityTypeBuilder<TCustomer> entity)
         {
-            builder.HasKey(p => p.Id);
+            entity.HasKey(p => p.Id);
 
-            builder.ToTable("T_Customer");
+            entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.Birthday).HasColumnType("DATETIME");
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(500);
+
+            entity.Property(e => e.Phone).HasMaxLength(10);
+
+            entity.ToTable("T_Customer");
         }
     }
 }

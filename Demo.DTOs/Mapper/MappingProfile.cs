@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
 using Demo.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Demo.DTOs.Mapper
 {
@@ -15,10 +12,13 @@ namespace Demo.DTOs.Mapper
                 .ForMember(o => o.MedRecordNumber, opt => opt.MapFrom(src => src.MedRecNumber))
                 .ReverseMap();
 
-            CreateMap<TCustomer, Customer>().ReverseMap(); 
+            CreateMap<TCustomer, Customer>()
+                .ReverseMap(); 
 
             CreateMap<TOrder, Order>().ReverseMap(); 
-            CreateMap<TOrderItem, OrderItem>().ReverseMap(); 
+            CreateMap<TOrderItem, OrderItem>()
+                .ForMember(o => o.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ReverseMap(); 
 
             CreateMap<TProduct, Product>().ReverseMap(); 
         }

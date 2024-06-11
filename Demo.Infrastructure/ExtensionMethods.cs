@@ -58,11 +58,11 @@ namespace Demo.Infrastructure
             {
                 try
                 {
-                    conn.BeginTrans();
+                    //conn.BeginTrans();
 
                     action();
 
-                    conn.Commit();
+                    //conn.Commit();
 
                     transaction.Complete();
 
@@ -84,9 +84,9 @@ namespace Demo.Infrastructure
             {
                 try
                 {
-                    conn.BeginTrans();
+                    //conn.BeginTrans();
                     var result = action();
-                    conn.Commit();
+                    //conn.Commit();
 
                     trans.Complete();
 
