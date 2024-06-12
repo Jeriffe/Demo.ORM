@@ -37,22 +37,29 @@ namespace Demo.EFCoreConsole
             log.LogInformation("Welcome to use Entity Framework Core, the best ORM in the .NET Platform!");
 
 
+            try
+            {
+                //ProviderName = DataProviderType.Sqlite;
+                //ConfigureConnectionString();
 
-            //ProviderName = DataProviderType.Sqlite;
-            //ConfigureConnectionString();
+                //SqlServer
+                ProviderName = DataProviderType.SQLServer;
 
-            //SqlServer
-            ProviderName = DataProviderType.SQLServer;
+                RawOperation();
 
-            RawOperation();
+                TestPatientRepository();
 
-            //TestPatientRepository();
+                TestProductRepository();
 
-            //TestProductRepository();
+                TestOrders();
 
-            //TestOrders();
+                TestServices();
+            }
+            catch (Exception ex)
+            {
+                ex = ex;
+            }
 
-            //TestServices();
 
         }
 
@@ -119,24 +126,24 @@ namespace Demo.EFCoreConsole
             var plist = svc.GetAll(null);
 
 
-            
+
             //Create
             var dtoP = new Order
             {
                 Customer = new Customer { Id = 4 },
                 Description = $"{maxId}",
-                TotalPrice = 8888.88,
+                TotalPrice = 8888.88m,
                 OrderItems = new List<OrderItem>
                 {
                     new OrderItem
                     {
-                        ProductId=2,Price=99.99,
+                        ProductId=2,Price=99.99m,
                         Description="Desc,P2,Price99.99",
                         CreateDate=DateTime.Now
                     },
                     new OrderItem
                     {
-                        ProductId=10,Price=88.88,
+                        ProductId=10,Price=88.88m,
                         Description="Desc,P10,Price88.88",
                         CreateDate=DateTime.Now
                     }
@@ -150,14 +157,14 @@ namespace Demo.EFCoreConsole
             var order = svc.GetSingle(maxId);
             var orderItems = orderItemRep.GetList(o => o.OrderId == order.Id);
             order.OrderItems = mapper.Map<List<OrderItem>>(orderItems);
-            order.TotalPrice = 999.99;
+            order.TotalPrice = 999.99m;
             order.OrderItems.RemoveAt(0);
             order.OrderItems[0].Price += 10;
             order.OrderItems.Add(new OrderItem
             {
-                OrderId=order.Id,
+                OrderId = order.Id,
                 ProductId = 5,
-                Price = 66.66,
+                Price = 66.66m,
                 Description = "Desc,P5,Price66.66",
                 CreateDate = DateTime.Now
             });
@@ -194,7 +201,7 @@ namespace Demo.EFCoreConsole
             //Use app service
             unitOfWork.ProcessByTrans(() =>
             {
-                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
+                var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
                 //Create
                 var dtoP = new Patient
                 {
@@ -212,7 +219,7 @@ namespace Demo.EFCoreConsole
                 // throw new Exception("Rollback trans");
             });
 
-            int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
             var pppp = pservice.GetSingle(maxId);
             pservice.Delete(pppp);
         }
@@ -358,8 +365,8 @@ namespace Demo.EFCoreConsole
                 var context = new EFCoreDBcontext(ConnectionString);
                 var unitOfWork = new UnitOfWork(context);
 
-                var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
-                var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
+                //var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
+                //var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
 
 
                 unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",

@@ -47,7 +47,7 @@ namespace Demo.Date.EFCoreRepository
         /// <returns></returns>
         public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
         {
-            if (!HasParameters(parameters))
+            if (HasParameters(parameters))
             {
                 var objParas = BuilderFormatParameterValues(ref sql, parameters);
 

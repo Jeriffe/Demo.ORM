@@ -1,6 +1,7 @@
 ﻿using Demo.Data.Models;
 using Demo.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Data;
 using System.Data.Common;
 
@@ -34,27 +35,31 @@ namespace Demo.Date.EFCoreRepository
 
         }
 
-        private void SetDataBaseType(DbContextOptionsBuilder optionsBuilder)
+        private void SetDataBaseType(DbContextOptionsBuilder optionBuilder)
         {
             switch (ProviderType)
             {
                 case DataProviderType.Sqlite:
                     //Install-Package Microsoft.EntityFrameworkCore.Sqlite
-                    optionsBuilder.UseSqlite(ConnectionString);
+                    optionBuilder.UseSqlite(ConnectionString);
+
+                    //Microsoft.EntityFrameworkCore.Database.Transaction.AmbientTransactionWarning: An ambient transaction has been detected
+                    //https://stackoverflow.com/questions/60080620/sqlite-in-memory-transactionscope-ambient-transaction-has-been-detected
+                    optionBuilder.ConfigureWarnings(x => x.Ignore(RelationalEventId.AmbientTransactionWarning));
 
                     break;
                 case DataProviderType.PostgreSQL:
                     //NuGet\Install - Package Npgsql.EntityFrameworkCore.PostgreSQL - Version 8.0.4
-                    optionsBuilder.UseNpgsql();
+                    optionBuilder.UseNpgsql();
                     break;
                 case DataProviderType.MySQL:
                     //NuGet\Install-Package Pomelo.EntityFrameworkCore.MySql -Version 8.0.2
-                    optionsBuilder.UseMySql(ServerVersion.AutoDetect(ConnectionString));
+                    optionBuilder.UseMySql(ServerVersion.AutoDetect(ConnectionString));
                     break;
                 case DataProviderType.SQLServer:
                 default:
                     //NuGet\Install-Package Microsoft.EntityFrameworkCore.SqlServer - Version 8.0.6
-                    optionsBuilder.UseSqlServer(ConnectionString);
+                    optionBuilder.UseSqlServer(ConnectionString);
 
                     break;
             }

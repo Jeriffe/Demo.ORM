@@ -16,7 +16,9 @@ namespace Demo.Date.EFCoreRepository
             entity.Property(e => e.CreateDate).HasColumnType("DATETIME");
             entity.Property(e => e.CustomerID).HasColumnName("CustomerID");
             entity.Property(e => e.Description).HasMaxLength(100);
-            entity.Property(e => e.TotalPrice).HasColumnType("numeric(18, 4)");
+            //entity.Property(e => e.TotalPrice).HasColumnType("numeric(18, 4)");
+            entity.Property(e => e.TotalPrice).HasColumnType("NUMERIC");
+
 
             entity.HasOne(d => d.TCustomer).WithMany(p => p.Orders)
             .HasForeignKey(d => d.CustomerID);

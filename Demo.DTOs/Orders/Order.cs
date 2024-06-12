@@ -12,7 +12,7 @@ namespace Demo.DTOs
         public Customer Customer { get; set; }
         public DateTime? CreateDate { get; set; }
         public string Description { get; set; }
-        public double? TotalPrice { get; set; }
+        public decimal? TotalPrice { get; set; }
 
         public IList<OrderItem> OrderItems { get; set; }
 

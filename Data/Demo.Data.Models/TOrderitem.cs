@@ -8,7 +8,7 @@ namespace Demo.Data.Models
         public virtual long Id { get; set; }
         public virtual long OrderId { get; set; }
         public virtual long ProductId { get; set; }
-        public virtual double Price { get; set; }
+        public virtual decimal Price { get; set; }
         public virtual DateTime CreateDate { get; set; }
         public virtual string Description { get; set; }
         public virtual TOrder Order { get; set; }

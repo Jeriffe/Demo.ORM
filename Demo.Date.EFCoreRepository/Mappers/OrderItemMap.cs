@@ -13,7 +13,8 @@ namespace Demo.Date.EFCoreRepository
             entity.Property(e => e.CreateDate).HasColumnType("DATETIME");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
-            entity.Property(e => e.Price).HasColumnType("NUMERIC(18, 4)");
+            //entity.Property(e => e.Price).HasColumnType("NUMERIC(18, 4)");
+            entity.Property(e => e.Price).HasColumnType("NUMERIC");
 
             entity.HasOne(d => d.Product).WithMany(p => p.OrderItems)
           .HasForeignKey(d => d.ProductId);

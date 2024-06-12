@@ -16,7 +16,8 @@ namespace Demo.Date.EFCoreRepository
             entity.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-            entity.Property(e => e.Price).HasColumnType("NUMERIC(18, 4)");
+            //entity.Property(e => e.Price).HasColumnType("NUMERIC(18, 4)");
+            entity.Property(e => e.Price).HasColumnType("NUMERIC");
         }
     }
 }

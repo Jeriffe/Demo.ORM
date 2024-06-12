@@ -141,18 +141,18 @@ namespace Demo.DapperConsole
             var plist = svc.GetAll(null);
 
 
-            var maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
             //Create
             var dtoP = new Order
             {
                 Customer = new Customer { Id = 4 },
                 Description = $"{maxId}",
-                TotalPrice = 8888.88,
+                TotalPrice = 8888.88m,
                 OrderItems = new List<OrderItem>
                 {
                     new OrderItem
                     {
-                        ProductId=2,Price=99.99,
+                        ProductId=2,Price=99.99m,
                         Description="Desc,P2,Price99.99",
                         CreateDate=DateTime.Now
                     },
@@ -168,7 +168,7 @@ namespace Demo.DapperConsole
 
 
             //Update
-            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
+            maxId = unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM dbo.T_Order");
             var order = svc.GetSingle(maxId);
             var orderItems = orderItemRep.GetList(o => o.OrderId == order.Id);
             order.OrderItems = mapper.Map<List<OrderItem>>(orderItems);
@@ -188,7 +188,7 @@ namespace Demo.DapperConsole
             //Delete
             svc.Delete(order);
 
-            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM dbo.T_Order");
+            maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Order");
         }
 
         private static void TestServices()
@@ -213,7 +213,7 @@ namespace Demo.DapperConsole
             //Use app service
             unitOfWork.ProcessByTrans(() =>
             {
-                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
                 //Create
                 var dtoP = new Patient
                 {
@@ -231,7 +231,7 @@ namespace Demo.DapperConsole
                 // throw new Exception("Rollback trans");
             });
 
-            int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
             var pppp = pservice.GetSingle(maxId);
             pservice.Delete(pppp);
         }

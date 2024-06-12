@@ -86,32 +86,53 @@ namespace Demo.Date.EFCoreRepository
 
         public void BulkCreate(IEnumerable<TEntity> entities)
         {
-            DBContext.BulkInsert(entities,
-                options =>
-                {
-                    options.BatchSize = 2000;
-                    options.BatchTimeout = 180;
-                });
+            foreach (var item in entities)
+            {
+                DBContext.Add(item);
+            }
+            DBContext.SaveChanges();
+            //DBContext.BulkInsert(entities,
+            //    options =>
+            //    {
+            //        options.BatchSize = 2000;
+            //        options.BatchTimeout = 180;
+            //    });
         }
 
         public void BulkUpdate(IEnumerable<TEntity> entities)
         {
-            DBContext.BulkUpdate(entities,
-                options =>
-                {
-                    options.BatchSize = 2000;
-                    options.BatchTimeout = 180;
-                });
-        }
+            foreach (var item in entities)
+            {
+                DBContext.ChangeTracker.Clear();
+                DBContext.Update(item);
 
+            }
+            DBContext.SaveChanges();
+
+            //DBContext.BulkUpdate(entities,
+            //    options =>
+            //    {
+            //        options.BatchSize = 2000;
+            //        options.BatchTimeout = 180;
+            //    });
+        }
+       
         public void BulkDelete(IEnumerable<TEntity> entities)
         {
-            DBContext.BulkDelete(entities,
-                options =>
-                {
-                    options.BatchSize = 2000;
-                    options.BatchTimeout = 180;
-                });
+            foreach (var item in entities)
+            {
+                DBContext.ChangeTracker.Clear();
+                DBContext.Remove(item);
+
+            }
+            DBContext.SaveChanges();
+
+            //DBContext.BulkDelete(entities,
+            //    options =>
+            //    {
+            //        options.BatchSize = 2000;
+            //        options.BatchTimeout = 180;
+            //    });
         }
     }
 }
