@@ -5,24 +5,26 @@ using Demo.DBScripts;
 using Demo.DTOs;
 using Demo.DTOs.Orders;
 using Demo.Infrastructure;
-using Demo.RawSql;
 using Demo.Services;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.IO;
 using System.Reflection;
 
+
 namespace Demo.RepoDBConsole
 {
-    class Program
+    internal class Program
     {
         static string ConnectionString { get; set; } = ConfigurationManager.ConnectionStrings["DB"].ConnectionString;
+        static DataProviderType ProviderName { get; set; } = DataProviderType.SQLServer;
         static ILoggerFactory loggerFactory;
+
         static void Main(string[] args)
         {
-
             //NuGet\Install-Package Microsoft.Extensions.Logging -Version 8.0.0
             loggerFactory = LoggerFactory.Create(builder =>
                   //NuGet\Install-Package Microsoft.Extensions.Logging.Console -Version 8.0.0
@@ -35,47 +37,203 @@ namespace Demo.RepoDBConsole
 
             var log = loggerFactory.CreateLogger<Program>();
 
-            ConfigureSqlite();
-
-            TestSqliteRepositories();
+            log.LogInformation("Welcome to use Entity Framework Core, the best ORM in the .NET Platform!");
 
 
-         //   TestRepositories();
+            try
+            {
+                //Sqlite
+                ProviderName = DataProviderType.Sqlite;
+                FluentMappers.Sql_Schema = string.Empty;
+                ConfigureConnectionString();
 
+                // //SqlServer
+                //ProviderName = DataProviderType.SQLServer;
 
-            TestOrders();
+                RawOperation();
 
-            //RawOperation();
+                TestPatientRepository();
 
-            TestServices();
+                TestProductRepository();
 
-            log.LogInformation("Welcome to use RepoDB, the fastest ORM in the world!");
+                TestOrders();
 
-            Console.ReadLine();
+                TestServices();
+            }
+            catch (Exception ex)
+            {
+                ex = ex;
+            }
         }
+
+        private static void ConfigureConnectionString()
+        {
+            switch (ProviderName)
+            {
+                case DataProviderType.SQLServer:
+                    break;
+                case DataProviderType.PostgreSQL:
+                    break;
+                case DataProviderType.MySQL:
+                    break;
+                case DataProviderType.Sqlite:
+                    var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                    var dbFullName = Path.Combine(baseDir, @"Data\ORM_DEMO.db");
+
+                    ConnectionString = $"Data Source = {dbFullName};";
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private static RepoDbContext BuildSqlContext()
         {
-            //Sqlite
-            FluentMappers.Sql_Schema = string.Empty;
-
-            return new RepoDbContext(ConnectionString, DataProviderType.Sqlite);
-
-            //SqlServer
-            // return new SqlDbContext(ConnectionString, DataProviderType.SQLServer);
-            // return BuildSqlContext();
+            switch (ProviderName)
+            {
+                case DataProviderType.PostgreSQL:
+                case DataProviderType.MySQL:
+                    throw new NotImplementedException("DataProviderType");
+                case DataProviderType.Sqlite:
+                    return new RepoDbContext(ConnectionString, DataProviderType.Sqlite);
+                case DataProviderType.SQLServer:
+                default:
+                    //SqlServer
+                    ProviderName = DataProviderType.SQLServer;
+                    // return new EFCoreDBcontext(ConnectionString, ProviderName);
+                    return new RepoDbContext(ConnectionString);
+            }
         }
-        private static void TestSqliteRepositories()
+
+        private static void TestOrders()
         {
-          
+            var context = BuildSqlContext();
 
-            SqliteRawOperation();
+            var unitOfWork = new UnitOfWork(context);
 
+            var orderRepo = new GenericRepository<TOrder>(unitOfWork);
+            var orderItemRep = new GenericRepository<TOrderItem>(unitOfWork);
+
+            var _configuration = new MapperConfiguration(config =>
+          config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
+
+            var mapper = _configuration.CreateMapper();
+
+            var log = loggerFactory.CreateLogger<OrderSvc>();
+            var svc = new OrderSvc(unitOfWork, orderRepo, orderItemRep, mapper, log);
+
+
+            var maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM T_Order");
+            var pOrder = svc.GetSingle(maxId);
+
+            var plist = svc.GetAll(null);
+
+
+
+            //Create
+            var dtoP = new Order
+            {
+                Customer = new Customer { Id = 4 },
+                Description = $"{maxId}",
+                TotalPrice = 8888.88m,
+                OrderItems = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        ProductId=2,Price=99.99m,
+                        Description="Desc,P2,Price99.99",
+                        CreateDate=DateTime.Now
+                    },
+                    new OrderItem
+                    {
+                        ProductId=10,Price=88.88m,
+                        Description="Desc,P10,Price88.88",
+                        CreateDate=DateTime.Now
+                    }
+                }
+            };
+            dtoP = svc.Create(dtoP);
+
+
+            //Update
+            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM T_Order");
+            var order = svc.GetSingle(maxId);
+            var orderItems = orderItemRep.GetList(o => o.OrderId == order.Id);
+            order.OrderItems = mapper.Map<List<OrderItem>>(orderItems);
+            order.TotalPrice = 999.99m;
+            order.OrderItems.RemoveAt(0);
+            order.OrderItems[0].Price += 10;
+            order.OrderItems.Add(new OrderItem
+            {
+                OrderId = order.Id,
+                ProductId = 5,
+                Price = 66.66m,
+                Description = "Desc,P5,Price66.66",
+                CreateDate = DateTime.Now
+            });
+
+            svc.Update(order);
+
+            //Delete
+
+            var orderAfterUpdate = svc.GetSingle(maxId);
+            svc.Delete(orderAfterUpdate);
+
+            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Order");
+        }
+
+        private static void TestServices()
+        {
+            var context = BuildSqlContext();
+            var unitOfWork = new UnitOfWork(context);
+            var patientRepo = new GenericRepository<TPatient>(unitOfWork);
+
+            var _configuration = new MapperConfiguration(config =>
+          config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
+
+            var mapper = _configuration.CreateMapper();
+
+            var logP = loggerFactory.CreateLogger<PatientService>();
+            var pservice = new PatientService(unitOfWork, patientRepo, mapper, logP);
+
+            var plist = pservice.GetAll(null);
+
+            var logR = loggerFactory.CreateLogger<ReportService>();
+            var service = new ReportService(new UnitOfWork(context), logR);
+
+            //Use app service
+            unitOfWork.ProcessByTrans(() =>
+            {
+                var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
+                //Create
+                var dtoP = new Patient
+                {
+                    FirstName = $"FirstName{maxId}",
+                    LastName = $"LastName{maxId}",
+                    MedRecordNumber = $"MRN{maxId}",
+                    BirthDate = DateTime.Now,
+                    DisChargeDate = DateTime.Now,
+                };
+                dtoP = pservice.Create(dtoP);
+                dtoP.MiddleInitial += "BaseAppSvc";
+                pservice.Update(dtoP);
+                var updatedP = pservice.GetSingle(dtoP.PatientId);
+
+                // throw new Exception("Rollback trans");
+            });
+
+            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
+            var pppp = pservice.GetSingle(maxId);
+            pservice.Delete(pppp);
+        }
+        private static void TestProductRepository()
+        {
             var context = BuildSqlContext();
             var unitOfWork = new UnitOfWork(context);
             var repo = new GenericRepository<TProduct>(unitOfWork);
 
             //Use repository
-            var item = repo.GetByKey(2);
+            var item = repo.GetByKey(2l);
             var items1 = repo.Get(p => p.Name == "Laptop Pro");
 
             var items = repo.GetList(p => p.Price > 100m);
@@ -124,150 +282,97 @@ namespace Demo.RepoDBConsole
 
         }
 
-        private static void ConfigureSqlite()
-        {
-            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            var dbFullName = Path.Combine(baseDir, @"Data\ORM_DEMO.db");
-
-            ConnectionString = $"Data Source = {dbFullName};";
-        }
-
-        private static void TestOrders()
+        private static void TestPatientRepository()
         {
             var context = BuildSqlContext();
-
             var unitOfWork = new UnitOfWork(context);
+            var repo = new GenericRepository<TPatient>(unitOfWork);
 
-            var orderRepo = new GenericRepository<TOrder>(unitOfWork);
-            var orderItemRep = new GenericRepository<TOrderItem>(unitOfWork);
+            var sql = "SELECT * FROM T_PATIENT WHERE PatientID = @PatientId";
+            var list2 = unitOfWork.ExecuteRawSql<TPatient>(sql: sql, parameters: new RawParameter { Name = "@PatientId", Value = 1 });
 
-            var _configuration = new MapperConfiguration(config =>
-          config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
+            var sqlUpdate = "update T_PATIENT set FirstName = @FirstName where PatientID = @PatientId";
+            unitOfWork.ExecuteRawNoQuery(sqlUpdate, CommandType.Text,
+                parameters: [new RawParameter { Name = "@FirstName", Value = "hahaha" }, new RawParameter { Name = "@PatientId", Value = 1 }]);
 
-            var mapper = _configuration.CreateMapper();
+            var patient = repo.GetByKey(2);
 
-            var log = loggerFactory.CreateLogger<OrderSvc>();
-            var svc = new OrderSvc(unitOfWork, orderRepo, orderItemRep, mapper, log);
-
-
-
-
-            var maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM T_Order");
-
-            var maxOrder = svc.GetSingle(maxId);
-
-
-            var plist = svc.GetAll(null);
-
-            //Create
-            var dtoP = new Order
+            var patientNew = new TPatient()
             {
-                Customer = new Customer { Id = 4 },
-                Description = $"{maxId}",
-                TotalPrice = 8888.88d,
-                OrderItems = new List<OrderItem>
-                {
-                    new OrderItem
-                    {
-                        ProductId=2,Price=99.99d,
-                        Description="Desc,P2,Price99.99",
-                        CreateDate=DateTime.Now
-                    },
-                    new OrderItem
-                    {
-                        ProductId=10,Price=88.88d,
-                        Description="Desc,P10,Price88.88",
-                        CreateDate=DateTime.Now
-                    }
-                }
+                FirstName = "F8",
+                LastName = "LastName938419",
+                BirthDate = DateTime.Now,
+                Gender = "M",
+                MedRecNumber = "938419",
+                SiteId = 999
             };
-            dtoP = svc.Create(dtoP);
+            var patientInserted = repo.Create(patientNew);
+            repo.Delete(patientInserted);
 
+            var patient1 = repo.Get(o => o.PatientId == 1);
+            patient1.FirstName = "change";
+            repo.Update(patient1);
 
-            //Update
-            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX([Id]) FROM T_Order");
-            var order = svc.GetSingle(maxId);
-            var orderItems = orderItemRep.GetList(o => o.OrderId == order.Id);
-            order.OrderItems = mapper.Map<List<OrderItem>>(orderItems);
-            order.TotalPrice = 999.99;
-            order.OrderItems.RemoveAt(0);
-            order.OrderItems[0].Price += 10;
-            order.OrderItems.Add(new OrderItem
-            {
-                ProductId = 5,
-                Price = 66.66,
-                Description = "Desc,P5,Price66.66",
-                CreateDate = DateTime.Now
-            });
-
-            svc.Update(order);
-
-            //Delete
-            svc.Delete(order);
-
-            maxId = (long)unitOfWork.ExecuteRawScalar("SELECT MAX(Id) FROM T_Order");
-        }
-
-        private static void TestServices()
-        {
-            var context = BuildSqlContext();
-
-            var unitOfWork = new UnitOfWork(context);
-
-            var patientRepo = new GenericRepository<TPatient>(unitOfWork);
-
-            var _configuration = new MapperConfiguration(config =>
-          config.AddMaps(Assembly.GetAssembly(typeof(Patient))));
-
-            var mapper = _configuration.CreateMapper();
-
-            var log = loggerFactory.CreateLogger<PatientService>();
-            var pservice = new PatientService(unitOfWork, patientRepo, mapper, log);
-
-            var plist = pservice.GetAll(null);
-
-            //Use app service
-            unitOfWork.ProcessByTrans(() =>
-            {
-                int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-                //Create
-                var dtoP = new Patient
-                {
-                    FirstName = $"FirstName{maxId}",
-                    LastName = $"LastName{maxId}",
-                    MedRecordNumber = $"MRN{maxId}",
-                    BirthDate = DateTime.Now,
-                    DisChargeDate = DateTime.Now,
-                };
-                dtoP = pservice.Create(dtoP);
-                dtoP.MiddleInitial += "BaseAppSvc";
-                pservice.Update(dtoP);
-                var updatedP = pservice.GetSingle(dtoP.PatientId);
-
-                // throw new Exception("Rollback trans");
-            });
-
-            int maxId = (int)unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT");
-            var pppp = pservice.GetSingle(maxId);
-            pservice.Delete(pppp);
-
-            // var result = service.GetPatientByCareUnitID(3, new PageFilter { PagIndex = 0, PageSize = 100, });
+            var list = repo.GetList();
+            var list1 = repo.GetList(o => o.PatientId == 2);
         }
 
         private static void RawOperation()
         {
+            switch (ProviderName)
+            {
+                case DataProviderType.SQLServer:
+                    SqlServerRawOperation();
+                    break;
+                case DataProviderType.PostgreSQL:
+                    break;
+                case DataProviderType.MySQL:
+                    break;
+                case DataProviderType.Sqlite:
+                    SqliteRawOperation();
+                    break;
+                default:
+                    break;
+            }
+        }
+        private static void SqliteRawOperation()
+        {
             try
             {
                 var context = BuildSqlContext();
-                var sqlExecutor = new DapperRawExecutor();
-                var unitOfWork = new UnitOfWork(context, sqlExecutor);
-
-                //var unitOfWork = new UnitOfWork(context);
-
+                var unitOfWork = new UnitOfWork(context);
 
                 var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
                 var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
 
+
+                var id = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
+                      parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
+
+                //SELECT DATE('2050-08-21', '+10 days'); DATE('2050-08-21', '+1 month'); DATE('now', '+1 years');
+                unitOfWork.ExecuteRawNoQuery("UPDATE T_PATIENT SET BirthDate=DATE('now', '-1 month') WHERE PatientId=@PatientId",
+                    parameters: new RawParameter { Name = "@PatientId", Value = 1 });
+
+                //SELECT  column_list  FROM table LIMIT {ROW_COUNT};
+                var dataTable = unitOfWork.ExecuteRawSql("SELECT  * FROM  [T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId LIMIT 100",
+                        parameters: [new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 1 }]);
+
+            }
+            catch (Exception ex)
+            {
+                ex = ex;
+            }
+        }
+
+        private static void SqlServerRawOperation()
+        {
+            try
+            {
+                var context = new RepoDbContext(ConnectionString);
+                var unitOfWork = new UnitOfWork(context);
+
+                var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
+                var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
 
 
                 unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
@@ -292,85 +397,5 @@ namespace Demo.RepoDBConsole
                 ex = ex;
             }
         }
-
-        private static void TestRepositories()
-        {
-            var context = BuildSqlContext();
-            var unitOfWork = new UnitOfWork(context);
-            var patientRepo = new PatientRepository(unitOfWork);
-
-            //Use repository
-            var patient = patientRepo.GetByKey(2);
-            var patient1 = patientRepo.Get(p => p.MedRecNumber == "938417");
-
-            var patients = patientRepo.Get(p => p.Gender == "F");
-            var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
-
-            //Create
-            var np = patientRepo.Create(new TPatient
-            {
-                FirstName = $"FirstName{maxId}",
-                LastName = $"LastName{maxId}",
-                MedRecNumber = $"MRN{maxId}"
-            });
-
-            var newPatient = patientRepo.GetByKey(np.PatientId);
-            newPatient.MiddleInitial += "UPDATE";
-            //Update
-            patientRepo.Update(newPatient);
-
-            // Delete
-            patientRepo.Delete(newPatient);
-
-            unitOfWork.ProcessByTrans(() =>
-            {
-                var maxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
-
-                var newPatient = patientRepo.GetByKey(maxId);
-
-                newPatient = patientRepo.Create(new TPatient
-                {
-                    FirstName = $"FirstName{maxId}",
-                    LastName = $"LastName{maxId}",
-                    MedRecNumber = $"MRN{maxId}"
-                });
-
-                newPatient.MiddleInitial += "UPDATE";
-                //Update
-                patientRepo.Update(newPatient);
-            });
-
-            var nmaxId = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT");
-            var nnewPatient = patientRepo.GetByKey(nmaxId);
-            // Delete
-            patientRepo.Delete(nnewPatient);
-
-        }
-        private static void SqliteRawOperation()
-        {
-            try
-            {
-                var context = BuildSqlContext();
-                var unitOfWork = new UnitOfWork(context);
-
-
-                var id = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
-                      parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
-
-                //SELECT DATE('2050-08-21', '+10 days'); DATE('2050-08-21', '+1 month'); DATE('now', '+1 years');
-                unitOfWork.ExecuteRawNoQuery("UPDATE T_PATIENT SET BirthDate=DATE('now', '-1 month') WHERE PatientId=@PatientId",
-                    parameters: new RawParameter { Name = "@PatientId", Value = 1 });
-
-                //SELECT  column_list  FROM table LIMIT {ROW_COUNT};
-                var dataTable = unitOfWork.ExecuteRawSql("SELECT  * FROM  [T_PATIENT]  WHERE Gender=@Gender AND PatientId<@PatientId LIMIT 100",
-                        parameters: [new RawParameter { Name = "@Gender", Value = "M" }, new RawParameter { Name = "@PatientId", Value = 3 }]);
-
-            }
-            catch (Exception ex)
-            {
-                ex = ex;
-            }
-        }
-
     }
 }

@@ -46,7 +46,7 @@ namespace Demo.Data.DapperRepository
             return GetQuery().ToList();
         }
 
-        public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr)
+        public IEnumerable<TEntity> GetList(Expression<Func<TEntity, bool>> predicateExpr = null)
         {
             if (predicateExpr == null)
             {
