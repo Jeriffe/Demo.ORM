@@ -42,18 +42,18 @@ namespace Demo.EFCoreConsole
                 //ProviderName = DataProviderType.Sqlite;
                 //ConfigureConnectionString();
 
-                //SqlServer
+                // //SqlServer
                 ProviderName = DataProviderType.SQLServer;
 
                 RawOperation();
 
-                TestPatientRepository();
+                //TestPatientRepository();
 
-                TestProductRepository();
+                //TestProductRepository();
 
-                TestOrders();
+                //TestOrders();
 
-                TestServices();
+                //TestServices();
             }
             catch (Exception ex)
             {
@@ -339,6 +339,9 @@ namespace Demo.EFCoreConsole
                 var context = BuildSqlContext();
                 var unitOfWork = new UnitOfWork(context);
 
+                var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
+                var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
+
 
                 var id = unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",
                       parameters: [new RawParameter { Name = "@Gender", Value = "F" }, new RawParameter { Name = "@PatientId", Value = 6 }]);
@@ -365,8 +368,8 @@ namespace Demo.EFCoreConsole
                 var context = new EFCoreDBcontext(ConnectionString);
                 var unitOfWork = new UnitOfWork(context);
 
-                //var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
-                //var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
+                var text_sql = ScriptsLoader.Get("ORDER_QUERY_ORDERLITE");
+                var orders = unitOfWork.ExecuteRawSql<OrderLite>(text_sql);
 
 
                 unitOfWork.ExecuteRawScalar("SELECT MAX(PatientID) FROM dbo.T_PATIENT WHERE Gender=@Gender AND PatientId<@PatientId",

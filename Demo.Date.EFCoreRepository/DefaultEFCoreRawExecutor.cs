@@ -6,6 +6,7 @@ using MySqlConnector;
 using Npgsql;
 using System.Data;
 using System.Data.Common;
+using System.Reflection;
 
 namespace Demo.Date.EFCoreRepository
 {
@@ -46,6 +47,57 @@ namespace Demo.Date.EFCoreRepository
         /// <param name="parameters"></param>
         /// <returns></returns>
         public IEnumerable<T> ExecuteRawSql<T>(DbConnection conn, DbTransaction trans, string sql, CommandType commandType = CommandType.Text, params RawParameter[] parameters) where T : class, new()
+        {
+            var result = new List<T>();
+
+            using (var cmd = conn.CreateCommand())
+            {
+                if (conn.State != ConnectionState.Open)
+                {
+                    cmd.Connection.Open();
+                }
+
+                cmd.CommandText = sql;
+                cmd.CommandType = commandType;
+                cmd.CommandTimeout = 3 * 60;
+
+                var efParameters = BuilderDynamicParameters(parameters);
+                if (efParameters != null)
+                {
+                    cmd.Parameters.AddRange(efParameters);
+                }
+
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Type type = typeof(T);
+
+                        var obj = Activator.CreateInstance(type) as T;
+
+                        PropertyInfo[] properties = type.GetProperties();
+
+                        foreach (PropertyInfo property in properties)
+                        {
+                            try
+                            {
+                                var value = reader[property.Name];
+                                if (value != null)
+                                    property.SetValue(obj, Convert.ChangeType(value.ToString(), property.PropertyType));
+                            }
+                            catch { }
+                        }
+                        result.Add(obj);
+                    }
+                }
+            }
+
+            return result;
+
+            // return ExecuteRawSqlByEFCore<T>(ref sql, parameters);
+        }
+
+        private IEnumerable<T> ExecuteRawSqlByEFCore<T>(ref string sql, RawParameter[] parameters) where T : class, new()
         {
             if (HasParameters(parameters))
             {
